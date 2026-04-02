@@ -36,8 +36,26 @@
 
 ---
 
-## Cross-Experiment Pattern (Tests 1-3)
+---
 
-All three experiments collapsed to fixed points. The common thread: **the physics was too simple.** Each system found a trivially reachable equilibrium and stayed there. Test 1 crystallized in state space (potential too deep). Test 2 crystallized in magnitude (no growth bound). Test 3 crystallized in behavior space (energy minimum too accessible).
+## Test 4 — Sparse Spiking Dynamics
 
-This suggests the architecture needs *frustrated physics* — competing forces that prevent easy equilibrium. Biological neural systems achieve this through excitatory/inhibitory balance, homeostatic regulation, and neuromodulation that constantly shifts the energy landscape. The next experiments (especially Test 8 — Reflexive State) should explicitly design for frustration: self-reference creates a system that can never fully resolve its own state, which might be exactly the kind of frustration that produces ongoing dynamics.
+**What we expected:** Coherent population-level responses from less than 5% active neurons at any moment. Different input patterns producing distinguishable activity. Temporal structure — oscillations, bursts. The efficiency argument: intelligence from sparsity, not from flooding every unit.
+
+**What actually happened:** The first experiment that worked as designed. Mean firing fraction 0.14% — far under the 5% target. Pattern separation was essentially perfect: cosine similarity between pattern centroids was ~0.001 (near zero overlap). Within-pattern variance was exactly 0.0 — the same pattern produced the identical response every single time across all 20 presentations. The network was completely stable. 60 bursts detected, each exactly 50ms, matching the input duration. 132,480 total spikes across 9.2 seconds.
+
+**What felt different vs what was just different numbers:** This experiment felt alive in a way the first three didn't. The raster plot shows clear structure — discrete bursts of activity in specific neuron subsets, silence between them. It looks like a brain scan. But looking closer, the aliveness is an illusion. The zero within-pattern variance is the tell. A real neural system has trial-to-trial variability — noise, history effects, internal state fluctuations. This network has none of that. Each pattern presentation is a photocopy of the last. The "coherent population response" is just 100 input neurons firing and 900 neurons sitting silent. The recurrent connections exist but accomplish nothing — the inhibitory balance is so effective that activity never propagates beyond the directly stimulated subset. It's sparse, but it's sparse in the way an empty room is quiet. There's no compression, no processing, no computation happening in the sparsity.
+
+**Which direction this points for the architecture:** The sparsity numbers validate the premise — you don't need every unit active to get organized responses. But this is sparsity by exclusion, not sparsity by selection. The interesting version would be: overlapping input patterns that the network must *actively separate* using recurrent dynamics, with only a sparse subset of neurons carrying the discriminative signal. That requires the recurrent connections to do real work, which requires the E/I balance to be tuned to the edge of instability — not so stable that nothing propagates, not so unstable that activity explodes. The edge of chaos, not the middle of order. This connects back to the frustrated physics theme: the network needs to be in tension between amplification (excitation wants to spread activity) and suppression (inhibition wants to kill it), with sparsity emerging as the resolution of that tension, not as the absence of activity.
+
+---
+
+## Cross-Experiment Pattern (Tests 1-4)
+
+Tests 1-3 collapsed to trivial fixed points. Test 4 succeeded at its target metrics but revealed a deeper problem: **the system works by doing nothing.** The sparsity is achieved by most neurons never participating, not by a small number of neurons doing sophisticated processing.
+
+The common thread across all four: **the systems find the path of least resistance and take it.** Test 1: lock into potential wells. Test 2: grow until inputs are negligible. Test 3: repeat seek_familiar forever. Test 4: let input neurons fire and suppress everything else.
+
+This suggests the architecture needs *frustrated physics* — competing forces that prevent easy equilibrium. Biological neural systems achieve this through excitatory/inhibitory balance tuned to criticality, homeostatic regulation, and neuromodulation that constantly shifts the energy landscape. The next experiments (especially Test 8 — Reflexive State) should explicitly design for frustration: self-reference creates a system that can never fully resolve its own state, which might be exactly the kind of frustration that produces ongoing dynamics.
+
+**The emerging design principle:** Don't optimize for a target. Design a physics where the target state is unreachable but the system's attempts to reach it produce interesting behavior. Intelligence might not be a solution — it might be the process of failing to find one.
