@@ -1,0 +1,76 @@
+{
+  "parameters": {
+    "N": 1000,
+    "dt": 0.1,
+    "tau": 20.0,
+    "threshold": 1.0,
+    "refractory_period": 2.0,
+    "n_excitatory": 800,
+    "n_inhibitory": 200,
+    "connection_density": 0.049791791791791794,
+    "n_connections": 49742,
+    "n_patterns": 3,
+    "n_presentations": 20,
+    "pattern_duration_ms": 50,
+    "inter_pattern_interval_ms": 100,
+    "current_amplitude": 5.0,
+    "total_duration_ms": 9200,
+    "seed": 42
+  },
+  "sparsity": {
+    "mean_firing_fraction": 0.00144,
+    "max_firing_fraction": 0.1,
+    "median_firing_fraction": 0.0,
+    "std_firing_fraction": 0.010580597911928846,
+    "pct_timesteps_under_5pct": 0.9856521739130435,
+    "pct_timesteps_zero": 0.9727282608695652,
+    "total_spikes": 132480
+  },
+  "pattern_separation": {
+    "within_pattern_variance": {
+      "A": 0.0,
+      "B": 0.0,
+      "C": 0.0
+    },
+    "between_pattern_distance": {
+      "A_vs_B": 311.0948408443959,
+      "A_vs_C": 310.94211679989576,
+      "B_vs_C": 311.0771608459869
+    },
+    "cosine_similarity": {
+      "A_vs_B": 0.00047507900810993107,
+      "A_vs_C": 0.0013633969363845855,
+      "B_vs_C": 0.00045448442037872484
+    },
+    "separability_index": 3110380394967.5947,
+    "n_presentations_per_pattern": {
+      "A": 20,
+      "B": 20,
+      "C": 20
+    }
+  },
+  "temporal_structure": {
+    "dominant_frequency_hz": 6.6304347826086945,
+    "spectral_concentration": 0.43532792256117336,
+    "n_bursts": 60,
+    "mean_burst_duration_ms": 50.0,
+    "mean_population_rate": 0.0014399999999999999
+  },
+  "stability": {
+    "status": "stable",
+    "first_window_rate": 0.0,
+    "last_window_rate": 0.0,
+    "quarter_means": [
+      0.0014403478260869565,
+      0.0014395652173913042,
+      0.001536304347826087,
+      0.0013437826086956522
+    ],
+    "rate_change_ratio": 0.0
+  },
+  "energy_proxy": {
+    "total_spikes": 132480,
+    "spikes_per_second": 14400.000000000002,
+    "spikes_per_neuron_per_second": 14.4
+  }
+}
