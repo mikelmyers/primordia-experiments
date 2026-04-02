@@ -1,0 +1,585 @@
+{
+  "parameters": {
+    "dim": 64,
+    "n_steps": 5000,
+    "perturbation_interval": 200,
+    "perturbation_scale": 2.0,
+    "seed": 42
+  },
+  "action_frequency": {
+    "seek_familiar": {
+      "count": 4680,
+      "frequency": 0.936
+    },
+    "differentiate": {
+      "count": 247,
+      "frequency": 0.0494
+    },
+    "integrate": {
+      "count": 73,
+      "frequency": 0.0146
+    }
+  },
+  "recovery_analysis": {
+    "perturbation_count": 24,
+    "recovered_count": 24,
+    "recovery_times": [
+      15,
+      16,
+      16,
+      15,
+      15,
+      14,
+      15,
+      14,
+      16,
+      14,
+      13,
+      15,
+      15,
+      16,
+      15,
+      14,
+      14,
+      14,
+      15,
+      14,
+      15,
+      14,
+      14,
+      15
+    ],
+    "mean_recovery": 14.708333333333334,
+    "median_recovery": 15.0,
+    "details": [
+      {
+        "perturbation_step": 200,
+        "pre_energy": 0.15577255434761347,
+        "post_peak_energy": 9.464151014664006,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 400,
+        "pre_energy": 0.1557725543780189,
+        "post_peak_energy": 10.07674228612722,
+        "recovery_steps": 16,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 600,
+        "pre_energy": 0.1557732154747919,
+        "post_peak_energy": 10.592941605630182,
+        "recovery_steps": 16,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 800,
+        "pre_energy": 0.1557732154857613,
+        "post_peak_energy": 9.63447228370369,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 1000,
+        "pre_energy": 0.15577322014079353,
+        "post_peak_energy": 9.744039761543341,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 1200,
+        "pre_energy": 0.15577319890833757,
+        "post_peak_energy": 8.826204269451566,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 1400,
+        "pre_energy": 0.15577319889531516,
+        "post_peak_energy": 9.673770071921414,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 1600,
+        "pre_energy": 0.15572549895678897,
+        "post_peak_energy": 8.75644252821103,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 1800,
+        "pre_energy": 0.15572549899962124,
+        "post_peak_energy": 10.30265118409065,
+        "recovery_steps": 16,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 2000,
+        "pre_energy": 0.15577319896696945,
+        "post_peak_energy": 9.645489642031277,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 2200,
+        "pre_energy": 0.15577319886481641,
+        "post_peak_energy": 8.007695551906505,
+        "recovery_steps": 13,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 2400,
+        "pre_energy": 0.15585214874481476,
+        "post_peak_energy": 9.510216460260041,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 2600,
+        "pre_energy": 0.15566103106735535,
+        "post_peak_energy": 9.864039959103323,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 2800,
+        "pre_energy": 0.15577319885952218,
+        "post_peak_energy": 10.620705998717263,
+        "recovery_steps": 16,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 3000,
+        "pre_energy": 0.15566103109697316,
+        "post_peak_energy": 9.545984533351534,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 3200,
+        "pre_energy": 0.15566103104379958,
+        "post_peak_energy": 8.998655808607907,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 3400,
+        "pre_energy": 0.15566102092905146,
+        "post_peak_energy": 8.650893234364272,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 3600,
+        "pre_energy": 0.15566101551288586,
+        "post_peak_energy": 8.638607498286248,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 3800,
+        "pre_energy": 0.15566103101240464,
+        "post_peak_energy": 9.209672845710221,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 4000,
+        "pre_energy": 0.15566101549732386,
+        "post_peak_energy": 8.938420811419052,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 4200,
+        "pre_energy": 0.15562663009853964,
+        "post_peak_energy": 9.97684673710254,
+        "recovery_steps": 15,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 4400,
+        "pre_energy": 0.1556440403069516,
+        "post_peak_energy": 8.338494744630019,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 4600,
+        "pre_energy": 0.1556266301226939,
+        "post_peak_energy": 8.674339001820567,
+        "recovery_steps": 14,
+        "recovered": true
+      },
+      {
+        "perturbation_step": 4800,
+        "pre_energy": 0.15564404033709422,
+        "post_peak_energy": 9.562410294438129,
+        "recovery_steps": 15,
+        "recovered": true
+      }
+    ]
+  },
+  "behavioral_sequences": {
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 4488,
+      "expected_random": 0.04996,
+      "ratio_to_random": 89831.86549239392,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 4536,
+      "expected_random": 0.4997,
+      "ratio_to_random": 9077.446467880729,
+      "length": 4
+    },
+    "differentiate \u2192 differentiate \u2192 differentiate \u2192 differentiate \u2192 differentiate": {
+      "count": 195,
+      "expected_random": 0.04996,
+      "ratio_to_random": 3903.122497998399,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 4584,
+      "expected_random": 4.998,
+      "ratio_to_random": 917.1668667466986,
+      "length": 3
+    },
+    "integrate \u2192 integrate \u2192 integrate \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "integrate \u2192 integrate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "integrate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 differentiate": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 differentiate \u2192 differentiate": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 differentiate \u2192 differentiate \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "seek_familiar \u2192 differentiate \u2192 differentiate \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "differentiate \u2192 differentiate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "differentiate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.04996,
+      "ratio_to_random": 480.3843074459568,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.04996,
+      "ratio_to_random": 460.3682946357086,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 integrate \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.04996,
+      "ratio_to_random": 460.3682946357086,
+      "length": 5
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 integrate \u2192 integrate \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.04996,
+      "ratio_to_random": 460.3682946357086,
+      "length": 5
+    },
+    "seek_familiar \u2192 integrate \u2192 integrate \u2192 integrate \u2192 seek_familiar": {
+      "count": 23,
+      "expected_random": 0.04996,
+      "ratio_to_random": 460.3682946357086,
+      "length": 5
+    },
+    "differentiate \u2192 differentiate \u2192 differentiate \u2192 differentiate": {
+      "count": 196,
+      "expected_random": 0.4997,
+      "ratio_to_random": 392.23534120472283,
+      "length": 4
+    },
+    "seek_familiar \u2192 seek_familiar": {
+      "count": 4632,
+      "expected_random": 49.99,
+      "ratio_to_random": 92.65853170634126,
+      "length": 2
+    },
+    "integrate \u2192 integrate \u2192 integrate \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "integrate \u2192 integrate \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "integrate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 differentiate": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 differentiate \u2192 differentiate": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "seek_familiar \u2192 differentiate \u2192 differentiate \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "differentiate \u2192 differentiate \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "differentiate \u2192 seek_familiar \u2192 seek_familiar \u2192 seek_familiar": {
+      "count": 24,
+      "expected_random": 0.4997,
+      "ratio_to_random": 48.02881729037423,
+      "length": 4
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 seek_familiar \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.4997,
+      "ratio_to_random": 46.02761656994197,
+      "length": 4
+    },
+    "seek_familiar \u2192 seek_familiar \u2192 integrate \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.4997,
+      "ratio_to_random": 46.02761656994197,
+      "length": 4
+    },
+    "seek_familiar \u2192 integrate \u2192 integrate \u2192 integrate": {
+      "count": 23,
+      "expected_random": 0.4997,
+      "ratio_to_random": 46.02761656994197,
+      "length": 4
+    }
+  },
+  "energy_stats": {
+    "initial": 0.15577255434761347,
+    "final": 0.15564405327446287,
+    "minimum": 0.1556266300985395,
+    "maximum": 10.620705998717263,
+    "mean": 0.2656482485816483,
+    "std": 0.7655355468359771
+  },
+  "perturbation_log": [
+    {
+      "step": 200,
+      "perturbation_magnitude": 15.882973835424199,
+      "pre_energy": 0.15577255434761347,
+      "post_energy": 20.637179705210578,
+      "energy_spike": 20.481407150862964
+    },
+    {
+      "step": 400,
+      "perturbation_magnitude": 16.835953609136237,
+      "pre_energy": 0.15577255437801862,
+      "post_energy": 22.060885312242092,
+      "energy_spike": 21.905112757864075
+    },
+    {
+      "step": 600,
+      "perturbation_magnitude": 17.766054003519315,
+      "pre_energy": 0.155773215474792,
+      "post_energy": 23.298210914385134,
+      "energy_spike": 23.142437698910342
+    },
+    {
+      "step": 800,
+      "perturbation_magnitude": 16.044436514218795,
+      "pre_energy": 0.15577321548576117,
+      "post_energy": 21.147486254246946,
+      "energy_spike": 20.991713038761183
+    },
+    {
+      "step": 1000,
+      "perturbation_magnitude": 16.324807030143063,
+      "pre_energy": 0.15577322014079345,
+      "post_energy": 21.321676253849702,
+      "energy_spike": 21.165903033708908
+    },
+    {
+      "step": 1200,
+      "perturbation_magnitude": 14.821789190049893,
+      "pre_energy": 0.15577319890833746,
+      "post_energy": 19.187894190836033,
+      "energy_spike": 19.032120991927695
+    },
+    {
+      "step": 1400,
+      "perturbation_magnitude": 16.179767716459665,
+      "pre_energy": 0.15577319889531538,
+      "post_energy": 21.18922858727113,
+      "energy_spike": 21.033455388375817
+    },
+    {
+      "step": 1600,
+      "perturbation_magnitude": 14.703718835671273,
+      "pre_energy": 0.15572549895678894,
+      "post_energy": 18.942103451472608,
+      "energy_spike": 18.78637795251582
+    },
+    {
+      "step": 1800,
+      "perturbation_magnitude": 17.195007215485223,
+      "pre_energy": 0.1557254989996212,
+      "post_energy": 22.615064969533893,
+      "energy_spike": 22.45933947053427
+    },
+    {
+      "step": 2000,
+      "perturbation_magnitude": 15.969850934922272,
+      "pre_energy": 0.15577319896696945,
+      "post_energy": 21.170405698956035,
+      "energy_spike": 21.014632499989066
+    },
+    {
+      "step": 2200,
+      "perturbation_magnitude": 13.482648964659623,
+      "pre_energy": 0.15577319886481647,
+      "post_energy": 17.274384171010848,
+      "energy_spike": 17.11861097214603
+    },
+    {
+      "step": 2400,
+      "perturbation_magnitude": 15.902533824304415,
+      "pre_energy": 0.15585214874481468,
+      "post_energy": 20.814775086688094,
+      "energy_spike": 20.65892293794328
+    },
+    {
+      "step": 2600,
+      "perturbation_magnitude": 16.46982622499952,
+      "pre_energy": 0.15566103106735504,
+      "post_energy": 21.645944898755282,
+      "energy_spike": 21.49028386768793
+    },
+    {
+      "step": 2800,
+      "perturbation_magnitude": 17.741979489171502,
+      "pre_energy": 0.15577319885952196,
+      "post_energy": 23.403572633535227,
+      "energy_spike": 23.247799434675706
+    },
+    {
+      "step": 3000,
+      "perturbation_magnitude": 15.959157702346962,
+      "pre_energy": 0.15566103109697338,
+      "post_energy": 20.890184477461034,
+      "energy_spike": 20.73452344636406
+    },
+    {
+      "step": 3200,
+      "perturbation_magnitude": 15.082248619157905,
+      "pre_energy": 0.15566103104379952,
+      "post_energy": 19.5986695110922,
+      "energy_spike": 19.4430084800484
+    },
+    {
+      "step": 3400,
+      "perturbation_magnitude": 14.502481770308432,
+      "pre_energy": 0.15566102092905146,
+      "post_energy": 18.802047677220912,
+      "energy_spike": 18.64638665629186
+    },
+    {
+      "step": 3600,
+      "perturbation_magnitude": 14.512517547269796,
+      "pre_energy": 0.15566101551288597,
+      "post_energy": 18.731651455845594,
+      "energy_spike": 18.575990440332706
+    },
+    {
+      "step": 3800,
+      "perturbation_magnitude": 15.412151457728568,
+      "pre_energy": 0.15566103101240458,
+      "post_energy": 20.11014853562678,
+      "energy_spike": 19.954487504614377
+    },
+    {
+      "step": 4000,
+      "perturbation_magnitude": 15.018694084377739,
+      "pre_energy": 0.15566101549732367,
+      "post_energy": 19.41327577315675,
+      "energy_spike": 19.25761475765943
+    },
+    {
+      "step": 4200,
+      "perturbation_magnitude": 16.63887299771418,
+      "pre_energy": 0.15562663009853972,
+      "post_energy": 21.931505367312727,
+      "energy_spike": 21.77587873721419
+    },
+    {
+      "step": 4400,
+      "perturbation_magnitude": 14.03736300831965,
+      "pre_energy": 0.1556440403069516,
+      "post_energy": 17.992331962117,
+      "energy_spike": 17.836687921810046
+    },
+    {
+      "step": 4600,
+      "perturbation_magnitude": 14.575768089806145,
+      "pre_energy": 0.15562663012269384,
+      "post_energy": 18.778557772854672,
+      "energy_spike": 18.62293114273198
+    },
+    {
+      "step": 4800,
+      "perturbation_magnitude": 15.99277093309065,
+      "pre_energy": 0.1556440403370943,
+      "post_energy": 20.926503495534376,
+      "energy_spike": 20.770859455197282
+    }
+  ]
+}

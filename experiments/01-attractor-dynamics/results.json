@@ -1,0 +1,43 @@
+{
+  "parameters": {
+    "N": 64,
+    "t_end": 100,
+    "n_eval": 10000,
+    "seed": 42,
+    "potential": "double-well (a=1.0, b=0.25)",
+    "noise_scale": 0.02,
+    "weight_init": "normal(0, 0.05) symmetrized + normal(0, 0.01)"
+  },
+  "basin_analysis": {
+    "n_distinct_basins": 1,
+    "n_basin_visits": 1,
+    "n_transitions": 0,
+    "avg_dwell_time": 96.34963496349636,
+    "median_dwell_time": 96.34963496349636,
+    "max_dwell_time": 96.34963496349636,
+    "time_in_basin_stats": {
+      "0": {
+        "visits": 1,
+        "total_time": 96.34963496349636,
+        "avg_time": 96.34963496349636,
+        "max_time": 96.34963496349636,
+        "min_time": 96.34963496349636
+      }
+    }
+  },
+  "transitions": [],
+  "trajectory_stats": {
+    "final_state_norm": 11.468215331214811,
+    "initial_state_norm": 0.6480087573976703,
+    "max_state_norm": 11.469208875358106,
+    "mean_state_norm": 11.327382332403918
+  },
+  "dimensionality": {
+    "effective_dim_95pct": 2,
+    "effective_dim_99pct": 2,
+    "pca_var_explained_top2": [
+      0.9492546804014752,
+      0.04331539238800248
+    ]
+  }
+}
