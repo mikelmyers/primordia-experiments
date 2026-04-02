@@ -59,3 +59,23 @@ The common thread across all four: **the systems find the path of least resistan
 This suggests the architecture needs *frustrated physics* — competing forces that prevent easy equilibrium. Biological neural systems achieve this through excitatory/inhibitory balance tuned to criticality, homeostatic regulation, and neuromodulation that constantly shifts the energy landscape. The next experiments (especially Test 8 — Reflexive State) should explicitly design for frustration: self-reference creates a system that can never fully resolve its own state, which might be exactly the kind of frustration that produces ongoing dynamics.
 
 **The emerging design principle:** Don't optimize for a target. Design a physics where the target state is unreachable but the system's attempts to reach it produce interesting behavior. Intelligence might not be a solution — it might be the process of failing to find one.
+
+---
+
+## Test 5 — Topological State Space
+
+**What we expected:** Distinct cognitive categories occupying different regions of state space with interesting topological features — holes, loops, disconnected components. Reasoning trajectories following smooth curves. Evidence that cognition has geometry.
+
+**What actually happened:** This experiment was constrained by encoder availability (HuggingFace blocked by proxy — used TF-IDF + random projection instead of GPT-2 hidden states). The results are partially informative and partially encoder-limited.
+
+Category separability was weak: silhouette score 0.067, separation ratio 1.08. The UMAP plot shows visible clusters (mathematical inputs form a tight group) but quantitative separation is marginal. Intrinsic dimensionality was wildly heterogeneous — MLE median of 2.5 but mean of 92.7, meaning most local neighborhoods are low-dimensional but some are not. PCA required 51 components for 95% variance, with no dominant directions (PC1 = 2.8%). Topology was trivial: one connected component at all thresholds, no holes or loops.
+
+The most interesting finding was the trajectory analysis. Reasoning trajectories have tortuosity of 3.67 (paths 3.7x longer than straight-line) and direction consistency of -0.44 (consecutive steps go in *opposite* directions). Each reasoning step zig-zags rather than flowing smoothly. Step sizes are remarkably uniform (~2.7 L2) regardless of content.
+
+**What felt different vs what was just different numbers:** The zig-zagging trajectories are genuinely surprising. We expected reasoning to trace curves through state space — a smooth path from question to answer. Instead, each step leaps to a different region and the next step leaps back. Whether this is a property of reasoning (each step reframes the problem) or of language (each sentence uses different vocabulary) is unknowable with this encoder. But the uniformity of step sizes is striking: every step moves approximately the same distance, as if reasoning has a characteristic "stride length" regardless of whether you're solving algebra or pondering consciousness.
+
+The flat PCA spectrum is the encoder's fingerprint, not a cognitive finding. TF-IDF + random projection distributes information uniformly by construction. A transformer would almost certainly show dominant directions of variation corresponding to semantic axes.
+
+**Which direction this points for the architecture:** The pipeline works — UMAP, persistent homology, dimensionality estimation, trajectory analysis are all functional and ready for richer representations. The key takeaway: **representation geometry depends entirely on the encoder.** A TF-IDF encoder produces diffuse, topologically trivial clouds because it encodes vocabulary, not meaning. For the architecture, this means the choice of representation is not neutral — it determines what geometric structure is even *possible*. If we want cognition with interesting topology (holes = concepts the system can't represent, disconnected components = incommensurable modes of thought), we need representations that are shaped by something like a transformer's nonlinear geometry. The geometry isn't in the data — it's in the encoding.
+
+The trajectory finding connects to the frustrated physics theme: reasoning may inherently be oscillatory rather than convergent. Each step doesn't get "closer" to an answer — it reframes the problem space. This is consistent with the idea that intelligence is the process of failing to converge, not the convergence itself.
