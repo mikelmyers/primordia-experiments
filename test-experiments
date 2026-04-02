@@ -1,0 +1,411 @@
+Primordia — 10 Cognitive Architecture
+Experiments
+Claude Code Prompts — Pre-Paradigm Research Series
+HOW TO USE THESE PROMPTS
+Each prompt is self-contained. Paste it directly into Claude Code as the opening
+instruction for a new session. Each experiment lives in its own subdirectory. The repo
+root should be named primordia-experiments.
+Start with Tests 1, 2, and 8 in that order.
+TEST 1 — Single Attractor Dynamics
+Directory: experiments/01-attractor-dynamics
+Build a continuous dynamical system experiment in Python. This is cognitive architecture rese
+WHAT TO BUILD:
+A state vector of dimension N (start with N=64) that evolves continuously through time accord
+dX/dt = -∇V(X) + W·f(X) + noise
+Where:
+- X is the state vector
+- V(X) is a potential energy function (start with a double-well potential extended to N dimen
+- W is a learned weight matrix initialized with small random values
+- f(X) is a nonlinear activation (tanh)
+- noise is small Gaussian noise to prevent freezing
+Use scipy.integrate.solve_ivp to integrate the system. Run for 10,000 timesteps.
+WHAT TO MEASURE:
+1. Plot the trajectory of the first 3 dimensions of X over time using matplotlib
+2. Use PCA to reduce X to 2D and plot the phase portrait — where does the system spend its ti
+3. Count distinct attractor basins the system visits — define a basin as a region where veloc
+4. Log every basin transition with timestamp
+5. Measure average time spent in each basin
+WHAT WE ARE LOOKING FOR:
+Does the system spontaneously settle into stable modes without being told to. Do those modes
+OUTPUT:
+- attractor_dynamics.py — the main simulation
+- visualize.py — plots and phase portrait
+- results.json — basin count, transition log, time-in-basin stats
+- README.md — what you built and what the numbers mean
+Do not add subsystems. Do not add task objectives. One equation, one state, let it run.
+TEST 2 — Persistent Non-Resetting State
+Directory: experiments/02-persistent-state
+Build a persistent state entity experiment in Python. This is cognitive architecture research
+WHAT TO BUILD:
+An entity with a fixed-dimension internal state vector (dim=128) that NEVER resets. Every int
+The update rule on each interaction:
+S(t+1) = αS(t) + β·encode(input) + γ·f(S(t))
+Where:
+- S is the persistent state vector
+- α = 0.95 (decay — most state preserved)
+- β = 0.1 (input influence — small but permanent)
+- γ = 0.3 (self-influence — state acts on itself)
+- encode(input) converts text input to a vector using a small sentence encoder (use sentence-
+- f is tanh nonlinearity
+Run 1000 simulated interactions. For inputs use a mix of: questions, statements, emotional co
+WHAT TO MEASURE:
+1. State drift over time — plot L2 distance of S(t) from S(0) at every 100 interactions
+2. Response consistency — for the same input presented at interaction 10, 100, 500, 1000, how
+3. Sensitivity change — does the entity become more or less sensitive to new inputs over time
+4. Cluster analysis — use UMAP to visualize state trajectory. Does it form regions, paths, or
+WHAT WE ARE LOOKING FOR:
+Does the entity develop something like habits — inputs that once caused large state changes n
+OUTPUT:
+- persistent_entity.py — the entity and update loop
+- simulate.py — runs 1000 interactions and logs everything
+- visualize.py — drift plot, UMAP trajectory, sensitivity curve
+- results.json — all measurements
+- README.md — what emerged, what did not
+Do not reset state under any condition. Do not add retrieval. Do not add goals. Just accumula
+TEST 3 — Energy Minimization as Motivation
+Directory: experiments/03-energy-motivation
+Build an energy-based motivation experiment in Python. This is cognitive architecture researc
+WHAT TO BUILD:
+An entity that has no goals, no objectives, no reward function. It has only an internal energ
+Define energy as:
+E(S) = tension(S) + incoherence(S) + novelty_cost(S)
+Where:
+- tension(S) = variance across state vector dimensions (high variance = high tension)
+- incoherence(S) = 1 - cosine_similarity(S, S_smooth) where S_smooth is exponential moving av
+- novelty_cost(S) = distance from nearest visited state (encourages return to familiar territ
+Action space (10 actions):
+- attend_to_self: amplify high-magnitude dimensions
+- suppress_noise: reduce low-magnitude dimensions toward zero
+- integrate: average current state with smoothed state
+- differentiate: amplify difference between current and smoothed state
+- seek_familiar: move state toward nearest historical cluster centroid
+- explore: add structured noise in low-variance dimensions
+- consolidate: reduce dimensionality by merging correlated dimensions
+- expand: increase dimensionality by splitting high-variance dimensions
+- rest: minimal update, let decay dominate
+- reset_partial: zero out bottom 10% magnitude dimensions
+On each timestep:
+1. Compute E(S) for each possible action (simulate one step ahead)
+2. Select action that minimizes E
+3. Apply action
+4. Log E(S), action chosen, state snapshot
+Run for 5000 timesteps with random perturbations injected every 200 steps to disturb equilibr
+WHAT TO MEASURE:
+1. Energy curve over time — does it trend downward with periodic spikes at perturbations
+2. Action frequency distribution — does the entity develop preferred actions
+3. Recovery time — after each perturbation, how many steps to return to pre-perturbation ener
+4. Behavioral sequences — are there recurring action sequences (proto-habits)
+WHAT WE ARE LOOKING FOR:
+Does the entity develop a stable low-energy mode it returns to. Does it feel like it wants to
+OUTPUT:
+- energy_entity.py — energy functions and action space
+- simulate.py — 5000 step simulation with perturbations
+- visualize.py — energy curve, action distribution, recovery analysis
+- results.json — all measurements
+- README.md — what the entity seemed to want, what it did under stress
+TEST 4 — Sparse Spiking Dynamics
+Directory: experiments/04-sparse-spiking
+Build a spiking neural network experiment in Python. This is cognitive architecture research
+WHAT TO BUILD:
+A leaky integrate-and-fire spiking neural network with N=1000 neurons. Implement from scratch
+Neuron model:
+dV/dt = -V/τ + I_input + I_recurrent
+Where:
+- V is membrane potential (reset to 0 after firing)
+- τ = 20ms time constant
+- Neuron fires when V > threshold (threshold = 1.0)
+- After firing: V = 0, absolute refractory period = 2ms
+Network structure:
+- 80% excitatory neurons, 20% inhibitory (Dale's law)
+- Sparse random connectivity: each neuron connects to 5% of others
+- Excitatory weights: positive, drawn from exponential distribution
+- Inhibitory weights: negative, 4x stronger than excitatory (balance)
+- No learning rule in this experiment — fixed weights
+Input:
+- Inject current pulses to random 10% of neurons at irregular intervals
+- Three input patterns: Pattern A, B, C — each activates a different 10% subset
+- Present each pattern 20 times in random order
+WHAT TO MEASURE:
+1. Sparsity: what percentage of neurons fire on any given timestep (target: under 5%)
+2. Pattern separation: do different input patterns produce distinguishable population activit
+3. Temporal structure: are there oscillations, bursts, or other temporal patterns in populati
+4. Energy proxy: total spike count as proxy for compute cost
+5. Stability: does the network settle or does activity explode or die
+WHAT WE ARE LOOKING FOR:
+Coherent population-level responses from less than 5% active neurons at any moment. This is t
+OUTPUT:
+- snn.py — neuron model and network
+- simulate.py — pattern presentation and measurement
+- visualize.py — raster plot, population firing rate, sparsity over time
+- results.json — sparsity stats, pattern separability scores
+- README.md — what the sparsity numbers mean for the GPU replacement argument
+TEST 5 — Topological State Space
+Directory: experiments/05-topology
+Build a topological state space experiment in Python. This is cognitive architecture research
+WHAT TO BUILD:
+An entity whose internal processing can be captured as trajectories through a high-dimensiona
+Step 1 — Generate state trajectories:
+Use a small transformer (GPT-2 small via HuggingFace) and capture the hidden state at layer 6
+- Mathematical reasoning (100 inputs)
+- Emotional language (100 inputs)
+- Spatial description (100 inputs)
+- Abstract philosophy (100 inputs)
+- Simple factual questions (100 inputs)
+This gives you 500 points in ~768-dimensional space.
+Step 2 — Topological analysis:
+- Use UMAP to reduce to 3D for visualization
+- Use sklearn manifold learning to estimate intrinsic dimensionality
+- Use ripser (pip install ripser) to compute persistent homology — this tells you the topolog
+- Compute pairwise distances between category centroids
+Step 3 — Trajectory analysis:
+For 10 multi-step reasoning sequences, capture state at each reasoning step and plot the traj
+WHAT TO MEASURE:
+1. Does each cognitive category occupy a distinct region of state space
+2. What is the intrinsic dimensionality of the manifold (likely much lower than 768)
+3. What topological features exist — are there holes, loops, disconnected regions
+4. Do reasoning trajectories follow smooth curves or erratic paths
+WHAT WE ARE LOOKING FOR:
+Evidence that cognition has geometry. If different types of thought occupy different regions
+OUTPUT:
+- capture_states.py — hidden state extraction
+- topology.py — UMAP, persistent homology, dimensionality estimation
+- visualize.py — 3D state space plot with category coloring, trajectory plots
+- results.json — topological features, intrinsic dimension, category separability
+- README.md — what the shape of thought looks like
+TEST 6 — Local Learning Only
+Directory: experiments/06-local-learning
+Build a local learning experiment in Python. This is cognitive architecture research — we are
+WHAT TO BUILD:
+A network of N=500 nodes that learns using only Hebbian and homeostatic rules. No loss functi
+Learning rules (applied locally at each node after each timestep):
+Hebbian (association):
+ΔW_ij = η_hebb · x_i · x_j
+(connections strengthen when both nodes are active together)
+Anti-Hebbian (decorrelation):
+ΔW_ij = -η_anti · x_i · x_j · (W_ij > threshold)
+(prevents runaway correlation)
+Homeostatic (activity regulation):
+Δθ_i = η_home · (x_i² - target_rate)
+(each node adjusts its own threshold to maintain target firing rate)
+Synaptic normalization (weight bounding):
+W_i = W_i / ||W_i||
+(applied every 10 steps, locally per node)
+Task:
+Present the network with structured input patterns (use MNIST digits, flatten to 784, subsamp
+After 10,000 pattern presentations, probe what the network has learned:
+- Present each digit class and measure population response
+- Test if different digit classes produce distinguishable responses without ever being told w
+WHAT TO MEASURE:
+1. Does the network develop selectivity for input patterns without supervision
+2. Do individual nodes develop receptive fields (consistent response to specific input 3. Is the learned representation stable or does it drift
+4. Compare representational quality to a backprop-trained autoencoder as baseline
+featur
+WHAT WE ARE LOOKING FOR:
+Global structure from local rules. If the network learns anything meaningful about digit stru
+OUTPUT:
+- local_network.py — node model and local learning rules
+- train.py — 10,000 step exposure loop
+- probe.py — post-training representational analysis
+- visualize.py — receptive fields, selectivity plots, comparison to baseline
+- results.json — selectivity scores, stability measures
+- README.md — what the network figured out on its own
+TEST 7 — Competitive Global Broadcast
+Directory: experiments/07-competitive-broadcast
+Build a competitive global workspace experiment in Python. This is cognitive architecture res
+WHAT TO BUILD:
+Implement Global Workspace Theory with one critical modification: competition is existential.
+Architecture:
+- 6 specialist modules (each a small feedforward network, 64-128-64 dims)
+- Perceptual: processes sensory-like input features
+- Semantic: processes meaning-level features
+- Temporal: processes sequence and timing features
+- Affective: processes valence and arousal features
+- Motor: processes action-oriented features
+- Metacognitive: processes system-state features
+- 1 global workspace (256-dim broadcast buffer)
+- Competition mechanism: softmax over module "urgency scores" with temperature τ
+Hard competition implementation:
+- Each module computes urgency score based on input salience and internal state
+- Softmax at temperature τ=0.1 (very sharp — near winner-take-all)
+- Winning module broadcasts to global workspace
+- All other modules receive zero gradient and zero input for that timestep
+- Winning module holds broadcast for minimum hold_time=3 timesteps before re-competition
+Compare against:
+- Soft integration baseline: weighted average of all module outputs (standard attention)
+- Medium competition: τ=1.0 (softer competition, losers still partially active)
+Test on:
+- Multi-modal input sequences requiring different specialist modules at different times
+- Conflicting inputs that require one interpretation to win
+- Sustained processing tasks requiring one module to hold the workspace
+WHAT TO MEASURE:
+1. Coherence score: how consistent is the global workspace representation over time (hard com
+2. Switching rate: how often does the dominant module change
+3. Task performance on conflict resolution vs soft baseline
+4. Subjective unity metric: variance of workspace representation (lower = more unified)
+WHAT WE ARE LOOKING FOR:
+Whether hard competition feels qualitatively different from soft integration. Whether the sys
+OUTPUT:
+- workspace.py — global workspace and competition mechanism
+- modules.py — 6 specialist modules
+- simulate.py — test suite with all three competition modes
+- visualize.py — workspace coherence over time, switching rate, comparison plots
+- results.json — all metrics across three modes
+- README.md — does hard competition feel like one thing or still like a committee
+TEST 8 — Reflexive State (New Math)
+Directory: experiments/08-reflexive-state
+Build a reflexive state experiment in Python. This is pre-paradigm cognitive architecture res
+THE MATHEMATICAL IDEA:
+Standard systems have state S(t). An observer O monitors S(t) separately. Self-awareness is b
+We want: a state R(t) where the system's model of itself IS part of the state — not a separat
+Formally, we define R as a fixed-point:
+R = Φ(R)
+Where Φ is a contraction mapping that takes the current state and returns an updated state th
+IMPLEMENTATION:
+Define the reflexive state as a structured tuple:
+R = (S, M)
+Where:
+- S is the content state (dim=64) — what the system is processing
+- M is the self-model (dim=32) — the system's compressed model of its own current S
+The update equation (our Φ):
+S(t+1) = f(S(t), input, M(t)) M(t+1) = g(S(t+1), M(t)) # content update informed by self-model
+# self-model update from new content
+Where:
+f(S, input, M) = tanh(W_s · S + W_i · encode(input) + W_m · M)
+g(S, M) = tanh(W_g · S + α · M) # α=0.7 self-model decay
+Critical constraint: Φ must be a contraction. Enforce this by constraining spectral radius of
+Fixed-point iteration:
+On each timestep, after computing S(t+1) and M(t+1), run 5 iterations of:
+M_k+1 = g(S(t+1), M_k)
+Until ||M_k+1 - M_k|| < 0.001. This finds the self-model that is consistent with the current
+WHAT TO MEASURE:
+1. Fixed-point convergence: does M always converge within 5 iterations or does it oscillate
+2. Self-model accuracy: how well does M predict S — train a small probe network to decode S f
+3. Behavioral difference: compare this system to identical system WITHOUT self-model (W_m = 0
+4. Self-consistency: when the system processes inputs about itself ("what are you doing") vs
+WHAT WE ARE LOOKING FOR:
+A system that is genuinely self-including without infinite regress. Whether self-reference im
+This is new mathematical territory. Document anything unexpected carefully.
+OUTPUT:
+- reflexive_state.py — R state structure, Φ operator, fixed-point iteration
+- simulate.py — 500 interactions with mixed self-referential and external inputs
+- probe.py — self-model accuracy measurement
+- visualize.py — M trajectory, convergence plots, self vs external processing comparison
+- results.json — convergence stats, self-model accuracy, behavioral difference metrics
+- README.md — what self-reference as mathematics feels like vs self-reference as architecture
+TEST 9 — Temporal Field (New Math)
+Directory: experiments/09-temporal-field
+Build a temporal field experiment in Python. This is pre-paradigm cognitive architecture rese
+THE MATHEMATICAL IDEA:
+Standard systems exist AT a time t. Time is a parameter. The system moves along it.
+We want: a system that HAS time as part of its state. Past, present, and anticipated future a
+Formally:
+T(τ) is a continuous scalar field over internal time coordinate τ ∈ [-L, +L]
+Where:
+- τ < 0 is the past region of the field
+- τ = 0 is the present
+- τ > 0 is the anticipated future region
+- L = 50 (field extent in each direction)
+The field is a probability-amplitude-like distribution (not probability — amplitude, which ca
+T(τ) = Σ_k a_k · φ_k(τ)
+Where φ_k are basis functions (use Fourier basis: sines and cosines) and a_k are learned coef
+IMPLEMENTATION:
+Initialize T(τ) as a Gaussian centered at τ=0 (entity is fully present, no past or future lea
+On each interaction with input x:
+1. Shift the field: T(τ) → T(τ-1) — the present moment moves forward, past grows
+2. Deposit experience: add a scaled basis function centered at τ=0 with amplitude proportiona
+3. Anticipation update: future region (τ>0) is updated as a learned extrapolation of recent p
+T(τ>0) ← Σ learned_weights · T(τ<0 pattern)
+4. Field normalization: L2 normalize the coefficients a_k
+The entity's current state is derived from the field:
+S = ∫ T(τ) · w(τ) dτ
+Where w(τ) is a temporal weighting function:
+- w(0) = 1.0 (present fully weighted)
+- w(τ<0) = exp(τ/decay) — exponential decay into past (decay=10)
+- w(τ>0) = exp(-τ/anticipation) — anticipation weight (anticipation=5)
+Discretize the integral using 100-point quadrature.
+Run 300 interactions with inputs that have temporal structure — sequences, patterns, callback
+baseli
+WHAT TO MEASURE:
+1. Past coherence: does the field's past region accurately encode what happened (measure by p
+2. Anticipation accuracy: does T(τ>0) predict upcoming inputs better than a memoryless 3. Present sensitivity: how does the τ=0 region respond to input novelty vs familiarity
+4. Temporal lean: does the field develop characteristic shapes — past-heavy, future-heavy, pr
+5. State coherence: does S (the integrated state) behave more coherently than a standard hidd
+WHAT WE ARE LOOKING FOR:
+An entity that doesn't just store the past and predict the future — one that IS its temporal
+This is genuinely unexplored. Log everything unexpected.
+OUTPUT:
+- temporal_field.py — field structure, basis functions, update equations
+- simulate.py — 300 interactions with temporally structured inputs
+- visualize.py — field evolution animation, past/future accuracy plots, temporal lean analysi
+- results.json — all measurements
+- README.md — what it means for an entity to have time rather than exist in time
+TEST 10 — Unity Primitive (New Math)
+Directory: experiments/10-unity-primitive
+Build a unity primitive experiment in Python. This is the most experimental of all ten tests
+THE MATHEMATICAL IDEA:
+Every current architecture starts with parts and builds toward unity. Modules, layers, subsys
+We want to invert this. Start with U — a unity object — and derive capabilities from it throu
+Formally, we define:
+U ∈ R^N is a unity vector (N=256). It represents the undifferentiated whole.
+Differentiation operators D_k: R^N → R^N where k ∈ {perception, reasoning, affect, action, me
+Each D_k is a projection that extracts a mode from U without fragmenting it:
+D_k(U) = P_k · U
+Where P_k is an orthogonal projection matrix (P_k² = P_k, P_k^T = P_k).
+Critical constraint: Σ_k P_k = I (the projections partition unity — together they are the who
+And: P_i · P_j = 0 for i≠j (the modes are orthogonal — they do not overlap)
+This means: the sum of all differentiated modes exactly reconstitutes U:
+Σ_k D_k(U) = U
+Unity is never lost. The modes are not parts — they are perspectives on the whole.
+The Unity Update Rule:
+On each timestep, inputs modulate U directly (not individual modules):
+U(t+1) = normalize(U(t) + η · encode(input) + Σ_k λ_k · D_k(U(t)))
+Where λ_k are learned salience weights that determine which mode is currently most expressed.
+Mode expression (what the system outputs) at time t:
+expressed_mode = argmax_k(λ_k)
+output = decode(D_{expressed_mode}(U(t)))
+IMPLEMENTATION:
+1. Initialize U as a random unit vector in R^256
+2. Construct 5 orthogonal projection matrices using Gram-Schmidt on random bases. Verify they
+3. Initialize λ_k as uniform (1/5 each)
+4. Learn λ_k online using Hebbian rule: λ_k increases when D_k(U) correlates with input
+5. Run 1000 interactions across 5 input types (one per mode)
+WHAT TO MEASURE:
+1. Unity preservation: at every timestep verify ||Σ_k D_k(U) - U|| < 0.001 (unity must 2. Mode selectivity: does the correct mode become dominant for each input type without always
+superv
+3. Cross-mode interference: when switching between input types, how long does it take for the
+4. Unity coherence: measure ||U|| over time — does the unity vector remain stable or drift
+5. Qualitative: describe what it feels like when you inspect U directly vs inspecting individ
+CRITICAL EXPERIMENT WITHIN THE EXPERIMENT:
+At timestep 500, forcibly set one P_k to zero (destroy one mode entirely). Measure:
+- Does U reconstitute the lost mode over subsequent interactions
+- Does the system find a new equilibrium
+- What does this feel like analogically — is it like losing a capability or losing a part of
+WHAT WE ARE LOOKING FOR:
+Whether a system that is mathematically constrained to remain one thing while expressing mult
+This experiment may produce null results. That is valuable. If oneness-as-primitive produces
+OUTPUT:
+- unity.py — U object, projection operators, unity update rule
+- simulate.py — 1000 interactions with mode destruction event at t=500
+- verify.py — continuous unity preservation checking
+- visualize.py — U trajectory, mode salience over time, post-destruction recovery
+- results.json — all measurements including mode destruction analysis
+- README.md — honest assessment of whether unity-first feels different from parts-first, and
+Document everything. This is the frontier.
+SUGGESTED EXECUTION ORDER
+1. 2. 3. 4. 5. 6. 7. 8. 9. 10. Test 1 — establish baseline dynamical intuition
+Test 2 — establish what persistence actually does
+Test 8 — first new math experiment while intuition is fresh
+Test 4 — establish the efficiency baseline early
+Test 3 — energy as motivation
+Test 9 — temporal field
+Test 6 — local learning
+Test 5 — topology (requires GPU for transformer hidden states)
+Test 7 — GWT ceiling test
+Test 10 — unity primitive last, after all other intuitions are built
+WHAT TO CAPTURE ACROSS ALL TESTS
+After each experiment add an entry to a root-level findings.md :
+What you expected
+What actually happened
+What felt different vs what was just different numbers
+Which direction this points for the architecture
+The findings.md is the most important output of this entire research series.
