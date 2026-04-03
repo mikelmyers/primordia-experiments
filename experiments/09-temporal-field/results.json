@@ -1,0 +1,89 @@
+{
+  "past_coherence": {
+    "mean": 0.085570012657061,
+    "std": 0.05288998180304682
+  },
+  "anticipation": {
+    "mean_error": 0.238468911857472,
+    "std_error": 0.1284206107550215,
+    "baseline_error": 0.8120676615678722
+  },
+  "present_sensitivity": {
+    "periodic": {
+      "mean_delta": 0.18880986661531196,
+      "std_delta": 0.11414070901702435,
+      "n_samples": 49
+    },
+    "ramp": {
+      "mean_delta": 0.01158839768938301,
+      "std_delta": 0.017442544824838133,
+      "n_samples": 50
+    },
+    "callback": {
+      "mean_delta": 0.18784237767060868,
+      "std_delta": 0.11358805093779414,
+      "n_samples": 50
+    },
+    "novel": {
+      "mean_delta": 0.09862673773483706,
+      "std_delta": 0.08133896113009552,
+      "n_samples": 50
+    },
+    "alternating": {
+      "mean_delta": 0.29152132795542146,
+      "std_delta": 0.010835172535486388,
+      "n_samples": 50
+    },
+    "return_periodic": {
+      "mean_delta": 0.1898978367389553,
+      "std_delta": 0.10846822201670428,
+      "n_samples": 50
+    }
+  },
+  "temporal_lean_by_phase": {
+    "periodic_1": {
+      "mean_past": 0.7437336930838608,
+      "mean_present": 0.1218497825591516,
+      "mean_future": 0.13441652200950197
+    },
+    "ramp": {
+      "mean_past": 0.48660152120793504,
+      "mean_present": 0.20724983278639222,
+      "mean_future": 0.306148643550276
+    },
+    "callback": {
+      "mean_past": 0.7291296943162401,
+      "mean_present": 0.11932912986955704,
+      "mean_future": 0.15154117346617121
+    },
+    "novel": {
+      "mean_past": 0.597374582469092,
+      "mean_present": 0.0901950092716908,
+      "mean_future": 0.3124304063176787
+    },
+    "alternating": {
+      "mean_past": 0.5285188308995581,
+      "mean_present": 0.060552163269571385,
+      "mean_future": 0.41092900431601737
+    },
+    "return_periodic": {
+      "mean_past": 0.3491770311074862,
+      "mean_present": 0.08660755836337937,
+      "mean_future": 0.5642154088802102
+    }
+  },
+  "state_coherence": {
+    "state_autocorrelation": 0.8318281389289524,
+    "input_autocorrelation": -0.07716752050500053,
+    "coherence_gain": -10.779512433215647
+  },
+  "overall": {
+    "mean_state": 0.14185917229620287,
+    "std_state": 1.311729535998286,
+    "final_temporal_lean": {
+      "past": 0.7974463262279091,
+      "present": 0.037077924143792206,
+      "future": 0.16547574812174684
+    }
+  }
+}
