@@ -1,0 +1,314 @@
+{
+  "intrinsic_dimensionality": {
+    "mle": {
+      "mle_mean": 92.7130731204186,
+      "mle_median": 2.4534331122778,
+      "mle_std": 480.7499789567964,
+      "mle_min": 0.028722588426444005,
+      "mle_max": 4371.267709182824
+    },
+    "pca": {
+      "pca_80pct": 51,
+      "pca_90pct": 51,
+      "pca_95pct": 51,
+      "pca_99pct": 51,
+      "pca_variance_explained": [
+        0.02826235749772279,
+        0.025988930867942253,
+        0.024959509442840578,
+        0.024355033538705526,
+        0.022696755035074585,
+        0.0222346696219611,
+        0.021707012914933342,
+        0.020903950142669263,
+        0.02024875066161455,
+        0.019862293730169428,
+        0.019116320316128838,
+        0.018717844034894154,
+        0.018147165312325044,
+        0.017971152081626456,
+        0.01750610733895843,
+        0.016999925877214234,
+        0.01668986477348493,
+        0.016231900303403296,
+        0.01537134644070613,
+        0.01504603858198191
+      ],
+      "pca_cumulative_20": [
+        0.02826235749772279,
+        0.05425128836566504,
+        0.07921079780850562,
+        0.10356583134721115,
+        0.12626258638228574,
+        0.14849725600424685,
+        0.1702042689191802,
+        0.19110821906184947,
+        0.21135696972346402,
+        0.23121926345363344,
+        0.2503355837697623,
+        0.26905342780465646,
+        0.2872005931169815,
+        0.30517174519860796,
+        0.32267785253756637,
+        0.3396777784147806,
+        0.3563676431882655,
+        0.3725995434916688,
+        0.38797088993237494,
+        0.40301692851435683
+      ]
+    }
+  },
+  "topological_features": {
+    "components_at_thresholds": [
+      {
+        "threshold": 0.9297468970663602,
+        "n_components": 1
+      },
+      {
+        "threshold": 0.9584785837254951,
+        "n_components": 1
+      },
+      {
+        "threshold": 0.9854903709847256,
+        "n_components": 1
+      },
+      {
+        "threshold": 1.0109028532330795,
+        "n_components": 1
+      },
+      {
+        "threshold": 1.0344058050676241,
+        "n_components": 1
+      }
+    ]
+  },
+  "category_separability": {
+    "centroid_distances": {
+      "emotional_vs_factual": 0.8671028803551171,
+      "emotional_vs_mathematical": 0.9097813333729251,
+      "emotional_vs_philosophical": 0.8495127873459923,
+      "emotional_vs_spatial": 0.923621790418419,
+      "factual_vs_mathematical": 0.8005348621486986,
+      "factual_vs_philosophical": 0.877110503439824,
+      "factual_vs_spatial": 0.8147938873609993,
+      "mathematical_vs_philosophical": 0.8762366690946447,
+      "mathematical_vs_spatial": 0.8512528050755589,
+      "philosophical_vs_spatial": 0.9278170812527438
+    },
+    "silhouette_score": 0.06699703065647705,
+    "mean_within_class_distance": 0.9109032693218667,
+    "mean_between_class_distance": 0.9877474779971646,
+    "separation_ratio": 1.0843604488679741
+  },
+  "trajectory_analysis": {
+    "per_sequence": [
+      {
+        "sequence_idx": 0,
+        "n_steps": 4,
+        "step_distances": [
+          2.742426107175558,
+          2.3087865146408597,
+          2.827181929795517
+        ],
+        "total_path_length": 7.878394551611935,
+        "straight_line_distance": 2.4156969762439715,
+        "tortuosity": 3.2613339458915074,
+        "step_size_std": 0.22704885723244053,
+        "direction_consistency": [
+          -0.3885470475772146,
+          -0.40654601534625767
+        ],
+        "mean_direction_consistency": -0.39754653146173613
+      },
+      {
+        "sequence_idx": 1,
+        "n_steps": 4,
+        "step_distances": [
+          2.704513754513622,
+          2.80856298189734,
+          2.554857054910569
+        ],
+        "total_path_length": 8.067933791321531,
+        "straight_line_distance": 2.0981903294555595,
+        "tortuosity": 3.845186815542614,
+        "step_size_std": 0.10413136300069567,
+        "direction_consistency": [
+          -0.5642986093439305,
+          -0.4693329395435746
+        ],
+        "mean_direction_consistency": -0.5168157744437525
+      },
+      {
+        "sequence_idx": 2,
+        "n_steps": 5,
+        "step_distances": [
+          2.706481524856914,
+          2.880770619175187,
+          2.753312954079919,
+          2.667847180114191
+        ],
+        "total_path_length": 11.00841227822621,
+        "straight_line_distance": 2.796440267363256,
+        "tortuosity": 3.936580518705649,
+        "step_size_std": 0.08021406109892489,
+        "direction_consistency": [
+          -0.5290904577944505,
+          -0.5898856739012736,
+          -0.4291437329889409
+        ],
+        "mean_direction_consistency": -0.5160399548948883
+      },
+      {
+        "sequence_idx": 3,
+        "n_steps": 5,
+        "step_distances": [
+          2.76584357824004,
+          2.788477609785202,
+          2.972802966772504,
+          2.9136880123106463
+        ],
+        "total_path_length": 11.440812167108394,
+        "straight_line_distance": 2.704940390923672,
+        "tortuosity": 4.229598628309008,
+        "step_size_std": 0.08600527765109972,
+        "direction_consistency": [
+          -0.5595716176617921,
+          -0.47945895950963496,
+          -0.5732064779499937
+        ],
+        "mean_direction_consistency": -0.5374123517071402
+      },
+      {
+        "sequence_idx": 4,
+        "n_steps": 5,
+        "step_distances": [
+          2.7015468478742566,
+          2.4249095591029635,
+          2.508648691042612,
+          2.6057972768209092
+        ],
+        "total_path_length": 10.24090237484074,
+        "straight_line_distance": 2.7944800903398326,
+        "tortuosity": 3.6646896895928,
+        "step_size_std": 0.1037052087537717,
+        "direction_consistency": [
+          -0.421556034234899,
+          -0.5230383246585397,
+          -0.36897158159851023
+        ],
+        "mean_direction_consistency": -0.43785531349731627
+      },
+      {
+        "sequence_idx": 5,
+        "n_steps": 5,
+        "step_distances": [
+          2.7907903947235972,
+          2.073392286269581,
+          0.0,
+          1.8841841866632385
+        ],
+        "total_path_length": 6.748366867656417,
+        "straight_line_distance": 2.855265477746665,
+        "tortuosity": 2.3634814066333796,
+        "step_size_std": 1.0310798713236018,
+        "direction_consistency": [
+          -0.32668793882243136,
+          0.0,
+          0.0
+        ],
+        "mean_direction_consistency": -0.10889597960747711
+      },
+      {
+        "sequence_idx": 6,
+        "n_steps": 5,
+        "step_distances": [
+          2.5463555764177714,
+          2.8762437105281773,
+          2.4873527060761966,
+          2.847248446722417
+        ],
+        "total_path_length": 10.757200439744562,
+        "straight_line_distance": 2.8684664486629528,
+        "tortuosity": 3.7501573165545303,
+        "step_size_std": 0.17400537382823938,
+        "direction_consistency": [
+          -0.4444049674356092,
+          -0.5277942142234076,
+          -0.38065260956596203
+        ],
+        "mean_direction_consistency": -0.4509505970749929
+      },
+      {
+        "sequence_idx": 7,
+        "n_steps": 5,
+        "step_distances": [
+          2.779225087753978,
+          2.8516121126244225,
+          2.482261012088401,
+          2.5752940754172315
+        ],
+        "total_path_length": 10.688392287884033,
+        "straight_line_distance": 2.6809718553587403,
+        "tortuosity": 3.986760348311759,
+        "step_size_std": 0.14925700264638883,
+        "direction_consistency": [
+          -0.4991721256549103,
+          -0.4470039544183868,
+          -0.4020810419787025
+        ],
+        "mean_direction_consistency": -0.4494190406839999
+      },
+      {
+        "sequence_idx": 8,
+        "n_steps": 5,
+        "step_distances": [
+          2.7931440859651597,
+          2.793170245130086,
+          2.676507670450097,
+          2.6815257634654617
+        ],
+        "total_path_length": 10.944347765010804,
+        "straight_line_distance": 2.852627887330665,
+        "tortuosity": 3.8365844397784152,
+        "step_size_std": 0.057097795437295706,
+        "direction_consistency": [
+          -0.4850447434971925,
+          -0.45799866682941,
+          -0.47183808448043224
+        ],
+        "mean_direction_consistency": -0.47162716493567824
+      },
+      {
+        "sequence_idx": 9,
+        "n_steps": 5,
+        "step_distances": [
+          2.896907852162109,
+          2.756345771318734,
+          2.672464476335541,
+          2.862001706672424
+        ],
+        "total_path_length": 11.187719806488808,
+        "straight_line_distance": 2.928928349723068,
+        "tortuosity": 3.8197314753522784,
+        "step_size_std": 0.08855597683234381,
+        "direction_consistency": [
+          -0.510513444543564,
+          -0.4878886685752253,
+          -0.5039991464716378
+        ],
+        "mean_direction_consistency": -0.5008004198634757
+      }
+    ],
+    "summary": {
+      "mean_tortuosity": 3.669410458467193,
+      "mean_direction_consistency": -0.4387363128170457,
+      "mean_path_length": 9.896248232989345,
+      "mean_straight_distance": 2.6996008073148388
+    }
+  },
+  "umap_params": {
+    "n_neighbors": 15,
+    "min_dist": 0.1,
+    "metric": "cosine"
+  }
+}

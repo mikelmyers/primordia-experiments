@@ -1,0 +1,51 @@
+{
+  "convergence": {
+    "rate": 0.0,
+    "mean_iterations": 5.0,
+    "mean_final_delta": 0.16202268827104147,
+    "oscillated": 1.0
+  },
+  "self_vs_external": {
+    "reflexive": {
+      "self_referential": {
+        "n_inputs": 154,
+        "mean_state_change": 2.8575447031218912,
+        "mean_convergence_iters": 5.0,
+        "mean_self_model_accuracy": 0.5443255032677933
+      },
+      "external": {
+        "n_inputs": 346,
+        "mean_state_change": 2.8975472642804863,
+        "mean_convergence_iters": 5.0,
+        "mean_self_model_accuracy": 0.5399869864209357
+      }
+    },
+    "control": {
+      "self_referential": {
+        "n_inputs": 154,
+        "mean_state_change": 1.4628724046040313,
+        "mean_convergence_iters": 5.0,
+        "mean_self_model_accuracy": 0.5486898171649408
+      },
+      "external": {
+        "n_inputs": 346,
+        "mean_state_change": 1.612633870855428,
+        "mean_convergence_iters": 5.0,
+        "mean_self_model_accuracy": 0.5523637402893495
+      }
+    }
+  },
+  "behavioral_difference": {
+    "reflexive_mean_SM_cosine": 0.5413232496097679,
+    "control_mean_SM_cosine": 0.5512321719670317,
+    "reflexive_S_norm_mean": 2.6449529701999204,
+    "control_S_norm_mean": 1.1151108127289928,
+    "reflexive_M_norm_mean": 2.619313954280308,
+    "control_M_norm_mean": 1.4821203028576324
+  },
+  "self_consistency": {
+    "reflexive_self_accuracy": 0.5443255032677933,
+    "reflexive_ext_accuracy": 0.5399869864209357,
+    "self_ext_gap": 0.0043385168468575985
+  }
+}

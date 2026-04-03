@@ -1,0 +1,39 @@
+{
+  "n_inputs": 500,
+  "n_categories": 5,
+  "categories": [
+    "mathematical",
+    "emotional",
+    "spatial",
+    "philosophical",
+    "factual"
+  ],
+  "hidden_dim": 768,
+  "encoder": "tfidf_random_projection",
+  "encoder_note": "GPT-2 unavailable (proxy block). Using TF-IDF + GaussianRandomProjection + tanh.",
+  "n_trajectories": 10,
+  "trajectory_lengths": [
+    4,
+    4,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5
+  ],
+  "trajectory_descriptions": [
+    "Algebraic equation solving",
+    "Logical deduction (birds/flight)",
+    "Physical process (ice heating)",
+    "Ethical reasoning (meat eating)",
+    "Spatial reasoning (objects in room)",
+    "Numerical pattern (doubling)",
+    "Abstract math (infinity)",
+    "Lateral thinking (match puzzle)",
+    "Causal chain (river geology)",
+    "Philosophical inquiry (consciousness)"
+  ]
+}

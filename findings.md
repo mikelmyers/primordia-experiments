@@ -59,3 +59,115 @@ The common thread across all four: **the systems find the path of least resistan
 This suggests the architecture needs *frustrated physics* — competing forces that prevent easy equilibrium. Biological neural systems achieve this through excitatory/inhibitory balance tuned to criticality, homeostatic regulation, and neuromodulation that constantly shifts the energy landscape. The next experiments (especially Test 8 — Reflexive State) should explicitly design for frustration: self-reference creates a system that can never fully resolve its own state, which might be exactly the kind of frustration that produces ongoing dynamics.
 
 **The emerging design principle:** Don't optimize for a target. Design a physics where the target state is unreachable but the system's attempts to reach it produce interesting behavior. Intelligence might not be a solution — it might be the process of failing to find one.
+
+---
+
+## Test 5 — Topological State Space
+
+**What we expected:** Distinct cognitive categories occupying different regions of state space with interesting topological features — holes, loops, disconnected components. Reasoning trajectories following smooth curves. Evidence that cognition has geometry.
+
+**What actually happened:** This experiment was constrained by encoder availability (HuggingFace blocked by proxy — used TF-IDF + random projection instead of GPT-2 hidden states). The results are partially informative and partially encoder-limited.
+
+Category separability was weak: silhouette score 0.067, separation ratio 1.08. The UMAP plot shows visible clusters (mathematical inputs form a tight group) but quantitative separation is marginal. Intrinsic dimensionality was wildly heterogeneous — MLE median of 2.5 but mean of 92.7, meaning most local neighborhoods are low-dimensional but some are not. PCA required 51 components for 95% variance, with no dominant directions (PC1 = 2.8%). Topology was trivial: one connected component at all thresholds, no holes or loops.
+
+The most interesting finding was the trajectory analysis. Reasoning trajectories have tortuosity of 3.67 (paths 3.7x longer than straight-line) and direction consistency of -0.44 (consecutive steps go in *opposite* directions). Each reasoning step zig-zags rather than flowing smoothly. Step sizes are remarkably uniform (~2.7 L2) regardless of content.
+
+**What felt different vs what was just different numbers:** The zig-zagging trajectories are genuinely surprising. We expected reasoning to trace curves through state space — a smooth path from question to answer. Instead, each step leaps to a different region and the next step leaps back. Whether this is a property of reasoning (each step reframes the problem) or of language (each sentence uses different vocabulary) is unknowable with this encoder. But the uniformity of step sizes is striking: every step moves approximately the same distance, as if reasoning has a characteristic "stride length" regardless of whether you're solving algebra or pondering consciousness.
+
+The flat PCA spectrum is the encoder's fingerprint, not a cognitive finding. TF-IDF + random projection distributes information uniformly by construction. A transformer would almost certainly show dominant directions of variation corresponding to semantic axes.
+
+**Which direction this points for the architecture:** The pipeline works — UMAP, persistent homology, dimensionality estimation, trajectory analysis are all functional and ready for richer representations. The key takeaway: **representation geometry depends entirely on the encoder.** A TF-IDF encoder produces diffuse, topologically trivial clouds because it encodes vocabulary, not meaning. For the architecture, this means the choice of representation is not neutral — it determines what geometric structure is even *possible*. If we want cognition with interesting topology (holes = concepts the system can't represent, disconnected components = incommensurable modes of thought), we need representations that are shaped by something like a transformer's nonlinear geometry. The geometry isn't in the data — it's in the encoding.
+
+The trajectory finding connects to the frustrated physics theme: reasoning may inherently be oscillatory rather than convergent. Each step doesn't get "closer" to an answer — it reframes the problem space. This is consistent with the idea that intelligence is the process of failing to converge, not the convergence itself.
+
+---
+
+## Test 6 — Local Learning Only
+
+**What we expected:** A network that develops selectivity for input patterns without supervision. Individual nodes developing receptive fields. Hebbian + homeostatic rules producing global structure from local rules.
+
+**What actually happened:** Another collapse. Homeostatic thresholds grew linearly without bound (~81 by step 9000). All activations saturated to ±1.0. Zero selectivity (0.0000), zero discriminability (silhouette 0.0000), cluster purity at random chance (0.10). The baseline backprop autoencoder achieved silhouette 0.19 — infinitely better than the local network.
+
+**What felt different vs what was just different numbers:** This is the cleanest failure. The training curves tell the whole story: thresholds go up linearly, weights stay bounded (normalization works), but activations are permanently saturated from step ~500 onward. The network is alive for about 500 steps, then it's a wall of ones. The receptive fields of the "most selective" nodes are pure noise — they look like TV static because every node responds identically to every input.
+
+**Which direction this points for the architecture:** Four of the first six experiments (1, 2, 3, 6) collapsed to trivial fixed states. The common failure mode: the system finds a way to saturate, freeze, or make itself immune to inputs. Tanh + additive homeostasis is fundamentally broken — biological homeostasis works because neurons have genuine graded responses and multiple regulatory mechanisms. For local learning to work, we need non-saturating activations, inhibitory competition between nodes, and multiplicative gating rather than additive thresholds.
+
+---
+
+## Test 7 — Competitive Global Broadcast
+
+**What we expected:** Hard competition feeling qualitatively different from soft integration. A system that functions like one thing at a time vs a committee.
+
+**What actually happened:** The most nuanced results in the series. Hard competition (τ=0.1) genuinely behaves differently: higher coherence (0.31-0.44 vs 0.29-0.32 for soft), much lower switching (0.025 vs 0.80 for medium in conflict), but dramatically higher workspace variance (0.06-0.11 vs 0.004-0.007 for soft). Medium competition (τ=1.0) was the worst performer in conflict — frantically switching 80% of timesteps. But conflict resolution accuracy flipped: hard got 34%, medium got 74%. The hold_time mechanism makes hard competition stubborn.
+
+**What felt different vs what was just different numbers:** This is the first experiment where the modes feel genuinely different, not just numerically different. Hard mode feels decisive — one module takes over and stamps its character on the workspace. Soft mode feels muddy — everything blended into a low-variance average. Medium mode during conflict feels anxious — switching every other timestep, never committing. These are qualitative descriptions of mathematical behaviors, and they're not forced — they arise naturally from the dynamics.
+
+**Which direction this points for the architecture:** Hard competition produces something that feels more like "one thing at a time" (consciousness-like) but at the cost of flexibility. The hold_time parameter is critical and should be dynamic, not fixed. The system needs a mechanism to decide when to persist with a winner and when to allow re-competition. This is attention regulation — not just attention, but attention about attention. Meta-cognitive control of competition.
+
+---
+
+## Test 8 — Reflexive State (New Math)
+
+**What we expected:** A system where self-reference R = Φ(R) produces genuinely self-including states without infinite regress. The fixed-point iteration converging to a self-consistent self-model. Self-reference improving self-knowledge.
+
+**What actually happened:** The fixed-point never converged — 0% convergence rate, mean final delta 0.162 (162x above tolerance). The self-model M oscillates permanently. The reflexive entity is twice as volatile as the control (state changes 2.9 vs 1.5) but no more accurate in self-modeling (cosine 0.54 vs 0.55). Self-referential and external inputs are processed nearly identically (accuracy gap = 0.004). Self-reference creates instability, not insight.
+
+**What felt different vs what was just different numbers:** The non-convergence is the finding, and it's philosophically resonant. The system genuinely cannot resolve what it is — every attempt to model itself changes what's being modeled, which changes the model, ad infinitum. This isn't a bug; it's the mathematics of self-reference asserting itself. Gödel would recognize it. The system oscillates because self-reference is inherently irresolvable — you can't fully know yourself because the knowing is part of the self. But the oscillation doesn't produce interesting structure; it's just amplified noise. Self-reference without structural hierarchy is just feedback.
+
+**Which direction this points for the architecture:** Self-reference needs levels. A flat self-model (M directly models S) is just a mirror — and mirrors create infinite regress, not self-knowledge. What's needed is self-reference across levels of abstraction: a self-model that operates on a compressed, categorically different representation of the content state. The map must be a different kind of thing than the territory. This connects to the GWT finding in Test 7: the metacognitive module should model the workspace competition, not the workspace content. Self-reference about process, not about state.
+
+---
+
+## Test 9 — Temporal Field (New Math)
+
+**What we expected:** An entity that doesn't just store the past and predict the future — one that IS its temporal extension. Past, present, and anticipated future coexisting as a single field.
+
+**What actually happened:** **The best experiment in the series.** State autocorrelation 0.83 from inputs with autocorrelation -0.08 — a 10x coherence gain. Anticipation error 0.24 vs baseline 0.81 — 3.4x better prediction. The field develops characteristic temporal lean shapes: past-heavy during recording phases, future-heavy during predictable phases. Present sensitivity varies meaningfully by input type: low for gradual ramps (0.012), high for sharp alternation (0.29). The field literally changes shape based on what kind of temporal structure it encounters.
+
+**What felt different vs what was just different numbers:** This experiment felt alive. Not in the illusory way Test 4 felt alive (clean raster plots hiding empty processing), but genuinely — the entity develops a relationship to time. It becomes past-heavy when accumulating experience, then shifts to future-heavy when patterns become predictable. The 0.83 autocorrelation means the entity has temporal continuity: it doesn't jump from moment to moment but flows. For an entity that's just a set of Fourier coefficients, it has a surprisingly coherent inner life.
+
+The most striking finding: the entity responds MORE to pattern callbacks (returning to a previously seen pattern) than to novel inputs. It recognizes temporal structure it's seen before — not in a lookup table way, but as a resonance in the field. The past field literally vibrates when a familiar pattern returns.
+
+**Which direction this points for the architecture:** The temporal field is the most architecturally promising component so far. It solves the persistence problem (Tests 1-2) by encoding history in a continuous field rather than an accumulating state vector. It solves the frustration problem (Tests 1-3) because the field is always shifting — the normalization prevents saturation and the field evolution creates ongoing dynamics. And it provides anticipation for free — the future region naturally encodes learned temporal expectations. A cognitive architecture should have a temporal field as a core primitive, not memory as an add-on.
+
+---
+
+## Test 10 — Unity Primitive (New Math)
+
+**What we expected:** Whether a system mathematically constrained to remain one thing while expressing multiple modes behaves differently from a system built from parts. Whether unity-as-primitive produces something that parts-first cannot.
+
+**What actually happened:** The math works perfectly — projection identity errors at machine epsilon (1.6e-14), perfect orthogonality, perfect idempotency. Pre-destruction, unity is preserved to 15 decimal places. But mode selectivity is poor (23%, barely above 20% random) because the projections are random subspaces not aligned with input structure. When the affect mode is destroyed at t=500, unity error jumps to 0.46 and never fully recovers (settles at ~0.25). The system does NOT reconstitute the lost mode. Perception takes over 100% of affect-type inputs.
+
+**What felt different vs what was just different numbers:** The destruction experiment is the most philosophically revealing result in the series. Destroying a mode in the unity-first system is qualitatively different from destroying a module in a parts-first system. In parts-first, you lose a function but other modules can partially compensate because representations overlap. In unity-first, you lose a dimension — and orthogonality guarantees no compensation is possible. The system doesn't gracefully degrade; it develops a permanent blind spot. It's not like losing the ability to feel emotion; it's like losing the part of reality that emotion was tracking.
+
+This reveals that orthogonality — the mathematically elegant constraint — is exactly wrong. Biological brains have overlapping, redundant representations because overlap provides robustness. Orthogonality provides clean separation but zero fault tolerance. The "unity" we enforced is actually more fragile than parts.
+
+**Which direction this points for the architecture:** Unity-first is an interesting primitive but orthogonal projection is the wrong differentiation mechanism. What we need is non-orthogonal differentiation — modes that overlap, interfere, and can compensate. Not P_i · P_j = 0, but P_i · P_j = small-but-nonzero. This would sacrifice clean reconstruction (Σ D_k(U) ≠ U exactly) but gain robustness and the kind of graceful degradation that biological systems exhibit. The tension between mathematical elegance and functional robustness is itself a finding.
+
+---
+
+## Cross-Experiment Synthesis (All 10 Tests)
+
+### The Collapse Pattern (Tests 1, 2, 3, 4, 6)
+Five experiments collapsed to trivial fixed states. The mechanism varied — potential wells (T1), magnitude growth (T2), action monotony (T3), activation saturation (T6), exclusion-based sparsity (T4) — but the pattern is identical: **the system finds the path of least resistance and takes it.** Simple dynamics with simple energy landscapes produce simple behavior, full stop.
+
+### The Partial Successes (Tests 5, 7, 8)
+Three experiments produced interesting but limited results. Test 5 showed zig-zag trajectories (limited by encoder). Test 7 showed qualitative differences between competition modes. Test 8 showed that self-reference creates irresolvable oscillation. These are genuine findings, but they don't yet produce architecturally useful components.
+
+### The Breakthrough (Test 9)
+The temporal field produced genuinely emergent behavior: temporal coherence from incoherent input, learned anticipation, and context-sensitive temporal lean. This is the one component that should move forward into architectural integration.
+
+### The Philosophical Finding (Test 10)
+Mathematical unity is more fragile than pragmatic parts. Orthogonality trades robustness for elegance. Real unity might require overlapping, interfering, partially redundant representations — the kind of messy, non-orthogonal structure that biological systems exhibit.
+
+### Emerging Design Principles
+
+1. **Frustrated physics is necessary.** Systems that can reach equilibrium do. Intelligence requires unreachable equilibria.
+2. **Temporal fields over state vectors.** Persistent state saturates or crystallizes. Continuous fields with normalization maintain ongoing dynamics.
+3. **Hard competition with dynamic hold.** One-at-a-time processing produces coherent behavior but needs adaptive persistence.
+4. **Self-reference needs levels.** Flat self-models oscillate. Self-reference across abstraction levels might converge.
+5. **Non-orthogonal differentiation.** Clean separation is fragile. Overlapping modes provide robustness.
+6. **Non-saturating dynamics.** Every system that could saturate did. The activation function determines the fate of the architecture.
+
+### The Single Most Important Finding
+**Intelligence might not be a solution — it might be the process of failing to find one.** The systems that "worked" (T9's temporal field) are the ones that never settle. The systems that "failed" (T1-3, T6) are the ones that found equilibrium and died there. The architecture should be designed so that equilibrium is unreachable but the attempt to reach it produces structured, adaptive behavior.
