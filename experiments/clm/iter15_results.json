@@ -1,0 +1,9 @@
+[
+  {"model": "ppmd_o3", "train_mb": 1, "bpc": 2.4853, "eval_bytes": 5000000, "train_time_s": 1, "eval_time_s": 12},
+  {"model": "ppmd_o3", "train_mb": 10, "bpc": 2.3634, "eval_bytes": 5000000, "train_time_s": 12, "eval_time_s": 13},
+  {"model": "ppmd_o3", "train_mb": 50, "bpc": 2.3396, "eval_bytes": 5000000, "train_time_s": 58, "eval_time_s": 13},
+  {"model": "ppmd_o3", "train_mb": 90, "bpc": 2.3341, "eval_bytes": 5000000, "train_time_s": 104, "eval_time_s": 13},
+  {"model": "ppmd_o5", "train_mb": 1, "bpc": 2.2166, "eval_bytes": 5000000, "train_time_s": 2, "eval_time_s": 16},
+  {"model": "ppmd_o5", "train_mb": 10, "bpc": 1.9010, "eval_bytes": 5000000, "train_time_s": 21, "eval_time_s": 13},
+  {"model": "ppmd_o5", "train_mb": 50, "bpc": 1.8104, "eval_bytes": 5000000, "train_time_s": 104, "eval_time_s": 13}
+]

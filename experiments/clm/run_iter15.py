@@ -38,12 +38,32 @@ from nano_gpt import train_and_eval  # noqa: E402
 
 PPM_ORDERS = [3, 5, 6]
 GPT_WALLCLOCK_S = 20 * 60  # 20 minutes per size
+RESULTS_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "iter15_results.json")
 
 
-def run_ppm(trains: dict, heldout: bytes) -> list[dict]:
-    rows = []
+def _load_done() -> list[dict]:
+    if os.path.exists(RESULTS_JSON):
+        with open(RESULTS_JSON) as f:
+            return json.load(f)
+    return []
+
+
+def _save(rows: list[dict]) -> None:
+    with open(RESULTS_JSON, "w") as f:
+        json.dump(rows, f, indent=2)
+
+
+def _already_done(rows: list[dict], model: str, train_mb: int) -> bool:
+    return any(r["model"] == model and r["train_mb"] == train_mb for r in rows)
+
+
+def run_ppm(trains: dict, heldout: bytes, rows: list[dict]) -> None:
     for order in PPM_ORDERS:
+        model_name = f"ppmd_o{order}"
         for mb, train_bytes in trains.items():
+            if _already_done(rows, model_name, mb):
+                print(f"[PPM-D order={order} train={mb}MB] skip (done)", flush=True)
+                continue
             print(f"[PPM-D order={order} train={mb}MB] starting", flush=True)
             t0 = time.time()
             model = PPMD(max_order=order)
@@ -58,21 +78,23 @@ def run_ppm(trains: dict, heldout: bytes) -> list[dict]:
                 flush=True,
             )
             rows.append({
-                "model": f"ppmd_o{order}",
+                "model": model_name,
                 "train_mb": mb,
                 "bpc": bpc,
                 "eval_bytes": n,
                 "train_time_s": t_train,
                 "eval_time_s": t_eval,
             })
+            _save(rows)
             # Free memory before next run
             del model
-    return rows
 
 
-def run_gpt(trains: dict, heldout: bytes) -> list[dict]:
-    rows = []
+def run_gpt(trains: dict, heldout: bytes, rows: list[dict]) -> None:
     for mb, train_bytes in trains.items():
+        if _already_done(rows, "nanogpt_cpu", mb):
+            print(f"[nanoGPT train={mb}MB] skip (done)", flush=True)
+            continue
         print(f"[nanoGPT train={mb}MB] starting, budget={GPT_WALLCLOCK_S}s", flush=True)
         t0 = time.time()
         r = train_and_eval(
@@ -95,7 +117,7 @@ def run_gpt(trains: dict, heldout: bytes) -> list[dict]:
             "final_train_loss": r["final_train_loss"],
             "n_params": r["n_params"],
         })
-    return rows
+        _save(rows)
 
 
 def write_markdown(rows: list[dict], path: str) -> None:
@@ -136,18 +158,16 @@ def write_markdown(rows: list[dict], path: str) -> None:
 def main():
     trains, heldout = splits()
     print(f"heldout: {len(heldout):,} bytes, sizes: {list(trains)} MB", flush=True)
-    all_rows = []
+    rows = _load_done()
+    print(f"resuming with {len(rows)} rows already done", flush=True)
     print("\n=== PPM-D runs ===\n", flush=True)
-    all_rows.extend(run_ppm(trains, heldout))
+    run_ppm(trains, heldout, rows)
     print("\n=== nanoGPT runs ===\n", flush=True)
-    all_rows.extend(run_gpt(trains, heldout))
+    run_gpt(trains, heldout, rows)
 
-    out_json = os.path.join(HERE, "iter15_results.json")
     out_md = os.path.join(HERE, "iter15_results.md")
-    with open(out_json, "w") as f:
-        json.dump(all_rows, f, indent=2)
-    write_markdown(all_rows, out_md)
-    print(f"\nwrote {out_json}\nwrote {out_md}", flush=True)
+    write_markdown(rows, out_md)
+    print(f"\nwrote {RESULTS_JSON}\nwrote {out_md}", flush=True)
 
 
 if __name__ == "__main__":
