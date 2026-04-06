@@ -493,7 +493,7 @@
       "domain": "ethics",
       "context_tags": [],
       "confidence": 1.0,
-      "usage_count": 10,
+      "usage_count": 11,
       "source": "authored"
     },
     "C5": {
@@ -529,9 +529,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192ice analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "water_present",
+        "stranger_present",
         "ice_present",
-        "stranger_present"
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -553,9 +553,9 @@
       "statement": "[crystallized from R3 by water\u2192ice analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "water_present",
+        "stranger_present",
         "ice_present",
-        "stranger_present"
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 5,
@@ -578,13 +578,15 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192oil analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "oil_present",
+        "stranger_present",
         "water_present",
-        "stranger_present"
+        "oil_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
-      "source": "crystallized"
+      "source": "crystallized",
+      "suppressed": true,
+      "suppression_reason": "superseded by v4 grounded analog for oil"
     },
     "R3~oil": {
       "id": "R3~oil",
@@ -602,13 +604,15 @@
       "statement": "[crystallized from R3 by water\u2192oil analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "oil_present",
+        "stranger_present",
         "water_present",
-        "stranger_present"
+        "oil_present"
       ],
       "confidence": 0.4,
-      "usage_count": 3,
-      "source": "crystallized"
+      "usage_count": 2,
+      "source": "crystallized",
+      "suppressed": true,
+      "suppression_reason": "superseded by v4 grounded analog for oil"
     },
     "P-admitted-with-water~food": {
       "id": "P-admitted-with-water~food",
@@ -628,8 +632,8 @@
       "domain": "physical",
       "context_tags": [
         "food_present",
-        "water_present",
-        "stranger_present"
+        "stranger_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -652,8 +656,8 @@
       "domain": "hospitality",
       "context_tags": [
         "food_present",
-        "water_present",
-        "stranger_present"
+        "stranger_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 2,
@@ -676,9 +680,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192medicine analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "medicine_present",
+        "stranger_present",
         "water_present",
-        "stranger_present"
+        "medicine_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -700,9 +704,9 @@
       "statement": "[crystallized from R3 by water\u2192medicine analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "medicine_present",
+        "stranger_present",
         "water_present",
-        "stranger_present"
+        "medicine_present"
       ],
       "confidence": 0.4,
       "usage_count": 1,
@@ -726,56 +730,8 @@
       "domain": "physical",
       "context_tags": [
         "hearth_present",
-        "wood_present",
-        "oil_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized_v4"
-    },
-    "P-wood-leaving~oil_v4": {
-      "id": "P-wood-leaving~oil_v4",
-      "antecedents": [
-        "oil_held_by_child",
-        "child_tender_at_door"
-      ],
-      "forbidden": [],
-      "derives": [
-        "oil_leaving_hall"
-      ],
-      "requires_in_result": [],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[v4 token-projected from P-wood-leaving via wood\u2192oil (sim +0.515)] Wood held by a child Tender at the door is wood leaving the Hall.",
-      "domain": "physical",
-      "context_tags": [
-        "wood_present",
         "oil_present",
-        "child_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized_v4"
-    },
-    "C3~oil_v4": {
-      "id": "C3~oil_v4",
-      "antecedents": [
-        "oil_supply_insufficient"
-      ],
-      "forbidden": [],
-      "derives": [],
-      "requires_in_result": [
-        "oil_replenishment_initiated"
-      ],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[v4 token-projected from C3 via wood\u2192oil (sim +0.515)] Wood supply must be replenished before it runs out.",
-      "domain": "fire_safety",
-      "context_tags": [
-        "wood_low",
-        "oil_present"
+        "wood_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

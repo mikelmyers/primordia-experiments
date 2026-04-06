@@ -31,6 +31,36 @@ from rule_store import RuleStore, _dict_to_rule
 from hdc import Codebook, encode_property_bundle, similarity
 
 
+def suppress_pre_v4_crystallizations(
+    store: RuleStore, substance: str
+) -> list[str]:
+    """Mark every non-v4 crystallized rule for `substance` as suppressed.
+
+    Rationale: v4 has property grounding (it picked its analog by HDC
+    similarity over a property table). The earlier syntactic abstractor
+    has no grounding — it substituted on string head match. Whenever v4
+    commits a crystallization for a substance, the earlier ones are
+    superseded by definition.
+
+    Suppressed rules remain in the store for audit but are filtered out
+    of `all_entries()` and `query_by_tags()`, so retrieval and the engine
+    no longer see them.
+    """
+    log: list[str] = []
+    for entry in store.all_entries(include_suppressed=True):
+        rid = entry["id"]
+        src = entry.get("source", "")
+        if src.startswith("crystallized") and src != "crystallized_v4":
+            tail = rid.split("~")[-1]
+            if tail == substance:
+                store.suppress_rule(
+                    rid,
+                    reason=f"superseded by v4 grounded analog for {substance}",
+                )
+                log.append(f"  ✗ suppressed `{rid}` (was {src})")
+    return log
+
+
 def synthesize_actions_by_analogy(
     new_obj: str,
     peer: str,
@@ -580,6 +610,34 @@ def crystallize_by_hdc_role_weighted(
     return new_rules, log
 
 
+def _scenario_token_set(facts: list[str]) -> set[str]:
+    out: set[str] = set()
+    for f in facts:
+        out.update(f.split("_"))
+    return out
+
+
+def _projection_relevance(
+    entry: dict, peer: str, scenario_tokens: set[str]
+) -> tuple[float, set[str], set[str]]:
+    """Fraction of an entry's non-peer tokens that appear in the scenario.
+
+    Returns (score, source_tokens_excluding_peer, overlap).
+    """
+    source_tokens: set[str] = set()
+    for pred in _all_predicates_in_rule(entry):
+        for tok in pred.split("_"):
+            if tok != peer:
+                source_tokens.add(tok)
+    if not source_tokens:
+        return 0.0, source_tokens, set()
+    overlap = source_tokens & scenario_tokens
+    return len(overlap) / len(source_tokens), source_tokens, overlap
+
+
+PROJECTION_RELEVANCE_THRESHOLD = 0.5
+
+
 def crystallize_by_hdc_v4_token_projection(
     unhandled_fact: str,
     facts: list[str],
@@ -659,8 +717,11 @@ def crystallize_by_hdc_v4_token_projection(
     best_peer, best_sim = scored[0]
     log.append(f"  ✓ analog: `{best_peer}` (sim {best_sim:+.4f})")
 
-    # TOKEN-LEVEL projection. Any rule whose predicate set contains
-    # `best_peer` as a `_`-delimited token gets a projected copy.
+    # TOKEN-LEVEL projection, with scenario-grounded relevance filter.
+    # Any rule whose predicate set contains `best_peer` as a `_`-delimited
+    # token is a projection candidate. The filter then drops candidates
+    # whose non-peer tokens are not grounded in the current scenario.
+    scenario_tokens = _scenario_token_set(facts)
     new_rules: list[Rule] = []
     for entry in store.all_entries():
         preds = _all_predicates_in_rule(entry)
@@ -668,6 +729,20 @@ def crystallize_by_hdc_v4_token_projection(
             continue
         if entry.get("source", "").startswith("crystallized"):
             continue
+        relevance, _src_toks, overlap = _projection_relevance(
+            entry, best_peer, scenario_tokens
+        )
+        if relevance < PROJECTION_RELEVANCE_THRESHOLD:
+            log.append(
+                f"  ✗ {entry['id']}: relevance {relevance:.2f} < "
+                f"{PROJECTION_RELEVANCE_THRESHOLD} "
+                f"(scenario overlap: {sorted(overlap)}); FILTERED"
+            )
+            continue
+        log.append(
+            f"  ✓ {entry['id']}: relevance {relevance:.2f} ≥ "
+            f"{PROJECTION_RELEVANCE_THRESHOLD}; projecting"
+        )
         new_id = f"{entry['id']}~{new_obj}_v4"
         if store.get_rule(new_id):
             continue

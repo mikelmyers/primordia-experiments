@@ -19,7 +19,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from engine import reason
+from engine import reason, plan_sequence
 from world_structured import (
     ACTIONS,
     SUBSTANCE_PROPERTIES,
@@ -36,11 +36,13 @@ from abstractor import (
     crystallize_by_hdc_v4_token_projection,
     synthesize_actions_by_analogy,
     select_v4_analog,
+    suppress_pre_v4_crystallizations,
     find_unhandled_facts,
 )
 from rule_store import _rule_to_dict
 from parser import parse
 from hdc import Codebook
+from compression import CompressionAnalog
 
 HERE = Path(__file__).parent
 
@@ -62,6 +64,7 @@ def run_scenario(
     store: RuleStore,
     codebook: Codebook,
     current_actions: list,
+    compression: CompressionAnalog,
 ) -> list[str]:
     out: list[str] = []
     title = scenario["title"]
@@ -141,6 +144,13 @@ def run_scenario(
                     )
                     v4_write_log.append(f"  ✓ wrote rule `{r.id}` to store")
 
+            # Rule hygiene: suppress earlier syntactic crystallizations
+            # for this substance now that v4 has produced grounded ones.
+            if new_rules:
+                hygiene_log = suppress_pre_v4_crystallizations(store, sub)
+                for line in hygiene_log:
+                    v4_write_log.append(line)
+
             peer, sim, _ = select_v4_analog(
                 synthetic,
                 parsed["facts"],
@@ -219,6 +229,25 @@ def run_scenario(
             out.append(f"  - {r}")
     out.append("")
 
+    # ----- STRIPS planner over action sequences (depth 3) -----
+    plan = plan_sequence(
+        parsed["facts"], parsed["goal"], active_rules, current_actions, max_depth=3
+    )
+    out += [
+        "### Planner — STRIPS depth-3 search",
+        "",
+        f"- nodes explored: {plan['nodes_explored']}",
+        f"- best sequence:  {plan['sequence']}",
+        f"- best score:     {plan['score']}",
+    ]
+    if plan["violations"]:
+        out.append(f"- remaining violations at terminal: {plan['violations']}")
+    if plan["trace"]:
+        out.append("- per-step derivations:")
+        for line in plan["trace"]:
+            out.append(f"  - {line}")
+    out.append("")
+
     # Capture unhandled facts BEFORE the syntactic abstractor mutates the store,
     # so the HDC shadow has something to analyze.
     pre_mutation_unhandled = find_unhandled_facts(parsed["facts"], store)
@@ -295,6 +324,34 @@ def run_scenario(
                     )
                 else:
                     out.append("  → crystallizes nothing")
+
+            # v5 — compression-based analog (different math foundation)
+            split = f.split("_")
+            if len(split) >= 3:
+                obj = split[-1]
+                if obj in SUBSTANCE_PROPERTIES:
+                    out.append(
+                        "- **v5 compression analog (PPM-style frequency, no HDC):**"
+                    )
+                    plain = compression.predict(obj, SUBSTANCE_PROPERTIES[obj])
+                    out.append(f"    plain prediction:        {plain}")
+                    role_weighted = compression.predict_role_weighted(
+                        obj,
+                        SUBSTANCE_PROPERTIES[obj],
+                        PROPERTY_ROLES,
+                        active_roles,
+                    )
+                    out.append(f"    role-weighted prediction: {role_weighted}")
+                    if role_weighted:
+                        chosen = role_weighted[0][0]
+                        out.append(
+                            f"    → compression picks: `{chosen}`  "
+                            f"(compare with HDC v3/v4 above)"
+                        )
+                    else:
+                        out.append(
+                            "    → compression has no role-relevant overlap"
+                        )
     out += ["", "---", ""]
     return out
 
@@ -320,10 +377,11 @@ def run() -> None:
     ]
 
     codebook = Codebook(seed=42)
+    compression = CompressionAnalog(SUBSTANCE_PROPERTIES)
     current_actions = list(ACTIONS)  # accumulates v4-synthesized actions
 
     for s in scenarios:
-        out += run_scenario(s, store, codebook, current_actions)
+        out += run_scenario(s, store, codebook, current_actions, compression)
 
     out += [
         "## Final rule store snapshot",

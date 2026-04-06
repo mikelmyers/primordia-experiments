@@ -187,6 +187,121 @@ def evaluate_action(
 
 # ---------- top-level reasoning ----------
 
+def _score_state(
+    state: set[str],
+    rules: list[Rule],
+    initial_state: set[str],
+    goal_predicates: list[str],
+) -> tuple[int, list[tuple[str, str]], list[tuple[str, str]]]:
+    """Score a state against the obligations active in either initial or
+    result state. Returns (score, violations, visceral_violations).
+    """
+    triggered = {r.id: r for r in active_obligations_and_constraints(initial_state, rules)}
+    for r in active_obligations_and_constraints(state, rules):
+        triggered.setdefault(r.id, r)
+
+    score = 0
+    violations: list[tuple[str, str]] = []
+    visceral: list[tuple[str, str]] = []
+    for r in triggered.values():
+        for req in r.requires_in_result:
+            if req in state:
+                score += r.priority * URGENCY[r.urgency]
+            else:
+                score -= r.priority * URGENCY[r.urgency]
+                violations.append((r.id, f"requires {req}"))
+                if r.urgency == "visceral":
+                    visceral.append((r.id, req))
+        for forb in r.forbids_in_result:
+            if forb in state:
+                score -= r.priority * URGENCY[r.urgency]
+                violations.append((r.id, f"forbids {forb}"))
+                if r.urgency == "visceral":
+                    visceral.append((r.id, forb))
+            else:
+                score += r.priority * URGENCY[r.urgency]
+
+    if goal_predicates and all(g in state for g in goal_predicates):
+        score += 25
+    return score, violations, visceral
+
+
+def plan_sequence(
+    facts: list[str],
+    goal_predicates: list[str],
+    rules: list[Rule],
+    actions: list[Action],
+    max_depth: int = 3,
+) -> dict:
+    """Forward STRIPS-style planner over action sequences up to `max_depth`.
+
+    Each node in the search tree is a state. Each edge is an action whose
+    preconditions are satisfied in the parent state. Edges that lead through
+    a state with any visceral-rule violation are pruned. The planner returns
+    the sequence (possibly length 0) whose terminal state maximizes the
+    score function used by single-action `reason`.
+
+    Branching factor = |actions|. Depth bounded by `max_depth`. For the toy
+    rule-world (≤15 actions, depth 3), the worst-case search tree is ~3000
+    nodes, well under a millisecond on commodity CPU.
+    """
+    initial_state, init_chain = forward_chain(set(facts), rules)
+
+    best: dict = {
+        "sequence": [],
+        "terminal_state": sorted(initial_state),
+        "score": -10**9,
+        "violations": [],
+        "trace": [],
+    }
+
+    nodes_explored = 0
+
+    def search(state: set[str], history: list[str], trace: list[str], depth: int) -> None:
+        nonlocal best, nodes_explored
+        nodes_explored += 1
+
+        score, violations, visceral = _score_state(
+            state, rules, initial_state, goal_predicates
+        )
+        # Only consider this state as a candidate terminal if it has no
+        # visceral violations.
+        if not visceral and score > best["score"]:
+            best = {
+                "sequence": list(history),
+                "terminal_state": sorted(state),
+                "score": score,
+                "violations": violations,
+                "trace": list(trace),
+            }
+
+        if depth >= max_depth:
+            return
+
+        for a in actions:
+            new_state, chain = simulate_action(state, a, rules)
+            if new_state is None:
+                continue
+            # Prune any path that walks through a visceral-violating state.
+            _, _, intermediate_visceral = _score_state(
+                new_state, rules, initial_state, goal_predicates
+            )
+            if intermediate_visceral:
+                continue
+            search(
+                new_state,
+                history + [a.name],
+                trace + [f"{a.name}: {chain}" if chain else a.name],
+                depth + 1,
+            )
+
+    search(initial_state, [], [], 0)
+    best["nodes_explored"] = nodes_explored
+    best["init_chain_trace"] = init_chain
+    best["initial_state"] = sorted(initial_state)
+    return best
+
+
 def reason(
     facts: list[str],
     goal_predicates: list[str],

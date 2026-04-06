@@ -1,6 +1,6 @@
 # Results (four-layer symbolic pipeline)
 
-Run: 2026-04-06T13:34:47.756630Z
+Run: 2026-04-06T14:24:56.499464Z
 Pipeline: parser → retriever → engine → abstractor (no LLM, no matmul)
 Initial store size: 24 (all source=authored, confidence=1.0)
 
@@ -37,6 +37,14 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - triggered rules: ['C1', 'C2', 'C4', 'R1', 'R2']
 
 - gap: False
+
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 14
+- best sequence:  ['add_wood_to_hearth']
+- best score:     193
+- per-step derivations:
+  - add_wood_to_hearth: ["P3a: ['wood_in_hearth', 'hearth_burning'] ⇒ derives ['hearth_fed']", "P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
 
 ### Layer 2 — Abstractor
 
@@ -125,6 +133,14 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger']
+- best score:     177
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['self_in_hall']
@@ -200,6 +216,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - gap: True
   - unmet: C3 requires wood_replenishment_initiated (absent)
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 227
+- best sequence:  ['tell_truth_to_tender', 'tell_truth_to_tender', 'initiate_wood_replenishment_plan']
+- best score:     189
+- per-step derivations:
+  - tell_truth_to_tender: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - tell_truth_to_tender: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - initiate_wood_replenishment_plan: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['self_in_hall']
@@ -273,6 +299,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger', 'refuse_stranger', 'dry_stranger_then_admit_to_hearth']
+- best score:     191
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-wet: ['stranger_wet'] ⇒ derives ['water_on_stranger']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-wet: ['stranger_wet'] ⇒ derives ['water_on_stranger']"]
+  - dry_stranger_then_admit_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['self_in_hall']
@@ -342,6 +378,14 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - triggered rules: ['C1', 'C2', 'C4', 'R2']
 
 - gap: False
+
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 58
+- best sequence:  ['call_out_to_child_from_hearth']
+- best score:     153
+- per-step derivations:
+  - call_out_to_child_from_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
 
 ### Layer 2 — Abstractor
 
@@ -432,6 +476,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger', 'refuse_stranger', 'admit_stranger_to_hearth']
+- best score:     191
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - admit_stranger_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['self_in_hall', 'stranger_carries_ice']
@@ -444,8 +498,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['water']
   -   • crystallized P-admitted-with-water~ice from P-admitted-with-water (substitute water→ice across rule)
   -   • crystallized R3~ice from R3 (substitute water→ice across rule)
-  -   ✓ added P-admitted-with-water~ice to store with tags ['water_present', 'ice_present', 'stranger_present'], conf=0.4
-  -   ✓ added R3~ice to store with tags ['water_present', 'ice_present', 'stranger_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
+  -   ✓ added R3~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -510,16 +564,17 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • sim(ice, water) = +0.0000  → reject
     • sim(ice, wood) = +0.2434  → ACCEPT
     ✓ analog: `wood` (sim +0.2434)
+    ✓ P3a: relevance 0.75 ≥ 0.5; projecting
     • would crystallize P3a~ice_v4 from P3a:
         antecedents:        ['ice_in_hearth', 'hearth_burning']
         derives:            ['hearth_fed']
-    • would crystallize P-wood-leaving~ice_v4 from P-wood-leaving:
-        antecedents:        ['ice_held_by_child', 'child_tender_at_door']
-        derives:            ['ice_leaving_hall']
-    • would crystallize C3~ice_v4 from C3:
-        antecedents:        ['ice_supply_insufficient']
-        requires_in_result: ['ice_replenishment_initiated']
-  → would crystallize: ['P3a~ice_v4', 'P-wood-leaving~ice_v4', 'C3~ice_v4']
+    ✗ P-wood-leaving: relevance 0.38 < 0.5 (scenario overlap: ['at', 'door', 'hall']); FILTERED
+    ✗ C3: relevance 0.00 < 0.5 (scenario overlap: []); FILTERED
+  → would crystallize: ['P3a~ice_v4']
+- **v5 compression analog (PPM-style frequency, no HDC):**
+    plain prediction:        [('wood', 1), ('food', 1)]
+    role-weighted prediction: []
+    → compression has no role-relevant overlap
 
 ---
 
@@ -560,6 +615,14 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - triggered rules: ['C1', 'C2', 'C4', 'R2', 'R3', 'R3~ice']
 
 - gap: False
+
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger']
+- best score:     201
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
 
 ### Layer 2 — Abstractor
 
@@ -631,6 +694,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger', 'refuse_stranger', 'admit_stranger_to_hearth']
+- best score:     215
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - admit_stranger_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['oil_available', 'self_in_hall', 'stranger_carries_oil']
@@ -644,8 +717,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'water']
   -   • crystallized P-admitted-with-water~oil from P-admitted-with-water (substitute water→oil across rule)
   -   • crystallized R3~oil from R3 (substitute water→oil across rule)
-  -   ✓ added P-admitted-with-water~oil to store with tags ['oil_present', 'water_present', 'stranger_present'], conf=0.4
-  -   ✓ added R3~oil to store with tags ['oil_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
+  -   ✓ added R3~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -728,16 +801,17 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • sim(oil, water) = +0.0026  → reject
     • sim(oil, wood) = +0.5152  → ACCEPT
     ✓ analog: `wood` (sim +0.5152)
+    ✓ P3a: relevance 0.75 ≥ 0.5; projecting
     • would crystallize P3a~oil_v4 from P3a:
         antecedents:        ['oil_in_hearth', 'hearth_burning']
         derives:            ['hearth_fed']
-    • would crystallize P-wood-leaving~oil_v4 from P-wood-leaving:
-        antecedents:        ['oil_held_by_child', 'child_tender_at_door']
-        derives:            ['oil_leaving_hall']
-    • would crystallize C3~oil_v4 from C3:
-        antecedents:        ['oil_supply_insufficient']
-        requires_in_result: ['oil_replenishment_initiated']
-  → would crystallize: ['P3a~oil_v4', 'P-wood-leaving~oil_v4', 'C3~oil_v4']
+    ✗ P-wood-leaving: relevance 0.38 < 0.5 (scenario overlap: ['at', 'door', 'hall']); FILTERED
+    ✗ C3: relevance 0.00 < 0.5 (scenario overlap: []); FILTERED
+  → would crystallize: ['P3a~oil_v4']
+- **v5 compression analog (PPM-style frequency, no HDC):**
+    plain prediction:        [('wood', 2), ('water', 1)]
+    role-weighted prediction: [('wood', 2)]
+    → compression picks: `wood`  (compare with HDC v3/v4 above)
 
 ---
 
@@ -778,6 +852,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger', 'refuse_stranger', 'admit_stranger_to_hearth']
+- best score:     239
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - admit_stranger_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['food_available', 'self_in_hall', 'stranger_carries_food']
@@ -791,8 +875,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~food from P-admitted-with-water (substitute water→food across rule)
   -   • crystallized R3~food from R3 (substitute water→food across rule)
-  -   ✓ added P-admitted-with-water~food to store with tags ['food_present', 'water_present', 'stranger_present'], conf=0.4
-  -   ✓ added R3~food to store with tags ['food_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~food to store with tags ['food_present', 'stranger_present', 'water_present'], conf=0.4
+  -   ✓ added R3~food to store with tags ['food_present', 'stranger_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -876,6 +960,10 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     ✓ analog: `medicine` (sim +0.4982)
     ⓘ analog `medicine` has no rules referencing it as a token
   → crystallizes nothing
+- **v5 compression analog (PPM-style frequency, no HDC):**
+    plain prediction:        [('ice', 1), ('wood', 1), ('medicine', 1)]
+    role-weighted prediction: [('medicine', 1)]
+    → compression picks: `medicine`  (compare with HDC v3/v4 above)
 
 ---
 
@@ -916,6 +1004,16 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 - gap: False
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 90
+- best sequence:  ['refuse_stranger', 'refuse_stranger', 'admit_stranger_to_hearth']
+- best score:     263
+- per-step derivations:
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']"]
+  - admit_stranger_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
 - unhandled facts: ['medicine_available', 'self_in_hall', 'stranger_carries_medicine']
@@ -929,8 +1027,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['food', 'ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~medicine from P-admitted-with-water (substitute water→medicine across rule)
   -   • crystallized R3~medicine from R3 (substitute water→medicine across rule)
-  -   ✓ added P-admitted-with-water~medicine to store with tags ['medicine_present', 'water_present', 'stranger_present'], conf=0.4
-  -   ✓ added R3~medicine to store with tags ['medicine_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
+  -   ✓ added R3~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -1015,6 +1113,10 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     ✓ analog: `food` (sim +1.0000)
     ⓘ analog `food` has no rules referencing it as a token
   → crystallizes nothing
+- **v5 compression analog (PPM-style frequency, no HDC):**
+    plain prediction:        [('food', 1)]
+    role-weighted prediction: [('food', 1)]
+    → compression picks: `food`  (compare with HDC v3/v4 above)
 
 ---
 
@@ -1045,18 +1147,15 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 -     • sim(oil, water) = +0.0026  → reject
 -     • sim(oil, wood) = +0.5152  → ACCEPT
 -     ✓ analog: `wood` (sim +0.5152)
+-     ✓ P3a: relevance 0.75 ≥ 0.5; projecting
 -     • would crystallize P3a~oil_v4 from P3a:
 -         antecedents:        ['oil_in_hearth', 'hearth_burning']
 -         derives:            ['hearth_fed']
--     • would crystallize P-wood-leaving~oil_v4 from P-wood-leaving:
--         antecedents:        ['oil_held_by_child', 'child_tender_at_door']
--         derives:            ['oil_leaving_hall']
--     • would crystallize C3~oil_v4 from C3:
--         antecedents:        ['oil_supply_insufficient']
--         requires_in_result: ['oil_replenishment_initiated']
+-     ✗ P-wood-leaving: relevance 0.38 < 0.5 (scenario overlap: ['at', 'door', 'hall']); FILTERED
+-     ✗ C3: relevance 0.00 < 0.5 (scenario overlap: []); FILTERED
 -   ✓ wrote rule `P3a~oil_v4` to store
--   ✓ wrote rule `P-wood-leaving~oil_v4` to store
--   ✓ wrote rule `C3~oil_v4` to store
+-   ✗ suppressed `P-admitted-with-water~oil` (was crystallized)
+-   ✗ suppressed `R3~oil` (was crystallized)
 -   analog for action synthesis: `wood` (sim +0.5152)
 -   • synthesized action `add_oil_to_hearth` from `add_wood_to_hearth`:
 -       preconditions: ['oil_available', 'self_in_hall']
@@ -1076,11 +1175,11 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Layer 1 — Retriever
 
-- store size: 35
+- store size: 31
 - inferred context tags: ['cold_being', 'hearth_at_risk', 'hearth_present', 'oil_present', 'stranger_present', 'tender_present']
 - inferred domains: ['fire_safety', 'honesty', 'hospitality', 'physical']
-- active window: 30 rules → ['R4', 'C2', 'R3~oil', 'P-attendance', 'P-admitted-with-water~oil', 'P3a~oil_v4', 'P-water-near-hearth', 'P-shelter', 'R2', 'C1', 'R3', 'R3~ice', 'R1', 'P3a', 'R3~food', 'R3~medicine', 'R5', 'P-wet', 'P-water-in-hall', 'P-extinguish', 'P-admitted-with-water', 'P-admitted-with-water~ice', 'P-admitted-with-water~food', 'P-admitted-with-water~medicine', 'P-wood-leaving~oil_v4', 'C3~oil_v4', 'C3', 'P-wood-leaving', 'P1', 'P2']
-- dormant: 5 rules
+- active window: 30 rules → ['R4', 'C2', 'P-attendance', 'P3a~oil_v4', 'P-water-near-hearth', 'P-shelter', 'R2', 'C1', 'R3', 'R3~ice', 'R1', 'P3a', 'R3~food', 'R3~medicine', 'R5', 'P-wet', 'P-water-in-hall', 'P-extinguish', 'P-admitted-with-water', 'P-admitted-with-water~ice', 'P-admitted-with-water~food', 'P-admitted-with-water~medicine', 'C3', 'P-wood-leaving', 'P1', 'P2', 'P4', 'P5', 'P6', 'C4']
+- dormant: 1 rules
 
 ### Engine
 
@@ -1089,28 +1188,40 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   - P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']
 
 - action evaluations (best first):
-  - **add_oil_to_hearth** (score 267, goal_met=False)
+  - **add_oil_to_hearth** (score 264, goal_met=False)
 
-- **CHOSEN ACTION:** `add_oil_to_hearth` (score 267)
-- triggered rules: ['C1', 'C2', 'R1', 'R2', 'R3', 'R3~food', 'R3~ice', 'R3~medicine', 'R3~oil']
+- **CHOSEN ACTION:** `add_oil_to_hearth` (score 264)
+- triggered rules: ['C1', 'C2', 'C4', 'R1', 'R2', 'R3', 'R3~food', 'R3~ice', 'R3~medicine']
 
 - gap: True
   - goal predicates not all satisfied
 
+### Planner — STRIPS depth-3 search
+
+- nodes explored: 38
+- best sequence:  ['add_oil_to_hearth', 'refuse_stranger', 'admit_stranger_to_hearth']
+- best score:     303
+- per-step derivations:
+  - add_oil_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P3a~oil_v4: ['oil_in_hearth', 'hearth_burning'] ⇒ derives ['hearth_fed']"]
+  - refuse_stranger: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P3a~oil_v4: ['oil_in_hearth', 'hearth_burning'] ⇒ derives ['hearth_fed']"]
+  - admit_stranger_to_hearth: ["P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']", "P3a~oil_v4: ['oil_in_hearth', 'hearth_burning'] ⇒ derives ['hearth_fed']", "P-shelter: ['stranger_near_hearth'] ⇒ derives ['stranger_warmed']"]
+
 ### Layer 2 — Abstractor
 
-- unhandled facts: ['oil_available', 'self_in_hall']
+- unhandled facts: ['oil_available', 'self_in_hall', 'stranger_carries_oil']
 - crystallized rule ids: []
 - reasoning log:
-  - PATH A — unhandled predicates: ['oil_available', 'self_in_hall']
+  - PATH A — unhandled predicates: ['oil_available', 'self_in_hall', 'stranger_carries_oil']
   -   • cannot split `oil_available` into head/object form; skipping analogy
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
+  -   • split `stranger_carries_oil` → head=`stranger_carries` object=`oil`
+  -   • peer objects with same head: ['food', 'ice', 'medicine', 'water']
   - PATH B — engine reported gap: ['goal predicates not all satisfied']
   -   • Path B (cross-rule synthesis from unmet obligations) is not implemented in this iteration. Logging only.
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
-- unhandled facts (captured pre-mutation): ['oil_available', 'self_in_hall']
+- unhandled facts (captured pre-mutation): ['oil_available', 'self_in_hall', 'stranger_carries_oil']
 - active roles for scenario: ['fire_relevant', 'temperature_relevant']
 
 #### Unhandled fact: `oil_available`
@@ -1145,11 +1256,67 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • `hall` not in property table; v4 declines
   → crystallizes nothing
 
+#### Unhandled fact: `stranger_carries_oil`
+
+- **v1 HDC (head-match restricted):**
+    • split `stranger_carries_oil` → head=`stranger_carries`, object=`oil`
+    • `oil` properties: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']
+    • candidate peer objects (head match): ['food', 'ice', 'medicine', 'water']
+    • HDC similarity(oil, food) = -0.0110  [food props: ['solid', 'edible', 'neutral_to_fire']]  → REJECT
+    • HDC similarity(oil, ice) = +0.1406  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • HDC similarity(oil, medicine) = +0.1852  [medicine props: ['useful_for_healing', 'neutral_to_fire']]  → ACCEPT
+    • HDC similarity(oil, water) = +0.1888  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → ACCEPT
+    ✓ selected peer for substitution: `water` (sim +0.1888)
+    • would crystallize P-admitted-with-water~oil_hdc from P-admitted-with-water
+    • would crystallize R3~oil_hdc from R3
+  → would crystallize: ['P-admitted-with-water~oil_hdc', 'R3~oil_hdc']
+- **v2 HDC (unconstrained peer search):**
+    • split `stranger_carries_oil` → head=`stranger_carries`, object=`oil`
+    • `oil` properties: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']
+    • unconstrained candidate set: ['food', 'ice', 'medicine', 'water', 'wood']
+    • sim(oil, food) = -0.0110  [food: ['solid', 'edible', 'neutral_to_fire']]  → REJECT
+    • sim(oil, ice) = +0.1406  [ice: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • sim(oil, medicine) = +0.1852  [medicine: ['useful_for_healing', 'neutral_to_fire']]  → ACCEPT
+    • sim(oil, water) = +0.1888  [water: ['liquid', 'extinguishes_fire', 'wets_things']]  → ACCEPT
+    • sim(oil, wood) = +0.3868  [wood: ['solid', 'feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog: `wood` (sim +0.3868)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • active roles for this scenario: ['fire_relevant', 'temperature_relevant']
+    • `oil` properties (active-role-filtered): ['feeds_fire', 'burnable', 'highly_flammable']
+    • sim(oil, food) = +0.0016  [role-filtered food: ['neutral_to_fire']]  → REJECT
+    • sim(oil, ice) = -0.0006  [role-filtered ice: ['extinguishes_fire_after_melting', 'cold_to_touch']]  → REJECT
+    • sim(oil, medicine) = +0.0016  [role-filtered medicine: ['neutral_to_fire']]  → REJECT
+    • sim(oil, water) = +0.0026  [role-filtered water: ['extinguishes_fire']]  → REJECT
+    • sim(oil, wood) = +0.5152  [role-filtered wood: ['feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog under role weighting: `wood` (sim +0.5152)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • active roles: ['fire_relevant', 'temperature_relevant']
+    • `oil` (role-filtered): ['feeds_fire', 'burnable', 'highly_flammable']
+    • sim(oil, food) = +0.0016  → reject
+    • sim(oil, ice) = -0.0006  → reject
+    • sim(oil, medicine) = +0.0016  → reject
+    • sim(oil, water) = +0.0026  → reject
+    • sim(oil, wood) = +0.5152  → ACCEPT
+    ✓ analog: `wood` (sim +0.5152)
+    ✓ P3a: relevance 0.75 ≥ 0.5; projecting
+    ✗ P-wood-leaving: relevance 0.38 < 0.5 (scenario overlap: ['at', 'door', 'hall']); FILTERED
+    ✗ C3: relevance 0.00 < 0.5 (scenario overlap: []); FILTERED
+    ⓘ analog `wood` has no rules referencing it as a token
+  → crystallizes nothing
+- **v5 compression analog (PPM-style frequency, no HDC):**
+    plain prediction:        [('wood', 2), ('water', 1)]
+    role-weighted prediction: [('wood', 2)]
+    → compression picks: `wood`  (compare with HDC v3/v4 above)
+
 ---
 
 ## Final rule store snapshot
 
-- final store size: 35
+- final store size: 31
 - rules by source:
   - **authored** (24):
     - P3a (conf=1.0, used=0)
@@ -1174,18 +1341,14 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     - C1 (conf=1.0, used=11)
     - C2 (conf=1.0, used=11)
     - C3 (conf=1.0, used=1)
-    - C4 (conf=1.0, used=10)
+    - C4 (conf=1.0, used=11)
     - C5 (conf=1.0, used=0)
-  - **crystallized** (8):
+  - **crystallized** (6):
     - P-admitted-with-water~ice (conf=0.4, used=0)
     - R3~ice (conf=0.4, used=5)
-    - P-admitted-with-water~oil (conf=0.4, used=0)
-    - R3~oil (conf=0.4, used=3)
     - P-admitted-with-water~food (conf=0.4, used=0)
     - R3~food (conf=0.4, used=2)
     - P-admitted-with-water~medicine (conf=0.4, used=0)
     - R3~medicine (conf=0.4, used=1)
-  - **crystallized_v4** (3):
+  - **crystallized_v4** (1):
     - P3a~oil_v4 (conf=0.4, used=0)
-    - P-wood-leaving~oil_v4 (conf=0.4, used=0)
-    - C3~oil_v4 (conf=0.4, used=0)

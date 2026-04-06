@@ -93,6 +93,12 @@ class RuleStore:
             self.data["rules"][rule_id]["usage_count"] += 1
             self.save()
 
+    def suppress_rule(self, rule_id: str, reason: str = "") -> None:
+        if rule_id in self.data["rules"]:
+            self.data["rules"][rule_id]["suppressed"] = True
+            self.data["rules"][rule_id]["suppression_reason"] = reason
+            self.save()
+
     # ---------- reads ----------
 
     def get_rule(self, rule_id: str) -> Rule | None:
@@ -102,11 +108,16 @@ class RuleStore:
     def get_meta(self, rule_id: str) -> dict | None:
         return self.data["rules"].get(rule_id)
 
-    def all_entries(self) -> list[dict]:
-        return list(self.data["rules"].values())
+    def all_entries(self, include_suppressed: bool = False) -> list[dict]:
+        if include_suppressed:
+            return list(self.data["rules"].values())
+        return [
+            d for d in self.data["rules"].values()
+            if not d.get("suppressed", False)
+        ]
 
-    def all_rules(self) -> list[Rule]:
-        return [_dict_to_rule(d) for d in self.data["rules"].values()]
+    def all_rules(self, include_suppressed: bool = False) -> list[Rule]:
+        return [_dict_to_rule(d) for d in self.all_entries(include_suppressed)]
 
     def query_by_tags(
         self, domains: list[str], context_tags: list[str]
@@ -114,7 +125,7 @@ class RuleStore:
         scored: list[tuple[float, dict]] = []
         ctx_set = set(context_tags)
         dom_set = set(domains)
-        for entry in self.data["rules"].values():
+        for entry in self.all_entries(include_suppressed=False):
             score = 0.0
             if entry["domain"] in dom_set:
                 score += 2.0

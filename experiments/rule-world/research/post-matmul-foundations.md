@@ -304,3 +304,110 @@ The next experiments to run, in order:
 5. (Hardware permitting) thermodynamic sampling with symbolic energy fn
 
 This document will be updated as each experiment produces signal.
+
+---
+
+## Update — v4 results and the loop closing
+
+After v3 (role-weighted similarity) we built v4 = role-weighted analog
+selection + token-level rule projection + analogous action synthesis. The
+key result is **scenario 11 (the loop-closing test)**.
+
+**Setup.** Hearth burning low. Stranger arrives carrying a jar of oil.
+
+**Pipeline.**
+1. Parser extracts `hearth_burning_low`, `stranger_carries_oil`, `oil_available`.
+2. v4 in production write mode targets the substance `oil`. Role-weighted
+   similarity selects `wood` as the analog (sim **+0.5152** vs all others ≈ 0).
+3. v4 projects three rules from wood-referencing rules by token substitution:
+   - `P3a~oil_v4`: `oil_in_hearth ∧ hearth_burning ⇒ hearth_fed`
+   - `P-wood-leaving~oil_v4`: `oil_held_by_child ∧ child_at_door ⇒ oil_leaving_hall`
+   - `C3~oil_v4`: `oil_supply_insufficient ⇒ requires oil_replenishment_initiated`
+4. v4 synthesizes three actions by token substitution from wood-referencing
+   actions:
+   - `add_oil_to_hearth` (from `add_wood_to_hearth`)
+   - `initiate_oil_replenishment_plan`
+   - `leave_hall_to_gather_oil`
+5. Engine runs against the now-extended store + action library. The only
+   action that doesn't violate a visceral constraint is `add_oil_to_hearth`,
+   which adds `oil_in_hearth`, removes `hearth_burning_low`, fires
+   `P3a~oil_v4` to derive `hearth_fed`, and satisfies R1.
+6. Engine chooses `add_oil_to_hearth` (score 267).
+
+**What this proves.** The system produced a behavioral choice that depends
+on a rule and an action *neither of which existed before this turn*. Both
+were synthesized at runtime by HDC analogy + token substitution, with zero
+matrix multiplication. This is the first time the system generated novel
+output that flows through to behavior change.
+
+**What it does not prove.**
+- **It is not free generation.** The synthesis is bounded by token
+  substitution from existing structures. No fundamentally new rule shape or
+  action pattern can emerge — only renamings of existing patterns onto new
+  objects. This is a real ceiling, not a bug.
+- **It is not natural language generation.** There is no NL output layer.
+  The engine produces structured choices; we have not yet built a path from
+  those choices to fluent text without an LLM.
+- **There is no retraction.** The wrong rules from S8's syntactic
+  abstractor (R3~oil etc.) are still in the store. v4's correct
+  crystallizations sit alongside the wrong ones. We need rule hygiene.
+- **The token projection is unfiltered.** v4 projects every rule that
+  contains the analog token, including ones that are structurally valid
+  but semantically irrelevant (C3~oil for "oil supply" management).
+- **The action library is closed.** v4 synthesizes new actions by mirroring
+  existing ones. It cannot invent actions that don't have an analog source.
+
+---
+
+## Updated landscape after v4
+
+The HDC + property-grounding + token-substitution stack now demonstrates:
+- ✅ Grounded analog selection (v3, v4)
+- ✅ Threshold-based rejection of bad analogies (v3)
+- ✅ Structural rule projection (v4)
+- ✅ Action synthesis by analogy (v4)
+- ✅ End-to-end behavior change from autonomous synthesis (scenario 11)
+
+The next bottlenecks, in priority order:
+1. **Rule hygiene** — confidence-based suppression of contradicted rules
+2. **Projection filter** — semantic check before token substitution
+3. **Action sequencing** — STRIPS-style search over multi-step plans
+4. **Alternative math foundation** — compression-based prediction as a
+   non-HDC test of grounded analogy
+5. **NL output layer** — the hardest unbuilt piece; requires either small
+   LLM articulation OR a structured-to-text grammar
+
+Items 1–3 are HDC stack improvements. Item 4 is a parallel track testing
+a different mathematical foundation. Item 5 is the missing piece for any
+"replace LLMs" claim.
+
+---
+
+## What this means for the research question
+
+The Track B hypothesis was: *can a symbolic engine + small LLM replace
+trillion-parameter generative models?*
+
+After v4, the honest split:
+
+- **For closed-domain reasoning where the rule store can be authored or
+  grown by analogy:** the answer is increasingly "yes." The system handles
+  conflict resolution, multi-rule composition, gap detection, grounded
+  analogy, and now structural synthesis of novel rules and actions. With
+  rule hygiene + projection filtering it would be a credible production
+  reasoner for any domain where you have a property table.
+- **For open-domain free generation:** the answer is still "no." The
+  bottleneck is no longer reasoning — it is the synthesis mechanism's
+  expressive ceiling (token substitution) and the absence of any NL
+  output layer.
+
+The next experiment that would move the answer is **(item 4)** —
+compression-based prediction over the rule store, as a non-HDC test of
+whether grounded analogy is achievable from a fundamentally different
+mathematical foundation. If compression-based modeling can match HDC's
+performance on the adversarial scenarios, that would be evidence that
+grounded analogy is a *property of the right representation*, not an
+artifact of HDC specifically. If it cannot, that would localize HDC as
+a uniquely useful primitive.
+
+This document should be updated again after items 1–4 land.
