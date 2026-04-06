@@ -314,8 +314,8 @@
       "domain": "shared_road",
       "context_tags": [
         "bicycle_present",
-        "vulnerable_present",
-        "horse_carriage_present"
+        "horse_carriage_present",
+        "vulnerable_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

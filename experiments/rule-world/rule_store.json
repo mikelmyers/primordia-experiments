@@ -529,8 +529,8 @@
       "statement": "[v4 token-projected from P3a via wood\u2192oil (sim +0.510)] Wood in burning Hearth produces fed Hearth.",
       "domain": "physical",
       "context_tags": [
-        "oil_present",
         "wood_present",
+        "oil_present",
         "hearth_present"
       ],
       "confidence": 0.4,

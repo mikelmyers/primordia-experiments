@@ -1,6 +1,6 @@
 # Results — traffic-world (architecture transfer test)
 
-Run: 2026-04-06T17:10:39.396804Z
+Run: 2026-04-06T19:31:37.339197Z
 Engine: rule-world machinery, unmodified, on a fresh domain.
 Authored rules: 14 | actions: 11 | substances: 9
 
