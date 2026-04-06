@@ -846,3 +846,113 @@ dictionary is hand-authored (iteration 14 candidate), (b) the parser
 is regex/keyword and does not transfer cleanly (no clean fix yet),
 and (c) the architecture has not been tested at non-toy vocabulary
 scale. None of these gaps require matrix multiplication to address.
+
+---
+
+## Iteration 14 — Humanization dictionary induction (partial win)
+
+**Hypothesis.** The iteration-9 induction trick that worked for the
+property table should also work for the humanization dictionary, by
+aligning each rule's English `statement` field against its formal
+predicate slots and extracting the shortest contiguous span containing
+every predicate token.
+
+**What was built.**
+- `experiments/rule-world/humanizer_inducer.py` — domain-agnostic
+  string-alignment inducer. Naive plural/verb stemming (drop trailing
+  's' for words >4 chars), per-domain agent aliases (map system tokens
+  like `self` to the nouns rule statements actually use: tender,
+  vehicle, driver, cook), shortest-window matching across candidate
+  statements. No matmul, no learned model, ~150 lines.
+- `experiments/rule-world/research/iteration14_runner.py` — runs the
+  inducer on all three domains, compares induced dictionaries against
+  the iteration-13 hand-authored ones, reports per-predicate side-by-side
+  and overall coverage.
+
+**Result — partial win.**
+
+| domain | authored | recovered | coverage |
+|---|---|---|---|
+| rule-world | 44 | 17 | **38.6%** |
+| traffic-world | 37 | 8 | **21.6%** |
+| kitchen-world | 42 | 16 | **38.1%** |
+| **combined** | **123** | **41** | **33.3%** |
+
+The inducer also extracted ~30 predicates per domain that the
+hand-authored dictionaries did not bother to write — free coverage.
+
+**Why this is much lower than the property-table induction (89%).**
+The two artifacts have fundamentally different alignment properties:
+
+- **Property tables** are grounded in rule *structure* (token
+  positions, co-occurrences, predicate shapes). Rules naturally
+  encode substance properties because the substances appear as
+  tokens in predicates, and similar substances appear in similar
+  predicate shapes. Iteration 9-11 exploited this directly.
+- **Humanization dictionaries** are grounded in rule *text* (English
+  statements written for humans). Rules do not naturally encode the
+  predicate vocabulary because the statements are written in fluent
+  English ("Vehicles must yield to ambulances behind them"), not in
+  predicate-aligned form ("ambulance_behind requires emergency_path_clear").
+  The bilingual trick reaches some predicates (the ones whose tokens
+  literally appear in the statement) but misses most of them.
+
+The traffic-world result (21.6%) is the cleanest demonstration:
+predicates use system tokens like `self_in_motion`, `red_light_ahead`,
+`car_close_ahead`, but rule statements say "a driver in motion",
+"red lights" (plural), and never use "ahead" or "close" at all. The
+agent alias trick (`self` → "vehicle"/"driver") helps a little but
+doesn't bridge the deeper structural gap between predicate tokens
+and English phrasing.
+
+**What this proves.**
+- One-third of the humanization labor is recoverable for free with
+  no learned model. The inducer works *partially* — it is not zero,
+  not nothing, and the extracted phrases are readable English.
+- The bilingual property of the rule store transfers selectively to
+  the NL output layer. Rules that use phrasing close to their
+  predicate vocabulary (rule-world, kitchen-world) get ~38% coverage.
+  Rules that use idiomatic English (traffic-world) get ~21%.
+- The structural fallback in the explainer (underscores → spaces)
+  handles the missing 67% gracefully. No scenario fails to explain.
+
+**What this disproves.**
+- The optimistic reading that "the iteration-9 trick works on every
+  artifact." It does not. Property structure and text alignment are
+  different problems. Iteration 9 won because rule structure encodes
+  substance similarity tightly. Iteration 14 only partly wins because
+  rule text encodes predicate vocabulary loosely.
+
+**Honest framing.** Iteration 14 is a *partial* win. It saves about
+40 hand-authored entries out of 123 — roughly 30 minutes of labor per
+domain. It does not eliminate the humanization dictionary as a
+hand-authored artifact, the way iteration 11 came close to eliminating
+the property table. The remaining ~70% can be addressed three ways
+(none of them requires matmul):
+
+1. **Author rule statements in predicate-aligned form.** "A grease
+   fire must be extinguished" already aligns. "Vehicles must yield to
+   ambulances behind them" does not. Re-phrasing rule statements is
+   itself authoring labor — moves the cost rather than eliminating it.
+2. **Use the parser in reverse.** The parser maps NL → predicates.
+   Inverting it (predicate → NL) using the same regex patterns would
+   recover any predicate the parser knows how to *produce*. Not tried.
+3. **Accept that the structural fallback is good enough.** The
+   explainer outputs perfectly readable text for every predicate —
+   "asked by tender" is fine even without humanization. Iteration 13
+   already proved this works end-to-end.
+
+The honest position after iteration 14: the humanization dictionary
+is a smaller bottleneck than the property table was, and is not on
+the critical path to closed-domain reasoning at all. The iteration-9
+induction technique is a lever, not a universal solvent.
+
+**Status of the trillion-dollar reframe after iteration 14.**
+Unchanged in headline. The full chain still works at N=3 with zero
+matmul. One artifact (property table) can be ~89% auto-acquired; one
+artifact (humanization dictionary) can be ~33% auto-acquired with the
+naive bilingual trick, with the residual handled by the explainer's
+graceful fallback. The remaining hand-authored surfaces are: the rules
+themselves (which is what a human would author anyway), the parser
+(largest remaining bottleneck), and the parts of the humanization
+dictionary the alignment doesn't reach.
