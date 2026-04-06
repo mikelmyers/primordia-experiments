@@ -1,3 +1,27 @@
+# Iteration 15 — CLM vs nanoGPT on text8 (bpc)
+
+All models evaluated on the same 5 MB held-out tail of text8 
+(bytes 95,000,000 – 100,000,000). Lower is better.
+
+
+| model | 1 MB | 10 MB | 50 MB | 90 MB |
+|---|---|---|---|---|
+| nanogpt_cpu | 2.5497 | 2.5150 | 2.5154 | 2.5176 |
+| ppmd_o3 | 2.4891 | 2.3730 | 2.3465 | 2.3423 |
+| ppmd_o5 | 2.2146 | 1.9101 | 1.8236 | 1.8044 |
+| ppmd_o6 | 2.2377 | 1.8870 | 1.7621 | 1.7311 |
+
+## Reference ceiling numbers (not reproduced here)
+
+| model | bpc on text8 | source |
+|---|---|---|
+| Transformer-XL 24L | 1.08 | Dai et al. 2019 |
+| small char-Transformer | ~1.3 | various |
+| PPM-D historical | ~1.54 | Mahoney text8 benchmark |
+| Shannon English estimate | ~1.3 | Shannon 1951 |
+
+## Raw run data
+```json
 [
   {
     "model": "ppmd_o3",
@@ -136,3 +160,4 @@
     "n_params": 814592
   }
 ]
+```

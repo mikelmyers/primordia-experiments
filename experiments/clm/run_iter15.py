@@ -37,7 +37,7 @@ from ppmd import PPMD  # noqa: E402
 from nano_gpt import train_and_eval  # noqa: E402
 
 PPM_ORDERS = [3, 5, 6]
-GPT_WALLCLOCK_S = 20 * 60  # 20 minutes per size
+GPT_WALLCLOCK_S = 7 * 60  # 7 minutes per size (fits in single foreground Bash call)
 RESULTS_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "iter15_results.json")
 
 
