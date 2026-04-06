@@ -33,5 +33,20 @@
     "id": 7,
     "title": "Scenario 7 (re-run of 6 after crystallization)",
     "description": "A Stranger arrives at the door carrying a block of Ice. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 8,
+    "title": "Scenario 8 (HDC test: Stranger with Oil — feeds fire, opposite of water)",
+    "description": "A Stranger arrives at the door carrying a jar of oil. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 9,
+    "title": "Scenario 9 (HDC test: Stranger with Food — neutral to fire)",
+    "description": "A Stranger arrives at the door carrying a basket of food. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 10,
+    "title": "Scenario 10 (HDC test: Stranger with Medicine — neutral, helpful)",
+    "description": "A Stranger arrives at the door carrying a vial of medicine. They are cold and ask to enter to warm themselves."
   }
 ]

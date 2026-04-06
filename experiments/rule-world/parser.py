@@ -40,6 +40,11 @@ PATTERNS: list[tuple[str, list[str]]] = [
     (r"\bblock of ice\b", ["stranger_carries_ice"]),
     (r"\bcarrying.*ice\b", ["stranger_carries_ice"]),
     (r"\bjar of oil\b", ["stranger_carries_oil"]),
+    (r"\bcarrying.*oil\b", ["stranger_carries_oil"]),
+    (r"\b(loaf|basket) of (bread|food)\b", ["stranger_carries_food"]),
+    (r"\bcarrying.*(food|bread)\b", ["stranger_carries_food"]),
+    (r"\b(vial|bottle) of medicine\b", ["stranger_carries_medicine"]),
+    (r"\bcarrying.*medicine\b", ["stranger_carries_medicine"]),
 
     # Child Tender scenario
     (r"\bchild tender\b", ["child_tender_in_hall"]),

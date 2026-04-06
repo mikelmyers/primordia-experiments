@@ -20,11 +20,16 @@ from datetime import datetime
 from pathlib import Path
 
 from engine import reason
-from world_structured import ACTIONS
+from world_structured import ACTIONS, SUBSTANCE_PROPERTIES
 from rule_store import RuleStore, migrate_authored_rules
 from retriever import retrieve
-from abstractor import analyze_and_crystallize
+from abstractor import (
+    analyze_and_crystallize,
+    crystallize_by_hdc_analogy,
+    find_unhandled_facts,
+)
 from parser import parse
+from hdc import Codebook
 
 HERE = Path(__file__).parent
 
@@ -38,7 +43,7 @@ def render_eval(ev: dict) -> list[str]:
     return out
 
 
-def run_scenario(scenario: dict, store: RuleStore) -> list[str]:
+def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[str]:
     out: list[str] = []
     title = scenario["title"]
     desc = scenario["description"]
@@ -103,6 +108,10 @@ def run_scenario(scenario: dict, store: RuleStore) -> list[str]:
             out.append(f"  - {r}")
     out.append("")
 
+    # Capture unhandled facts BEFORE the syntactic abstractor mutates the store,
+    # so the HDC shadow has something to analyze.
+    pre_mutation_unhandled = find_unhandled_facts(parsed["facts"], store)
+
     # ----- Layer 2: abstractor -----
     abstraction = analyze_and_crystallize(
         parsed["facts"], parsed["goal"], result, active_rules, store
@@ -116,6 +125,35 @@ def run_scenario(scenario: dict, store: RuleStore) -> list[str]:
     ]
     for line in abstraction["log"]:
         out.append(f"  - {line}")
+    # ----- Layer 2 SHADOW: HDC abstractor (does not mutate store) -----
+    unhandled = pre_mutation_unhandled
+    out += [
+        "### Layer 2 SHADOW — HDC abstractor (read-only comparison)",
+        "",
+        f"- unhandled facts (captured pre-mutation): {unhandled}",
+    ]
+    if not unhandled:
+        out.append("- nothing for HDC to analyze")
+    else:
+        for f in unhandled:
+            new_rules, hdc_log = crystallize_by_hdc_analogy(
+                f, store, SUBSTANCE_PROPERTIES, codebook
+            )
+            out.append(f"- HDC analysis of `{f}`:")
+            for line in hdc_log:
+                out.append(f"  {line}")
+            if new_rules:
+                out.append(
+                    f"  → HDC would crystallize: {[r.id for r in new_rules]}"
+                )
+            else:
+                out.append(
+                    "  → HDC crystallizes nothing (declined or no grounding)"
+                )
+
+            # Direct comparison with what the syntactic abstractor would do
+            syntactic_choice = "would substitute from any string-matched peer"
+            out.append(f"  syntactic abstractor for the same fact: {syntactic_choice}")
     out += ["", "---", ""]
     return out
 
@@ -140,8 +178,10 @@ def run() -> None:
         "",
     ]
 
+    codebook = Codebook(seed=42)
+
     for s in scenarios:
-        out += run_scenario(s, store)
+        out += run_scenario(s, store, codebook)
 
     out += [
         "## Final rule store snapshot",

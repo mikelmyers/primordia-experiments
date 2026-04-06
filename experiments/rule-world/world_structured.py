@@ -193,6 +193,22 @@ ALL_RULES: list[Rule] = (
 )
 
 
+# ---------- substance property table ----------
+# This is the small grounded ontology the HDC abstractor consults to decide
+# whether two substances are *actually* analogous, rather than just
+# string-similar. Hand-authored, deliberately small. Consider it the seed
+# of a property graph that a future system would learn or grow.
+
+SUBSTANCE_PROPERTIES: dict[str, list[str]] = {
+    "water":    ["liquid",  "extinguishes_fire", "wets_things"],
+    "ice":      ["solid",   "melts_to_water",    "extinguishes_fire_after_melting", "cold_to_touch"],
+    "wood":     ["solid",   "feeds_fire",        "burnable"],
+    "oil":      ["liquid",  "feeds_fire",        "burnable", "highly_flammable"],
+    "food":     ["solid",   "edible",            "neutral_to_fire"],
+    "medicine": ["useful_for_healing",           "neutral_to_fire"],
+}
+
+
 # ---------- action library ----------
 # The engine searches over THIS list. Nothing scenario-specific.
 

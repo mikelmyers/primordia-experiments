@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from engine import Rule
 from rule_store import RuleStore, _dict_to_rule
+from hdc import Codebook, encode_property_bundle, similarity
 
 
 def _split_predicate(p: str) -> tuple[str, str] | None:
@@ -134,6 +135,118 @@ def crystallize_by_analogy(
                 f"  • crystallized {new_id} from {entry['id']} "
                 f"(substitute {old_obj}→{new_obj} across rule)"
             )
+    return new_rules, log
+
+
+def crystallize_by_hdc_analogy(
+    unhandled_fact: str,
+    store: RuleStore,
+    properties_by_substance: dict[str, list[str]],
+    codebook: Codebook,
+    similarity_threshold: float = 0.10,
+) -> tuple[list[Rule], list[str]]:
+    """HDC-grounded analogy: only substitute when property bundles overlap.
+
+    The syntactic abstractor would happily substitute `water → oil` because
+    both end the predicate `stranger_carries_<X>`. The HDC abstractor first
+    checks whether oil and water actually share the properties that made the
+    rule about water *forbid* admission. If they don't, it refuses to
+    substitute, even though syntactic structure permits it.
+
+    This is the test of whether distributed property representations can
+    discriminate semantically inappropriate analogies that string matching
+    cannot.
+
+    NOTE: this function does NOT mutate the store. It is run as a shadow
+    alongside the production syntactic abstractor for comparison.
+    """
+    log: list[str] = []
+    split = _split_predicate(unhandled_fact)
+    if split is None:
+        log.append(f"  • cannot split `{unhandled_fact}`")
+        return [], log
+    head, new_obj = split
+    log.append(f"  • split `{unhandled_fact}` → head=`{head}`, object=`{new_obj}`")
+
+    if new_obj not in properties_by_substance:
+        log.append(
+            f"  • `{new_obj}` has no entry in property table; "
+            f"HDC analogy declines (would be ungrounded)"
+        )
+        return [], log
+
+    new_props = properties_by_substance[new_obj]
+    log.append(f"  • `{new_obj}` properties: {new_props}")
+    new_hv = encode_property_bundle(new_props, codebook)
+
+    # Find peer objects via head match (same as syntactic).
+    peer_objects: set[str] = set()
+    for entry in store.all_entries():
+        for pred in _all_predicates_in_rule(entry):
+            other = _split_predicate(pred)
+            if other and other[0] == head and other[1] != new_obj:
+                peer_objects.add(other[1])
+    if not peer_objects:
+        log.append(f"  • no peer objects with head `{head}`")
+        return [], log
+    log.append(f"  • candidate peer objects (head match): {sorted(peer_objects)}")
+
+    # Score each peer by HDC property similarity.
+    scored_peers: list[tuple[str, float]] = []
+    for peer in sorted(peer_objects):
+        if peer not in properties_by_substance:
+            log.append(f"  • peer `{peer}` not in property table; cannot score")
+            continue
+        peer_props = properties_by_substance[peer]
+        peer_hv = encode_property_bundle(peer_props, codebook)
+        sim = similarity(new_hv, peer_hv)
+        verdict = "ACCEPT" if sim >= similarity_threshold else "REJECT"
+        log.append(
+            f"  • HDC similarity({new_obj}, {peer}) = {sim:+.4f}  "
+            f"[{peer} props: {peer_props}]  → {verdict}"
+        )
+        if sim >= similarity_threshold:
+            scored_peers.append((peer, sim))
+
+    if not scored_peers:
+        log.append(
+            f"  ✗ no peer passed similarity threshold {similarity_threshold}; "
+            f"HDC abstractor REFUSES to crystallize an analogy "
+            f"(this is the win condition vs syntactic substitution)"
+        )
+        return [], log
+
+    scored_peers.sort(key=lambda x: -x[1])
+    best_peer, best_sim = scored_peers[0]
+    log.append(
+        f"  ✓ selected peer for substitution: `{best_peer}` (sim {best_sim:+.4f})"
+    )
+
+    new_rules: list[Rule] = []
+    for entry in store.all_entries():
+        preds = _all_predicates_in_rule(entry)
+        if not any(_references_object(p, best_peer) for p in preds):
+            continue
+        if entry.get("source") == "crystallized":
+            continue
+        new_id = f"{entry['id']}~{new_obj}_hdc"
+        new_rule = Rule(
+            id=new_id,
+            antecedents=_substitute_in_list(entry["antecedents"], best_peer, new_obj),
+            forbidden=_substitute_in_list(entry["forbidden"], best_peer, new_obj),
+            derives=_substitute_in_list(entry["derives"], best_peer, new_obj),
+            requires_in_result=_substitute_in_list(entry["requires_in_result"], best_peer, new_obj),
+            forbids_in_result=_substitute_in_list(entry["forbids_in_result"], best_peer, new_obj),
+            priority=entry["priority"],
+            urgency=entry["urgency"],
+            statement=(
+                f"[HDC-crystallized from {entry['id']} by "
+                f"{best_peer}→{new_obj} (sim {best_sim:+.3f})] "
+                + entry.get("statement", "")
+            ),
+        )
+        new_rules.append(new_rule)
+        log.append(f"  • would crystallize {new_id} from {entry['id']}")
     return new_rules, log
 
 
