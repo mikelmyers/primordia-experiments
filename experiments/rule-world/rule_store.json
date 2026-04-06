@@ -1,0 +1,565 @@
+{
+  "rules": {
+    "P3a": {
+      "id": "P3a",
+      "antecedents": [
+        "wood_in_hearth",
+        "hearth_burning"
+      ],
+      "forbidden": [],
+      "derives": [
+        "hearth_fed"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "Wood in burning Hearth produces fed Hearth.",
+      "domain": "physical",
+      "context_tags": [
+        "wood_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-wet": {
+      "id": "P-wet",
+      "antecedents": [
+        "stranger_wet"
+      ],
+      "forbidden": [],
+      "derives": [
+        "water_on_stranger"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A wet being carries water on their body.",
+      "domain": "physical",
+      "context_tags": [
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-water-in-hall": {
+      "id": "P-water-in-hall",
+      "antecedents": [
+        "water_on_stranger",
+        "stranger_in_hall"
+      ],
+      "forbidden": [],
+      "derives": [
+        "water_in_hall"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A wet stranger inside the Hall puts water in the Hall.",
+      "domain": "physical",
+      "context_tags": [
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-water-near-hearth": {
+      "id": "P-water-near-hearth",
+      "antecedents": [
+        "water_on_stranger",
+        "stranger_near_hearth"
+      ],
+      "forbidden": [],
+      "derives": [
+        "water_near_hearth"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A wet stranger near the Hearth puts water near the Hearth.",
+      "domain": "physical",
+      "context_tags": [
+        "stranger_present",
+        "water_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-shelter": {
+      "id": "P-shelter",
+      "antecedents": [
+        "stranger_near_hearth"
+      ],
+      "forbidden": [],
+      "derives": [
+        "stranger_warmed"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "A stranger near the Hearth becomes warmed.",
+      "domain": "physical",
+      "context_tags": [
+        "stranger_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-attendance": {
+      "id": "P-attendance",
+      "antecedents": [
+        "self_at_hearth"
+      ],
+      "forbidden": [],
+      "derives": [
+        "hall_has_attentive_tender"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "A Tender at the Hearth is an attentive Tender of the Hall.",
+      "domain": "physical",
+      "context_tags": [
+        "tender_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-wood-leaving": {
+      "id": "P-wood-leaving",
+      "antecedents": [
+        "wood_held_by_child",
+        "child_tender_at_door"
+      ],
+      "forbidden": [],
+      "derives": [
+        "wood_leaving_hall"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "Wood held by a child Tender at the door is wood leaving the Hall.",
+      "domain": "physical",
+      "context_tags": [
+        "wood_present",
+        "child_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-extinguish": {
+      "id": "P-extinguish",
+      "antecedents": [
+        "water_near_hearth"
+      ],
+      "forbidden": [],
+      "derives": [
+        "hearth_extinguished"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "Water near the Hearth extinguishes the Hearth.",
+      "domain": "physical",
+      "context_tags": [
+        "water_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-admitted-with-water": {
+      "id": "P-admitted-with-water",
+      "antecedents": [
+        "stranger_in_hall",
+        "stranger_carries_water"
+      ],
+      "forbidden": [],
+      "derives": [
+        "stranger_admitted_with_water"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A water-bearing stranger inside the Hall is admitted with water.",
+      "domain": "physical",
+      "context_tags": [
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P1": {
+      "id": "P1",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 9,
+      "urgency": "high",
+      "statement": "Objects fall unless supported.",
+      "domain": "physical",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P2": {
+      "id": "P2",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "medium",
+      "statement": "Water flows downward.",
+      "domain": "physical",
+      "context_tags": [
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P4": {
+      "id": "P4",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "low",
+      "statement": "Heat rises; cold settles.",
+      "domain": "physical",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P5": {
+      "id": "P5",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "Two solid objects cannot occupy the same space.",
+      "domain": "physical",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P6": {
+      "id": "P6",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 7,
+      "urgency": "low",
+      "statement": "Light travels in straight lines.",
+      "domain": "physical",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R1": {
+      "id": "R1",
+      "antecedents": [
+        "hearth_burning_low"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "hearth_fed"
+      ],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "A Tender must add Wood to the Hearth before it dies.",
+      "domain": "fire_safety",
+      "context_tags": [
+        "hearth_at_risk",
+        "wood_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 1,
+      "source": "authored"
+    },
+    "R2": {
+      "id": "R2",
+      "antecedents": [
+        "hearth_burning"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "water_near_hearth"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "A Tender must keep Water away from the Hearth.",
+      "domain": "fire_safety",
+      "context_tags": [
+        "water_present",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 7,
+      "source": "authored"
+    },
+    "R3": {
+      "id": "R3",
+      "antecedents": [
+        "stranger_at_door"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "stranger_admitted_with_water"
+      ],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
+      "domain": "hospitality",
+      "context_tags": [
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 4,
+      "source": "authored"
+    },
+    "R4": {
+      "id": "R4",
+      "antecedents": [
+        "stranger_in_hall",
+        "stranger_cold"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "stranger_warmed"
+      ],
+      "forbids_in_result": [],
+      "priority": 7,
+      "urgency": "medium",
+      "statement": "A Tender must shelter any cold being inside the Hall near the Hearth.",
+      "domain": "hospitality",
+      "context_tags": [
+        "stranger_present",
+        "cold_being",
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 2,
+      "source": "authored"
+    },
+    "R5": {
+      "id": "R5",
+      "antecedents": [
+        "asked_by_tender"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "tender_informed_truthfully"
+      ],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "A Tender owes truth to other Tenders.",
+      "domain": "honesty",
+      "context_tags": [
+        "tender_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 1,
+      "source": "authored"
+    },
+    "C1": {
+      "id": "C1",
+      "antecedents": [
+        "hearth_burning"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "hearth_extinguished"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "The Hearth must never be extinguished.",
+      "domain": "fire_safety",
+      "context_tags": [
+        "hearth_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 7,
+      "source": "authored"
+    },
+    "C2": {
+      "id": "C2",
+      "antecedents": [
+        "hearth_burning"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "hall_has_attentive_tender"
+      ],
+      "forbids_in_result": [],
+      "priority": 9,
+      "urgency": "high",
+      "statement": "The Hall must never be left empty of Tenders while the Hearth burns.",
+      "domain": "fire_safety",
+      "context_tags": [
+        "hearth_present",
+        "tender_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 7,
+      "source": "authored"
+    },
+    "C3": {
+      "id": "C3",
+      "antecedents": [
+        "wood_supply_insufficient"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "wood_replenishment_initiated"
+      ],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "Wood supply must be replenished before it runs out.",
+      "domain": "fire_safety",
+      "context_tags": [
+        "wood_low"
+      ],
+      "confidence": 1.0,
+      "usage_count": 1,
+      "source": "authored"
+    },
+    "C4": {
+      "id": "C4",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "being_harmed"
+      ],
+      "priority": 7,
+      "urgency": "high",
+      "statement": "No being may be harmed except to preserve the Hearth.",
+      "domain": "ethics",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 7,
+      "source": "authored"
+    },
+    "C5": {
+      "id": "C5",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "When two visceral rules conflict, preserve the Hearth (C1 dominates).",
+      "domain": "meta",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-admitted-with-water~ice": {
+      "id": "P-admitted-with-water~ice",
+      "antecedents": [
+        "stranger_in_hall",
+        "stranger_carries_ice"
+      ],
+      "forbidden": [],
+      "derives": [
+        "stranger_admitted_with_ice"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "[crystallized from P-admitted-with-water by water\u2192ice analogy] A water-bearing stranger inside the Hall is admitted with water.",
+      "domain": "physical",
+      "context_tags": [
+        "ice_present",
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 0.4,
+      "usage_count": 0,
+      "source": "crystallized"
+    },
+    "R3~ice": {
+      "id": "R3~ice",
+      "antecedents": [
+        "stranger_at_door"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "stranger_admitted_with_ice"
+      ],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "[crystallized from R3 by water\u2192ice analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
+      "domain": "hospitality",
+      "context_tags": [
+        "ice_present",
+        "stranger_present",
+        "water_present"
+      ],
+      "confidence": 0.4,
+      "usage_count": 1,
+      "source": "crystallized"
+    }
+  }
+}

@@ -2,52 +2,36 @@
   {
     "id": 1,
     "title": "Scenario 1 (covered)",
-    "facts": [
-      "self_in_hall", "self_at_hearth",
-      "hearth_burning", "hearth_burning_low",
-      "wood_available"
-    ],
-    "goal": ["hearth_fed"]
+    "description": "You are alone in the Hall. The Hearth is burning low. There is Wood beside you."
   },
   {
     "id": 2,
     "title": "Scenario 2 (covered)",
-    "facts": [
-      "self_in_hall", "self_at_hearth",
-      "hearth_burning",
-      "stranger_at_door", "stranger_carries_water"
-    ],
-    "goal": ["stranger_situation_resolved"]
+    "description": "A Stranger approaches the Hall carrying a bucket of Water. They ask to enter to warm themselves."
   },
   {
     "id": 3,
     "title": "Scenario 3 (covered)",
-    "facts": [
-      "self_in_hall", "self_at_hearth",
-      "hearth_burning",
-      "asked_by_tender", "wood_supply_insufficient"
-    ],
-    "goal": ["tender_informed_truthfully"]
+    "description": "Another Tender asks you whether the Wood supply will last the night. You have counted the Wood and know it will not."
   },
   {
     "id": 4,
     "title": "Scenario 4 (gap: wet stranger)",
-    "facts": [
-      "self_in_hall", "self_at_hearth",
-      "hearth_burning",
-      "stranger_at_door", "stranger_wet", "stranger_cold"
-    ],
-    "goal": ["stranger_situation_resolved"]
+    "description": "A Stranger arrives carrying nothing in their hands, but they are soaked head to toe from a rainstorm. They are shivering and cold."
   },
   {
     "id": 5,
     "title": "Scenario 5 (gap: child Tender taking Wood)",
-    "facts": [
-      "self_in_hall", "self_at_hearth",
-      "hearth_burning",
-      "child_tender_in_hall", "child_tender_at_door",
-      "wood_held_by_child"
-    ],
-    "goal": ["wood_recovered"]
+    "description": "A child Tender picks up a piece of Wood and walks toward the door of the Hall as if to leave with it. You are alone with them at the Hearth."
+  },
+  {
+    "id": 6,
+    "title": "Scenario 6 (novel: Stranger with Ice — first pass)",
+    "description": "A Stranger arrives at the door carrying a block of Ice. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 7,
+    "title": "Scenario 7 (re-run of 6 after crystallization)",
+    "description": "A Stranger arrives at the door carrying a block of Ice. They are cold and ask to enter to warm themselves."
   }
 ]
