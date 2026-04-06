@@ -1,6 +1,6 @@
 # Results (four-layer symbolic pipeline)
 
-Run: 2026-04-06T13:17:01.030725Z
+Run: 2026-04-06T13:23:15.486448Z
 Pipeline: parser → retriever → engine → abstractor (no LLM, no matmul)
 Initial store size: 24 (all source=authored, confidence=1.0)
 
@@ -66,6 +66,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
+  → crystallizes nothing
 
 #### Unhandled fact: `wood_available`
 
@@ -76,6 +79,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • cannot split `wood_available`
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
+    • cannot split `wood_available`
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
     • cannot split `wood_available`
   → crystallizes nothing
 
@@ -145,6 +151,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 ---
@@ -220,6 +229,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
+  → crystallizes nothing
 
 ---
 
@@ -287,6 +299,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 ---
@@ -357,6 +372,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
+  → crystallizes nothing
 
 #### Unhandled fact: `self_in_hall`
 
@@ -370,6 +388,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 ---
@@ -423,8 +444,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['water']
   -   • crystallized P-admitted-with-water~ice from P-admitted-with-water (substitute water→ice across rule)
   -   • crystallized R3~ice from R3 (substitute water→ice across rule)
-  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
-  -   ✓ added R3~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
+  -   ✓ added R3~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -443,6 +464,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 #### Unhandled fact: `stranger_carries_ice`
@@ -477,6 +501,25 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     ✓ best analog under role weighting: `wood` (sim +0.2434)
     ⓘ best analog `wood` has no rules to project from in store
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • active roles: ['fire_relevant', 'temperature_relevant']
+    • `ice` (role-filtered): ['extinguishes_fire_after_melting', 'cold_to_touch']
+    • sim(ice, food) = -0.0102  → reject
+    • sim(ice, medicine) = -0.0102  → reject
+    • sim(ice, oil) = -0.0006  → reject
+    • sim(ice, water) = +0.0000  → reject
+    • sim(ice, wood) = +0.2434  → ACCEPT
+    ✓ analog: `wood` (sim +0.2434)
+    • would crystallize P3a~ice_v4 from P3a:
+        antecedents:        ['ice_in_hearth', 'hearth_burning']
+        derives:            ['hearth_fed']
+    • would crystallize P-wood-leaving~ice_v4 from P-wood-leaving:
+        antecedents:        ['ice_held_by_child', 'child_tender_at_door']
+        derives:            ['ice_leaving_hall']
+    • would crystallize C3~ice_v4 from C3:
+        antecedents:        ['ice_supply_insufficient']
+        requires_in_result: ['ice_replenishment_initiated']
+  → would crystallize: ['P3a~ice_v4', 'P-wood-leaving~ice_v4', 'C3~ice_v4']
 
 ---
 
@@ -545,6 +588,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
+  → crystallizes nothing
 
 ---
 
@@ -597,8 +643,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'water']
   -   • crystallized P-admitted-with-water~oil from P-admitted-with-water (substitute water→oil across rule)
   -   • crystallized R3~oil from R3 (substitute water→oil across rule)
-  -   ✓ added P-admitted-with-water~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
-  -   ✓ added R3~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~oil to store with tags ['oil_present', 'stranger_present', 'water_present'], conf=0.4
+  -   ✓ added R3~oil to store with tags ['oil_present', 'stranger_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -617,6 +663,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 #### Unhandled fact: `stranger_carries_oil`
@@ -654,6 +703,25 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     ✓ best analog under role weighting: `wood` (sim +0.5152)
     ⓘ best analog `wood` has no rules to project from in store
   → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • active roles: ['fire_relevant', 'temperature_relevant']
+    • `oil` (role-filtered): ['feeds_fire', 'burnable', 'highly_flammable']
+    • sim(oil, food) = +0.0016  → reject
+    • sim(oil, ice) = -0.0006  → reject
+    • sim(oil, medicine) = +0.0016  → reject
+    • sim(oil, water) = +0.0026  → reject
+    • sim(oil, wood) = +0.5152  → ACCEPT
+    ✓ analog: `wood` (sim +0.5152)
+    • would crystallize P3a~oil_v4 from P3a:
+        antecedents:        ['oil_in_hearth', 'hearth_burning']
+        derives:            ['hearth_fed']
+    • would crystallize P-wood-leaving~oil_v4 from P-wood-leaving:
+        antecedents:        ['oil_held_by_child', 'child_tender_at_door']
+        derives:            ['oil_leaving_hall']
+    • would crystallize C3~oil_v4 from C3:
+        antecedents:        ['oil_supply_insufficient']
+        requires_in_result: ['oil_replenishment_initiated']
+  → would crystallize: ['P3a~oil_v4', 'P-wood-leaving~oil_v4', 'C3~oil_v4']
 
 ---
 
@@ -706,8 +774,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~food from P-admitted-with-water (substitute water→food across rule)
   -   • crystallized R3~food from R3 (substitute water→food across rule)
-  -   ✓ added P-admitted-with-water~food to store with tags ['stranger_present', 'food_present', 'water_present'], conf=0.4
-  -   ✓ added R3~food to store with tags ['stranger_present', 'food_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
+  -   ✓ added R3~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -726,6 +794,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 #### Unhandled fact: `stranger_carries_food`
@@ -761,6 +832,17 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • sim(food, wood) = +0.2522  [role-filtered wood: ['feeds_fire', 'burnable']]  → ACCEPT
     ✓ best analog under role weighting: `medicine` (sim +0.4982)
     ⓘ best analog `medicine` has no rules to project from in store
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • active roles: ['fire_relevant', 'nutritional', 'temperature_relevant']
+    • `food` (role-filtered): ['edible', 'neutral_to_fire']
+    • sim(food, ice) = +0.2484  → ACCEPT
+    • sim(food, medicine) = +0.4982  → ACCEPT
+    • sim(food, oil) = +0.0018  → reject
+    • sim(food, water) = +0.0080  → reject
+    • sim(food, wood) = +0.2522  → ACCEPT
+    ✓ analog: `medicine` (sim +0.4982)
+    ⓘ analog `medicine` has no rules referencing it as a token
   → crystallizes nothing
 
 ---
@@ -814,8 +896,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['food', 'ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~medicine from P-admitted-with-water (substitute water→medicine across rule)
   -   • crystallized R3~medicine from R3 (substitute water→medicine across rule)
-  -   ✓ added P-admitted-with-water~medicine to store with tags ['stranger_present', 'medicine_present', 'water_present'], conf=0.4
-  -   ✓ added R3~medicine to store with tags ['stranger_present', 'medicine_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
+  -   ✓ added R3~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -834,6 +916,9 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   → crystallizes nothing
 - **v3 HDC (role-weighted, fire-context):**
     • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
   → crystallizes nothing
 
 #### Unhandled fact: `stranger_carries_medicine`
@@ -870,6 +955,17 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     • sim(medicine, wood) = +0.0120  [role-filtered wood: ['feeds_fire', 'burnable']]  → REJECT
     ✓ best analog under role weighting: `food` (sim +1.0000)
     ⓘ best analog `food` has no rules to project from in store
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • active roles: ['fire_relevant', 'temperature_relevant']
+    • `medicine` (role-filtered): ['neutral_to_fire']
+    • sim(medicine, food) = +1.0000  → ACCEPT
+    • sim(medicine, ice) = -0.0102  → reject
+    • sim(medicine, oil) = +0.0016  → reject
+    • sim(medicine, water) = +0.0014  → reject
+    • sim(medicine, wood) = +0.0120  → reject
+    ✓ analog: `food` (sim +1.0000)
+    ⓘ analog `food` has no rules referencing it as a token
   → crystallizes nothing
 
 ---

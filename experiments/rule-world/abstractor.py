@@ -76,6 +76,24 @@ def _references_object(pred: str, obj: str) -> bool:
     return pred.endswith("_" + obj)
 
 
+def _references_token(pred: str, token: str) -> bool:
+    """True if `token` appears anywhere in `pred` as a `_`-delimited token.
+
+    `_references_object("wood_in_hearth", "wood")` → False (suffix-based)
+    `_references_token("wood_in_hearth", "wood")` → True (token-based)
+    """
+    return token in pred.split("_")
+
+
+def _substitute_token(pred: str, old: str, new: str) -> str:
+    """Replace every `_`-delimited token equal to `old` with `new`."""
+    return "_".join(new if t == old else t for t in pred.split("_"))
+
+
+def _substitute_tokens_in_list(items: list[str], old: str, new: str) -> list[str]:
+    return [_substitute_token(p, old, new) for p in items]
+
+
 def crystallize_by_analogy(
     unhandled_fact: str, store: RuleStore
 ) -> tuple[list[Rule], list[str]]:
@@ -460,6 +478,130 @@ def crystallize_by_hdc_role_weighted(
     if not new_rules:
         log.append(
             f"  ⓘ best analog `{best_peer}` has no rules to project from in store"
+        )
+    return new_rules, log
+
+
+def crystallize_by_hdc_v4_token_projection(
+    unhandled_fact: str,
+    facts: list[str],
+    store: RuleStore,
+    properties_by_substance: dict[str, list[str]],
+    property_roles: dict[str, str],
+    active_roles: set[str],
+    codebook: Codebook,
+    similarity_threshold: float = 0.10,
+) -> tuple[list[Rule], list[str]]:
+    """v4: role-weighted analog selection (v3) + TOKEN-level projection.
+
+    Same analog selection as v3 — fire-context filters to fire-relevant
+    properties, etc. The new piece is projection: a rule is a projection
+    candidate if any of its predicates contains the peer as a token (split
+    by `_`), not just predicates ending in `_<peer>`. Substitution is then
+    applied token-wise across the matched predicates.
+
+    Concretely for `oil` with peer `wood` (sim +0.515 in S8):
+      P3a: antecedents [wood_in_hearth, hearth_burning]
+                derives    [hearth_fed]
+      → projects to:
+      P3a~oil_v4: antecedents [oil_in_hearth, hearth_burning]
+                       derives    [hearth_fed]
+
+    This is a structurally novel rule that no human authored, derived
+    purely from grounded property analogy + token substitution.
+    """
+    log: list[str] = []
+    split = _split_predicate(unhandled_fact)
+    if split is None:
+        log.append(f"  • cannot split `{unhandled_fact}`")
+        return [], log
+    head, new_obj = split
+
+    if new_obj not in properties_by_substance:
+        log.append(f"  • `{new_obj}` not in property table; v4 declines")
+        return [], log
+
+    log.append(f"  • active roles: {sorted(active_roles)}")
+    if not active_roles:
+        log.append("  • no active roles inferred; v4 declines")
+        return [], log
+
+    def role_filtered(props: list[str]) -> list[str]:
+        return [p for p in props if property_roles.get(p) in active_roles]
+
+    new_props_f = role_filtered(properties_by_substance[new_obj])
+    log.append(f"  • `{new_obj}` (role-filtered): {new_props_f}")
+    if not new_props_f:
+        log.append(
+            f"  • no role-relevant properties for `{new_obj}`; v4 declines"
+        )
+        return [], log
+    new_hv = encode_property_bundle(new_props_f, codebook)
+
+    candidates = sorted(s for s in properties_by_substance if s != new_obj)
+    scored: list[tuple[str, float]] = []
+    for peer in candidates:
+        peer_props_f = role_filtered(properties_by_substance[peer])
+        if not peer_props_f:
+            continue
+        peer_hv = encode_property_bundle(peer_props_f, codebook)
+        sim = similarity(new_hv, peer_hv)
+        verdict = "ACCEPT" if sim >= similarity_threshold else "reject"
+        log.append(
+            f"  • sim({new_obj}, {peer}) = {sim:+.4f}  → {verdict}"
+        )
+        if sim >= similarity_threshold:
+            scored.append((peer, sim))
+
+    if not scored:
+        log.append("  ✗ no candidate passed threshold after role filtering")
+        return [], log
+
+    scored.sort(key=lambda x: -x[1])
+    best_peer, best_sim = scored[0]
+    log.append(f"  ✓ analog: `{best_peer}` (sim {best_sim:+.4f})")
+
+    # TOKEN-LEVEL projection. Any rule whose predicate set contains
+    # `best_peer` as a `_`-delimited token gets a projected copy.
+    new_rules: list[Rule] = []
+    for entry in store.all_entries():
+        preds = _all_predicates_in_rule(entry)
+        if not any(_references_token(p, best_peer) for p in preds):
+            continue
+        if entry.get("source", "").startswith("crystallized"):
+            continue
+        new_id = f"{entry['id']}~{new_obj}_v4"
+        if store.get_rule(new_id):
+            continue
+        new_rule = Rule(
+            id=new_id,
+            antecedents=_substitute_tokens_in_list(entry["antecedents"], best_peer, new_obj),
+            forbidden=_substitute_tokens_in_list(entry["forbidden"], best_peer, new_obj),
+            derives=_substitute_tokens_in_list(entry["derives"], best_peer, new_obj),
+            requires_in_result=_substitute_tokens_in_list(entry["requires_in_result"], best_peer, new_obj),
+            forbids_in_result=_substitute_tokens_in_list(entry["forbids_in_result"], best_peer, new_obj),
+            priority=entry["priority"],
+            urgency=entry["urgency"],
+            statement=(
+                f"[v4 token-projected from {entry['id']} via "
+                f"{best_peer}→{new_obj} (sim {best_sim:+.3f})] "
+                + entry.get("statement", "")
+            ),
+        )
+        new_rules.append(new_rule)
+        log.append(f"  • would crystallize {new_id} from {entry['id']}:")
+        if new_rule.antecedents:
+            log.append(f"      antecedents:        {new_rule.antecedents}")
+        if new_rule.derives:
+            log.append(f"      derives:            {new_rule.derives}")
+        if new_rule.requires_in_result:
+            log.append(f"      requires_in_result: {new_rule.requires_in_result}")
+        if new_rule.forbids_in_result:
+            log.append(f"      forbids_in_result:  {new_rule.forbids_in_result}")
+
+    if not new_rules:
+        log.append(
+            f"  ⓘ analog `{best_peer}` has no rules referencing it as a token"
         )
     return new_rules, log
 

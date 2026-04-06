@@ -530,8 +530,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "ice_present",
-        "water_present"
+        "water_present",
+        "ice_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -554,8 +554,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "ice_present",
-        "water_present"
+        "water_present",
+        "ice_present"
       ],
       "confidence": 0.4,
       "usage_count": 4,
@@ -578,9 +578,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192oil analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
+        "oil_present",
         "stranger_present",
-        "water_present",
-        "oil_present"
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -602,9 +602,9 @@
       "statement": "[crystallized from R3 by water\u2192oil analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
+        "oil_present",
         "stranger_present",
-        "water_present",
-        "oil_present"
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 2,
@@ -628,8 +628,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "food_present",
-        "water_present"
+        "water_present",
+        "food_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -652,8 +652,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "food_present",
-        "water_present"
+        "water_present",
+        "food_present"
       ],
       "confidence": 0.4,
       "usage_count": 1,
@@ -677,8 +677,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "medicine_present",
-        "water_present"
+        "water_present",
+        "medicine_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -701,8 +701,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "medicine_present",
-        "water_present"
+        "water_present",
+        "medicine_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

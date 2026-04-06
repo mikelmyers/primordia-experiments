@@ -33,6 +33,7 @@ from abstractor import (
     crystallize_by_hdc_analogy,
     crystallize_by_hdc_unconstrained,
     crystallize_by_hdc_role_weighted,
+    crystallize_by_hdc_v4_token_projection,
     find_unhandled_facts,
 )
 from parser import parse
@@ -165,6 +166,15 @@ def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[s
                 (
                     "v3 HDC (role-weighted, fire-context)",
                     crystallize_by_hdc_role_weighted,
+                    dict(unhandled_fact=f, facts=parsed["facts"], store=store,
+                         properties_by_substance=SUBSTANCE_PROPERTIES,
+                         property_roles=PROPERTY_ROLES,
+                         active_roles=active_roles,
+                         codebook=codebook),
+                ),
+                (
+                    "v4 HDC (role-weighted + TOKEN-level projection)",
+                    crystallize_by_hdc_v4_token_projection,
                     dict(unhandled_fact=f, facts=parsed["facts"], store=store,
                          properties_by_substance=SUBSTANCE_PROPERTIES,
                          property_roles=PROPERTY_ROLES,
