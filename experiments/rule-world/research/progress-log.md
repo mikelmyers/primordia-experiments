@@ -522,3 +522,65 @@ in headline, sharpened in detail. Property-table induction works at
 agreement on its own. The diagnostic resolution improved: we now know
 *why* it doesn't improve (symmetric noise from syntactic
 crystallizations) and have a one-line fix to test in iteration 11.
+
+---
+
+## Iteration 11 — v4-only loop closure (the fix landed)
+
+**Hypothesis.** Filtering the inducer's corpus to `crystallized_v4`
+rules only — excluding the symmetric pre-v4 syntactic crystallizations
+that drowned the discriminating signal in iteration 10 — should flip
+oil → wood from rank 5 to rank 1.
+
+**What was built.**
+- `experiments/rule-world/research/iteration11_runner.py` — same
+  three-domain comparison shape as i10, with one new variant E:
+  base rules + only those crystallized rules whose `source` field is
+  `crystallized_v4`. The engine still fires every crystallization;
+  this filter applies only to property induction.
+
+**Result — the fix landed.**
+
+| domain | query | target | A baseline | B full loop | E v4-only |
+|---|---|---|---|---|---|
+| rule-world | oil | wood | food ❌ | food ❌ | **wood ✅** |
+| rule-world | food | medicine | medicine ✅ | medicine ✅ | medicine ✅ |
+| rule-world | medicine | food | food ✅ | food ✅ | food ✅ |
+| traffic-world | horse_carriage | bicycle | bicycle ✅ | bicycle ✅ | bicycle ✅ |
+| traffic-world | robotaxi | car | car ✅ | car ✅ | car ✅ |
+| traffic-world | fire_engine | truck | ambulance ❌ | ambulance ❌ | ambulance ❌ |
+
+**Combined top-1 agreement: 5/6** (up from 4/6 in iterations 9 and 10).
+
+Oil's rank for wood across the three variants: 5 → 5 → **1**.
+
+**What this proves.**
+- The diagnosis from iteration 10 was correct. The signal *was* there;
+  it was being drowned by symmetric noise.
+- A one-line filter (excluding non-analogical crystallizations from the
+  inducer's corpus while keeping them in the engine) is sufficient to
+  recover the right answer.
+- The crystallization → induction loop, when fed only with v4-style
+  *analogical* rules, contributes signal that flips a previously
+  failing query to passing on the headline metric.
+
+**What this does not prove.**
+- That fire_engine will ever resolve. It is still a pure
+  corpus-coverage failure: truck appears in zero traffic-world rules,
+  actions, or scenarios. No amount of cleverness in induction or loop
+  closure fixes that. The fix is adding a scenario that mentions
+  trucks.
+- That the v4-only filter is a free lunch in general. It works here
+  because the syntactic crystallizations happened to be uniformly
+  symmetric. In a domain with a richer set of non-analogical
+  crystallizations the filter might discard useful signal too.
+
+**Status of the trillion-dollar reframe after iteration 11.**
+Property-table induction now reaches **5 of 6** top-1 agreement on the
+adversarial set across both domains, with zero hand-authored property
+labels and zero matmul. The remaining failure is corpus coverage, not
+algorithm. The path from iteration 8's "property table is the new
+bottleneck" to iteration 11's "property table is mostly automatic" is
+complete in the small. The next research question is whether this
+holds at non-toy scale — which is what a third domain (iteration 12)
+would test.
