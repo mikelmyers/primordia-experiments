@@ -122,16 +122,20 @@ def select_v4_analog(
     active_roles: set[str],
     codebook: Codebook,
     similarity_threshold: float = 0.10,
+    target_substance: str | None = None,
 ) -> tuple[str | None, float, list[str]]:
     """Pure analog selection step from v4 (without projection). Returns
     (best_peer, similarity, log) so callers can use the same analog for
     both rule projection and action synthesis.
     """
     log: list[str] = []
-    split = _split_predicate(unhandled_fact)
-    if split is None:
-        return None, 0.0, log
-    head, new_obj = split
+    if target_substance is not None:
+        new_obj = target_substance
+    else:
+        split = _split_predicate(unhandled_fact)
+        if split is None:
+            return None, 0.0, log
+        _, new_obj = split
     if new_obj not in properties_by_substance:
         return None, 0.0, log
     if not active_roles:
@@ -647,6 +651,8 @@ def crystallize_by_hdc_v4_token_projection(
     active_roles: set[str],
     codebook: Codebook,
     similarity_threshold: float = 0.10,
+    target_substance: str | None = None,
+    relevance_threshold: float = PROJECTION_RELEVANCE_THRESHOLD,
 ) -> tuple[list[Rule], list[str]]:
     """v4: role-weighted analog selection (v3) + TOKEN-level projection.
 
@@ -667,11 +673,16 @@ def crystallize_by_hdc_v4_token_projection(
     purely from grounded property analogy + token substitution.
     """
     log: list[str] = []
-    split = _split_predicate(unhandled_fact)
-    if split is None:
-        log.append(f"  • cannot split `{unhandled_fact}`")
-        return [], log
-    head, new_obj = split
+    if target_substance is not None:
+        new_obj = target_substance
+        head = "carries"
+        log.append(f"  • target_substance override: `{new_obj}`")
+    else:
+        split = _split_predicate(unhandled_fact)
+        if split is None:
+            log.append(f"  • cannot split `{unhandled_fact}`")
+            return [], log
+        head, new_obj = split
 
     if new_obj not in properties_by_substance:
         log.append(f"  • `{new_obj}` not in property table; v4 declines")
@@ -732,16 +743,16 @@ def crystallize_by_hdc_v4_token_projection(
         relevance, _src_toks, overlap = _projection_relevance(
             entry, best_peer, scenario_tokens
         )
-        if relevance < PROJECTION_RELEVANCE_THRESHOLD:
+        if relevance < relevance_threshold:
             log.append(
                 f"  ✗ {entry['id']}: relevance {relevance:.2f} < "
-                f"{PROJECTION_RELEVANCE_THRESHOLD} "
+                f"{relevance_threshold} "
                 f"(scenario overlap: {sorted(overlap)}); FILTERED"
             )
             continue
         log.append(
             f"  ✓ {entry['id']}: relevance {relevance:.2f} ≥ "
-            f"{PROJECTION_RELEVANCE_THRESHOLD}; projecting"
+            f"{relevance_threshold}; projecting"
         )
         new_id = f"{entry['id']}~{new_obj}_v4"
         if store.get_rule(new_id):

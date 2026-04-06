@@ -221,6 +221,104 @@ change driven entirely by autonomous synthesis. Zero matmul anywhere.
 
 ---
 
+## Iteration 8 — Transfer test: traffic-world
+
+**Built:** A parallel domain `experiments/traffic-world/` with new
+`traffic_rules.py` (14 rules, 11 actions, 9 substances), `traffic_parser.py`
+(regex), `traffic_scenarios.json` (8 scenarios), `traffic_runner.py`. Imports
+the entire rule-world architecture (engine, retriever, abstractor, hdc,
+compression, rule_store) without modification.
+
+**Architectural changes required:** TWO. Both backward-compatible.
+- `retriever.retrieve()` gained optional `prefix_tags`, `tag_to_domain`,
+  `fact_tag_overrides` parameters with rule-world defaults.
+- `crystallize_by_hdc_v4_token_projection()` and `select_v4_analog()` gained
+  optional `target_substance` parameter so multi-token substance names like
+  `horse_carriage` and `fire_engine` can be passed directly instead of
+  derived from a `<head>_<object>` synthetic fact. Also gained
+  `relevance_threshold` parameter.
+
+**Hidden assumption surfaced:** rule-world's "substances are single tokens"
+assumption was invisible because every rule-world substance was a single
+token (water, ice, oil, food, medicine). Traffic-world has `horse_carriage`
+and `fire_engine`. The `_split_predicate` heuristic broke. The fix is the
+`target_substance` parameter — the runner now passes the substance directly.
+
+**Result on 8 scenarios:**
+
+| # | Scenario | Engine choice | Source |
+|---|---|---|---|
+| 1 | Red light | stop_at_intersection | authored R1 |
+| 2 | Pedestrian in crosswalk | yield_to_pedestrian | authored R2 |
+| 3 | Ambulance behind | pull_over | authored R3 |
+| 4 | Car too close | slow_down_for_car | authored R5 |
+| 5 | Bicycle ahead | maintain_safe_distance_from_bicycle | authored R6 |
+| 6 | **Horse-drawn carriage (NOVEL)** | **maintain_safe_distance_from_horse_carriage** | **v4 synthesized from bicycle (sim +0.633)** |
+| 7 | **Robotaxi (NOVEL)** | **slow_down_for_robotaxi** | **v4 synthesized from car (sim +1.000)** |
+| 8 | Fire engine behind | pull_over | generic P-pulled-over fallback |
+
+All 8 scenarios passed with no engine-reported gaps. Two of the three novel
+substances (horse_carriage, robotaxi) drove the engine to *autonomously
+synthesized actions that did not exist 30 ms before* — same loop closure as
+rule-world scenario 11, demonstrated in a fresh domain.
+
+**HDC vs compression on traffic-world novel substances:**
+
+| Substance | HDC v3/v4 picks | Compression v5 picks | Match |
+|---|---|---|---|
+| horse_carriage | bicycle (+0.633) | bicycle (3) | ✅ |
+| robotaxi | car (+1.000) | car (4) | ✅ |
+| fire_engine | truck (+0.635) | truck (3, tied with ambulance) | ✅ |
+
+The substrate-independence finding from iteration 7 holds in the new domain.
+HDC bipolar similarity and compression frequency counting produce the same
+analog choices on a totally different rule set with totally different
+substances.
+
+**Failures encountered and what they taught us:**
+- Parser brittleness: first run had 5 of 8 scenarios fail because regex
+  patterns assumed exact phrasings. Fixed in `traffic_parser.py` only —
+  no architectural impact. **Lesson: regex parsers don't transfer; the
+  parsing layer needs either a small LM or much more disciplined patterns.**
+- Multi-token substance names broke `_split_predicate`. Fixed with the
+  `target_substance` parameter. **Lesson: the substance vocabulary
+  abstraction was too tied to rule-world's single-token convention.**
+- Projection relevance threshold (0.5) was too strict for traffic rules
+  whose obligations use abstract tokens like "safe", "distance", "from".
+  Made threshold a parameter; traffic-world uses 0.20. **Lesson: the
+  relevance check needs a smarter notion of "scenario context" — possibly
+  including action effect tokens.**
+- Goal predicate inference in the parser had to be told which token the
+  synthesized action would produce. **Lesson: the goal-from-parser pattern
+  assumes the parser knows what the engine will produce. A better design
+  would let the engine derive its own goals from active obligations.**
+
+**What this proves about the architecture:**
+- The engine, abstractor, HDC, compression, planner, and rule store
+  transfer to a totally different domain with **two ~10-line backward-
+  compatible parameter additions** to two files.
+- All domain-specific knowledge lives in the new domain's files, not in
+  the architecture.
+- The substrate-independence finding (HDC and compression converge on the
+  same analogs) replicates in a fresh domain, lending it more weight.
+
+**What this does NOT prove:**
+- That the parser layer transfers. It does not. Parser is hand-authored
+  per domain and the brittle patterns surfaced immediately.
+- That the property table can be authored quickly. Authoring traffic-world's
+  property table took ~15 minutes of human thought. For real domains the
+  authoring time scales with vocabulary size — this is the same bottleneck
+  CYC hit.
+- That the parser-engine interface is well-designed. Several scenario
+  failures came from goal-predicate mismatches between parser output and
+  the predicates the synthesized actions actually produce. This needs a
+  cleaner contract.
+
+**Status:** the architecture transfers. The math foundations transfer. The
+parser does not transfer. Property table authoring is the labor cost.
+
+---
+
 ## Track B answer status
 
 **Closed-domain reasoning with grounded analogy:** working at toy scale,

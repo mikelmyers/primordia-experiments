@@ -60,26 +60,35 @@ TAG_TO_DOMAIN = {
 }
 
 
-def derive_context_tags(facts: list[str]) -> list[str]:
+def derive_context_tags(
+    facts: list[str],
+    fact_tag_overrides: dict[str, list[str]] | None = None,
+    prefix_tags: dict[str, list[str]] | None = None,
+) -> list[str]:
+    overrides = fact_tag_overrides if fact_tag_overrides is not None else FACT_TAG_OVERRIDES
+    prefixes = prefix_tags if prefix_tags is not None else PREFIX_TAGS
     tags: set[str] = set()
     for f in facts:
-        if f in FACT_TAG_OVERRIDES:
-            tags.update(FACT_TAG_OVERRIDES[f])
-        for prefix, tag_list in PREFIX_TAGS.items():
+        if f in overrides:
+            tags.update(overrides[f])
+        for prefix, tag_list in prefixes.items():
             if f.startswith(prefix):
                 tags.update(tag_list)
-        # Cold-being detection
         if "cold" in f:
             tags.add("cold_being")
     return sorted(tags)
 
 
-def derive_domains(context_tags: list[str]) -> list[str]:
+def derive_domains(
+    context_tags: list[str],
+    tag_to_domain: dict[str, str] | None = None,
+) -> list[str]:
+    mapping = tag_to_domain if tag_to_domain is not None else TAG_TO_DOMAIN
     domains: set[str] = set()
     for t in context_tags:
-        if t in TAG_TO_DOMAIN:
-            domains.add(TAG_TO_DOMAIN[t])
-    domains.add("physical")  # always include passive physics
+        if t in mapping:
+            domains.add(mapping[t])
+    domains.add("physical")
     return sorted(domains)
 
 
@@ -88,9 +97,12 @@ def retrieve(
     goal: list[str],
     store: RuleStore,
     window: int = WINDOW_SIZE,
+    prefix_tags: dict[str, list[str]] | None = None,
+    tag_to_domain: dict[str, str] | None = None,
+    fact_tag_overrides: dict[str, list[str]] | None = None,
 ) -> dict:
-    context_tags = derive_context_tags(facts)
-    domains = derive_domains(context_tags)
+    context_tags = derive_context_tags(facts, fact_tag_overrides, prefix_tags)
+    domains = derive_domains(context_tags, tag_to_domain)
     fact_set = set(facts)
     goal_set = set(goal)
 
