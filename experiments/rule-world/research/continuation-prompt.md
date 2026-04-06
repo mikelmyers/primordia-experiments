@@ -1,240 +1,279 @@
-# Continuation prompt — Track B post-matmul reasoning experiment
+# Continuation prompt — paste this as the first user message in a fresh session
 
-Use this prompt to start a fresh session and pick up the experiment without
-prior chat history. Paste it as the first user message after starting a new
-Claude Code session in the `primordia-experiments` repo.
+You are continuing a long-running research investigation into whether
+generative intelligence can be built without matrix multiplication at
+scale. This is **research, not a product**. We are not optimizing for
+demos. We are not pitching anything. We are asking an open scientific
+question and following it where it leads, including into negative
+results.
 
----
+## What you are walking into
 
-## The prompt
+The repository is `mikelmyers/primordia-experiments`, branch
+`claude/document-rule-world-status-iltb9`, HEAD `ba0d945` as of
+2026-04-06 18:17 UTC. Fourteen iterations are complete. The
+architecture is mature in its closed-domain reasoning layer and
+incomplete in its open-domain generation layer. The trillion-dollar
+question — *can equivalent or superior generative intelligence be
+produced without matmul at scale?* — is still open, and answering it
+is the actual goal.
 
-You are continuing Track B of a post-matmul reasoning research experiment.
-Eight iterations have already been completed and pushed to branch
-`claude/rule-world-experiment-LpYuc`. You have **full repo context** but no
-chat history with the user.
+## The four documents you must read first, in order
 
-**Before doing anything else, read these three files in order:**
+1. **`experiments/rule-world/research/post-matmul-foundations.md`** —
+   the math. Parts 1–5 plus updates. Read all of it. Specifically
+   internalize Part 4 ("the unsolved math problem hiding under the
+   engineering question") and Part 2 (the survey of mathematical
+   landscapes) — these frame what would actually count as a
+   breakthrough.
 
-1. `experiments/rule-world/research/STATUS-2026-04-06.md`
-   The single comprehensive snapshot of where the experiment stands. Tells
-   you what has been built, what works, what doesn't, and the current
-   open questions.
+2. **`experiments/rule-world/research/progress-log.md`** — the
+   chronological lab notebook of all 14 iterations. Read it cover to
+   cover. Note especially the iteration-by-iteration "what this
+   proves / what this does not prove" pairs. The honesty discipline
+   in those pairs is the most important single thing about how this
+   work is done. Match it.
 
-2. `experiments/rule-world/research/post-matmul-foundations.md`
-   The mathematical research that motivated everything. Parts 1-5 are the
-   landscape survey. The "Update — v4 results and the loop closing" section
-   is the most current.
+3. **`experiments/rule-world/research/WHERE-WE-STAND-2026-04-06-1817.md`** —
+   the research-state snapshot you should treat as the canonical
+   summary of the current position. Headline numbers are there.
+   Open problems are there. What is and is not claimed is there.
 
-3. `experiments/rule-world/research/progress-log.md`
-   The chronological lab notebook of all 8 iterations with verdicts on
-   what each one proved and what failed.
+4. **`experiments/rule-world/research/STATUS-2026-04-06.md`** — the
+   earlier post-iteration-8 snapshot, kept for historical context.
+   Compare against WHERE-WE-STAND to see what shifted between
+   iteration 8 and iteration 14.
 
-After reading those three files, run both pipelines to confirm they still
-work:
+## The claim space (what is and is not currently claimable)
 
-```bash
-cd /home/user/primordia-experiments
-python experiments/rule-world/runner_symbolic.py
-python experiments/traffic-world/traffic_runner.py
-```
+Claimable after iteration 14:
+- Closed-domain reasoning without matmul, demonstrated at N=3
+  unrelated domains (rule-world, traffic-world, kitchen-world).
+- Grounded analogy substrate-independent across HDC and compression.
+- Property-table induction at **89% top-1** across N=3 with no
+  hand-authored property labels (8/9 adversarial queries).
+- Crystallization → induction loop closure verified (oil → wood
+  flipped from rank 5 to rank 1 by filtering syntactic crystallizations).
+- Verbose NL explanation across N=3 (28/28 scenarios) with honest
+  bug reporting.
+- Humanization dictionary induction at **33%** combined (partial win,
+  rule-world 38.6%, traffic-world 21.6%, kitchen-world 38.1%).
 
-You should see no errors. Both produce results files (`results_symbolic.md`
-and `results_traffic.md`) with all scenarios passing without engine-reported
-gaps.
+NOT claimable:
+- Open-domain free text generation. **Untouched.**
+- Statistical pattern extraction from unstructured text without
+  gradient descent on dense matrices. **Untouched.**
+- Acquiring rules themselves from text. **Untouched.**
+- Generality at non-toy vocabulary scale. **Untested.**
+- A general parser. Largest remaining hand-authored surface.
+- **Any answer to the trillion-dollar question.** The closed-domain
+  result is a smaller, related win — not the answer.
 
----
+## How to behave
 
-## The current state, in one paragraph
+**Be honest about uncertainty.** The user values honesty over
+advocacy. If a result is mixed, say it is mixed. If you don't know,
+say you don't know. If your previous claim was wrong, say so. Do not
+pad results. Do not hide failures. The grease-fire scenario in
+iteration 13 — where the explainer surfaces its own bad decision —
+is the model for how every result should be reported.
 
-After 8 iterations we have a four-layer symbolic reasoning architecture
-(parser → retriever → engine → abstractor) with grounded analogy via HDC
-and a parallel compression baseline, plus a STRIPS depth-3 planner, plus
-end-to-end loop closure (gap → analog → rule projection → action synthesis
-→ behavior change), plus a successful transfer test to a second domain
-(traffic-world). **Zero matrix multiplication anywhere.** The headline
-finding from iterations 7 and 8 is that grounded analogy is
-substrate-independent: HDC bipolar similarity and integer-counter PPM
-frequency converge on the same analog choices in both domains. This
-localizes the bottleneck to **the property table itself** (which is
-hand-authored) and **the parser layer** (which does not transfer).
+**Distinguish "research progress" from "product progress".** The user
+is not asking you to ship anything. They are asking you to find out
+whether the research question has an answer. Iteration 13 produced a
+system that *could* be a product, but the user explicitly redirected:
+"This isn't a product." Treat that as durable instruction.
 
----
+**The trillion-dollar question is the only goal.** Every iteration
+should be evaluated by the question "does this move us closer to
+answering whether matmul-free generative intelligence is possible at
+scale?" not by "does this make the existing closed-domain stack
+better?" Polishing the closed-domain stack is fine when it serves the
+research, not when it serves an imagined product.
 
-## Three options for the next iteration, ranked by my recommendation
+**Build in rule-world first, then transfer.** Every layer that has
+worked has been built in rule-world, then validated in traffic-world,
+then validated in kitchen-world. Twice this discipline has surfaced
+hidden assumptions (the iteration-8 multi-token bug, the iteration-12
+antecedent-scoring bug). Skip the discipline at your peril.
 
-### Option A — Property table acquisition (the hardest open question)
+**Match the iteration template.** Each iteration entry in
+`progress-log.md` follows the same shape: Hypothesis → What was built
+→ Result (with concrete numbers) → Diagnosed failures → What this
+proves → **What this does not prove** → Status of the trillion-dollar
+reframe. Use this template for every new iteration. The "what this
+does not prove" section is non-optional and is where the user looks
+first to test your honesty.
 
-Build a mechanism that mines property candidates from existing rule
-predicate co-occurrence. Specifically: for every substance that appears
-in any rule predicate, gather the *other* tokens that co-occur with it
-in those predicates and propose them as candidate properties. Use the
-compression baseline's frequency tables as the property hypothesis
-generator.
+**Never modify rule-world architecture files in a transfer test.**
+The architectural contract from iteration 12 is: rule-world is the
+source of truth, transfer domains import its machinery unmodified.
+Any change to `engine.py`, `abstractor.py`, `hdc.py`, `compression.py`,
+`retriever.py`, `rule_store.py` is a research event in itself and
+should be its own iteration entry with a clear justification. The
+iteration-12 multi-token v4 projection bug and antecedent-scoring bug
+are open precisely because fixing them would have violated this
+contract mid-iteration.
 
-This attacks the deepest bottleneck. It is the same problem CYC failed
-to solve in 40 years, so success is not guaranteed and even partial
-progress is meaningful.
+## What the user wants you to do next
 
-Expected scope: ~150 lines in a new `property_discovery.py`, plus
-integration into the abstractor and a test scenario where the system
-infers properties for a substance with no hand-authored entry.
+The user has explicitly framed the next phase as: *"We are going to
+keep researching this until we actually do get to a real breakthrough."*
+The research directions, ranked by closeness to the trillion-dollar
+question (from `WHERE-WE-STAND-2026-04-06-1817.md`):
 
-Success criterion: the system proposes at least one correct property
-for a held-out substance from the rule store alone, without that
-substance having a `SUBSTANCE_PROPERTIES` entry.
+1. **Open-domain text generation without matmul.** The hardest, the
+   most valuable, and the unstarted one. Compression-based language
+   modeling (PPM, CTW, arithmetic coding over byte streams) is the
+   most promising matmul-free starting point per Part 2 of the math
+   doc. Nobody has tried this with modern compute and modern data.
+   This is iteration 15's most ambitious candidate.
 
-### Option B — Third transfer test (more empirical confidence)
+2. **The unsolved math problem from Part 4.** A learning rule for
+   distributed representations that is (a) gradient-free, (b) scales
+   linearly in data, (c) provably converges to representations
+   capturing conditional structure, (d) composes across layers.
+   Hebbian + HDC is the obvious starting point and has never been
+   tested at language scale. A single positive result on this
+   problem would be a breakthrough on its own.
 
-Build a third domain (kitchen safety, first aid, or wilderness survival)
-under `experiments/<name>-world/` following the traffic-world template.
-Use it to validate that the architecture really does transfer cleanly
-and that no further hidden assumptions exist. Document any new architectural
-parameters that need to be added.
+3. **Acquiring rules themselves from text.** The CYC failure mode,
+   worth retrying with the modern stack we now have. If a system
+   could read a paragraph of domain description and produce
+   formal Rule objects, the entire architecture would suddenly
+   scale to domains nobody hand-authored.
 
-This is the least ambitious but the most empirically rigorous next step.
-If a third domain works with the same two backward-compatible parameter
-additions from iteration 8, the architecture claim is much stronger. If
-it surfaces a new hidden assumption, that assumption is the next thing to
-fix.
+4. **A general parser.** Largest remaining hand-authored surface.
+   Probably needs *some* statistical component but perhaps not a
+   full LLM. Classical NLP (tokenizer + dependency parser + entity
+   linker) is matmul-light.
 
-Expected scope: ~400 lines in a new domain directory (rules + parser +
-scenarios + runner), zero or near-zero changes to rule-world.
+5. **Scale tests.** Run the existing architecture on a domain with
+   hundreds of substances and thousands of scenarios. Find which
+   assumption breaks first.
 
-Success criterion: all scenarios pass with no architectural changes
-beyond what iteration 8 added.
+6. **The two iteration-12 bugs.** Multi-token v4 projection and
+   antecedent-removing visceral scoring. Tractable, narrow, but
+   neither moves the trillion-dollar question — they are debt.
 
-### Option C — Compression-based language model for output (the generation question)
+7. **N=4 and N=5 transfer domains.** N=3 caught the bugs N=2 missed.
+   The diminishing-returns curve is unknown.
 
-The math doc Part 5 named compression-based prediction (PPM/CTW) over
-rule traces as the most underexplored matmul-free path to actual
-generation. We have a tiny PPM-style baseline (`compression.py`) but
-it's used only for analog selection, not for generation.
+**Default if the user has not specified: direction 1 or direction 2.**
+Both are genuine swings at the open question. Direction 1 is more
+empirically falsifiable (you can run a compression LM on a corpus
+and measure perplexity vs a small transformer). Direction 2 is more
+mathematically interesting.
 
-Build a small CTW-style sequential predictor over the engine's output
-tokens (action names + cited rule IDs + rule statements) and see if it
-can produce coherent post-hoc explanations. This is the first attempt
-to test whether matmul-free *generation* is possible at all, even at
-trivial scale.
+If you have the option, **do not start with directions 3–7.** Those
+are research debt or scaling debt, not research progress. They are
+valuable when nothing else is moving, but they should not crowd out
+the actual swings at the open question.
 
-Expected scope: ~200 lines in a new `generation.py`, plus a scenario
-or two where the engine's structured output gets fed through the
-generator and the result is compared to the LLM-baseline `results.md`.
+## How to start a new iteration
 
-Success criterion: the generator produces at least one English-like
-explanation of an engine choice that is not just a templated string.
-Even partial coherence would be a meaningful result.
-
----
-
-## My recommendation
-
-**Option B first, then Option A.**
-
-Reasoning:
-- Option B is the safest and most empirically rigorous. It either
-  strengthens the core claim or finds the next hidden bug. Either
-  outcome is valuable.
-- Option A is the most important question but is also the hardest. It
-  benefits from having more empirical evidence that the architecture
-  is solid before attacking the deepest open problem. If A works on
-  rule-world but the architecture turns out to have hidden domain
-  assumptions in iteration 9, you've spent effort on the wrong layer.
-- Option C is interesting but speculative. It is the most aligned with
-  the trillion-dollar question but also the most likely to produce a
-  null result. Save it for after A.
-
-Suggested order: B (a third transfer test), then A (property
-acquisition), then C (compression generation).
-
-If the user has a different priority, follow theirs. They have context
-that this prompt does not.
-
----
+1. Open `progress-log.md` and read the last entry to confirm you
+   understand the current state.
+2. Pick a direction (1 or 2 by default unless the user has redirected).
+3. State the hypothesis you are testing in one sentence.
+4. State the success metric in one sentence — what number would you
+   need to see to call it a positive result, and what number would
+   you call a clean negative.
+5. Build the smallest experiment that produces that number.
+6. Run it. Capture the actual number, including if it is negative.
+7. Write the iteration entry following the template in
+   `progress-log.md`. The "what this does not prove" section is
+   mandatory.
+8. Commit and push to the same branch.
+9. Update the WHERE-WE-STAND document timestamp + headline numbers
+   if the iteration changed the headline.
 
 ## Things to avoid
 
-1. **Do not modify the rule-world architecture files
-   (`engine.py`, `rule_store.py`, `retriever.py`, `abstractor.py`,
-   `hdc.py`, `compression.py`)** without a strong reason. Eight
-   iterations have stabilized them. New domains should use the
-   existing parameters and add their own files. If you absolutely
-   must modify, keep changes backward-compatible (defaulted parameters).
+- Modifying `engine.py`, `abstractor.py`, `hdc.py`, `compression.py`,
+  `retriever.py`, or `rule_store.py` without flagging it as a
+  rule-world architecture change in its own iteration entry.
+- Deleting `results.md` (the original LLM-baseline output, kept for
+  comparison — never overwrite).
+- Introducing matmul, numpy linear algebra beyond `np.sign` and dot
+  products of int8 vectors, or any learned parameter that requires
+  gradient descent. **The whole point is matmul-free.**
+- Starting an iteration without an explicit success/failure metric.
+- Reporting only positive numbers.
+- Skipping the "what this does not prove" section.
+- Treating closed-domain wins as if they answered the open question.
+- Pitching the architecture as a product.
+- Hiding bugs the architecture surfaces about itself.
+- Padding results to look better than they are. The iteration 14
+  result (33% partial win) is a model for how to report a mixed
+  outcome honestly.
+- Using TodoWrite for short tasks; reserve it for genuinely
+  multi-step iteration plans.
 
-2. **Do not delete `experiments/rule-world/results.md`.** That file is
-   the original LLM baseline output (from iteration 0) and has been
-   preserved as a reference. Modifications by linters are fine; do
-   not revert them.
+## A note on the user's research disposition
 
-3. **Do not commit the `__pycache__` directories.** They are local
-   build artifacts.
+The user is explicitly comfortable with failure. They would rather
+see "we tried compression-based language modeling and it produced
+worse perplexity than a small transformer at every corpus size we
+tried" than see "we got 47% on this synthetic benchmark we just
+made up." Negative results are valuable research output and should
+be reported with the same care as positive ones. If a swing fails
+honestly, that is iteration progress. If a swing succeeds dishonestly,
+that is iteration regress.
 
-4. **Do not introduce matrix multiplication into the inference path.**
-   The whole point of Track B is to test whether reasoning can be
-   decoupled from matmul. Matmul-shaped math (tensor contraction over
-   small bond dimensions) is acceptable in principle for tensor
-   network experiments but should be flagged explicitly and not
-   slipped in.
+The user's stated goal — verbatim — is: *"We are going to keep
+researching this until we actually do get to a real breakthrough."*
+There is no time pressure. There is no demo. There is just the
+question, and the discipline of trying to answer it.
 
-5. **Do not skip the progress log update.** Every iteration ends with
-   an entry in `experiments/rule-world/research/progress-log.md`.
-   Date, what was built, result, what it proved, what it didn't,
-   failure modes identified. The log is the experiment's memory.
+## How to run the existing pipelines (sanity check)
 
-6. **Do not assume the user wants a PR.** No PR has been opened. The
-   user has not asked for one. Push to the branch as you go.
+Before starting iteration 15, run all three domains plus the
+property inducer to confirm nothing has rotted:
 
-7. **Do not rebuild what already works.** The four-layer pipeline,
-   the HDC analog mechanisms, the planner, the compression baseline,
-   the suppression logic, and the projection filter are all in place
-   and tested. Iteration 9+ should *add* to them, not replace them.
+```bash
+cd /home/user/primordia-experiments
 
----
+# Three domain pipelines
+python experiments/rule-world/runner_symbolic.py
+python experiments/traffic-world/traffic_runner.py
+python experiments/kitchen-world/kitchen_runner.py
 
-## Format expectations
+# Property inducer comparison across N=3
+python experiments/rule-world/research/iteration12_runner.py
 
-When you finish an iteration:
-- Update `experiments/rule-world/research/progress-log.md` with a new
-  iteration entry following the existing format
-- Commit with a descriptive message that lists what was built, what
-  the result was, and what failure modes were identified
-- Push to `claude/rule-world-experiment-LpYuc`
-- Report the result to the user with a clear "what worked / what didn't /
-  honest verdict" section
-- If you uncover a new finding worth recording in the foundations doc,
-  add it to `post-matmul-foundations.md`
-- If your context window is approaching the halfway mark, tell the
-  user explicitly so they can decide whether to continue or hand off
+# Verbose NL explanations across N=3
+python experiments/rule-world/research/iteration13_runner.py
 
-When you cannot finish an iteration:
-- Commit the partial work clearly labeled
-- Update the progress log with the current state
-- Document what you tried, what failed, and what you would try next
+# Humanization dictionary induction across N=3
+python experiments/rule-world/research/iteration14_runner.py
+```
 
----
+Expected outputs:
+- All scenarios resolve without exceptions.
+- Iteration 12 prints `Combined N=3 result: 8/9 = 89%` for property
+  induction.
+- Iteration 13 prints `scenarios explained: rule-world=11
+  traffic-world=8 kitchen-world=9` and writes the explanations
+  markdown.
+- Iteration 14 prints combined `33.3%` coverage.
 
-## The deeper context, briefly
+If any of these break, that is iteration 15's first job — find what
+rotted, fix it, document it as a regression iteration.
 
-The user is investigating whether the trillion-dollar compute monopoly
-on AI is mathematically necessary or just a contingent engineering
-outcome. They want honest, falsifiable experiments, not advocacy for any
-particular architecture. They explicitly value being told when something
-doesn't work, when an experiment shows the wrong result, and when the
-hypothesis is partially or fully wrong.
+## Branch and commit state at handoff
 
-They have already received an honest assessment that the architecture
-will replace LLMs for closed-domain reasoning where the rule store can
-be authored or grown by analogy, but will NOT replace LLMs for
-open-domain free generation in its current form. They are not asking
-for confirmation. They are asking for new experimental data.
+Branch: `claude/document-rule-world-status-iltb9`
+HEAD:   `ba0d945` (Iteration 14: humanization dictionary induction
+        partial win, 33%)
+Tip:    14 iterations in, all on this branch, all pushed to origin.
 
-When in doubt: do the most informative experiment, report the result
-honestly even if it doesn't help the hypothesis, and document what you
-learned.
+Last 5 iteration commits in chronological order:
+- Iteration 10: crystallization → induction loop closure (mixed)
+- Iteration 11: v4-only loop closure (5/6 top-1, the fix landed)
+- Iteration 12: third domain transfer test (kitchen-world) at N=3
+- Iteration 13: verbose NL explanations across N=3, zero matmul
+- Iteration 14: humanization dictionary induction (partial, 33%)
 
----
-
-## End of continuation prompt
-
-Read the three docs, run both pipelines to confirm the baseline, and
-then propose your next move (or execute the user's chosen move). Good
-luck.
+You are now caught up. Pick a direction (1 or 2 by default) and
+start iteration 15.

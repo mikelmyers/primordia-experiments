@@ -315,7 +315,7 @@
         "wood_present"
       ],
       "confidence": 1.0,
-      "usage_count": 2,
+      "usage_count": 0,
       "source": "authored"
     },
     "R2": {
@@ -338,7 +338,7 @@
         "hearth_present"
       ],
       "confidence": 1.0,
-      "usage_count": 11,
+      "usage_count": 0,
       "source": "authored"
     },
     "R3": {
@@ -361,7 +361,7 @@
         "water_present"
       ],
       "confidence": 1.0,
-      "usage_count": 8,
+      "usage_count": 0,
       "source": "authored"
     },
     "R4": {
@@ -386,7 +386,7 @@
         "hearth_present"
       ],
       "confidence": 1.0,
-      "usage_count": 5,
+      "usage_count": 0,
       "source": "authored"
     },
     "R5": {
@@ -408,7 +408,7 @@
         "tender_present"
       ],
       "confidence": 1.0,
-      "usage_count": 1,
+      "usage_count": 0,
       "source": "authored"
     },
     "C1": {
@@ -430,7 +430,7 @@
         "hearth_present"
       ],
       "confidence": 1.0,
-      "usage_count": 11,
+      "usage_count": 0,
       "source": "authored"
     },
     "C2": {
@@ -453,7 +453,7 @@
         "tender_present"
       ],
       "confidence": 1.0,
-      "usage_count": 11,
+      "usage_count": 0,
       "source": "authored"
     },
     "C3": {
@@ -475,7 +475,7 @@
         "wood_low"
       ],
       "confidence": 1.0,
-      "usage_count": 1,
+      "usage_count": 0,
       "source": "authored"
     },
     "C4": {
@@ -493,7 +493,7 @@
       "domain": "ethics",
       "context_tags": [],
       "confidence": 1.0,
-      "usage_count": 11,
+      "usage_count": 0,
       "source": "authored"
     },
     "C5": {
@@ -512,206 +512,6 @@
       "usage_count": 0,
       "source": "authored"
     },
-    "P-admitted-with-water~ice": {
-      "id": "P-admitted-with-water~ice",
-      "antecedents": [
-        "stranger_in_hall",
-        "stranger_carries_ice"
-      ],
-      "forbidden": [],
-      "derives": [
-        "stranger_admitted_with_ice"
-      ],
-      "requires_in_result": [],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from P-admitted-with-water by water\u2192ice analogy] A water-bearing stranger inside the Hall is admitted with water.",
-      "domain": "physical",
-      "context_tags": [
-        "stranger_present",
-        "ice_present",
-        "water_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized"
-    },
-    "R3~ice": {
-      "id": "R3~ice",
-      "antecedents": [
-        "stranger_at_door"
-      ],
-      "forbidden": [],
-      "derives": [],
-      "requires_in_result": [],
-      "forbids_in_result": [
-        "stranger_admitted_with_ice"
-      ],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from R3 by water\u2192ice analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
-      "domain": "hospitality",
-      "context_tags": [
-        "stranger_present",
-        "ice_present",
-        "water_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 5,
-      "source": "crystallized"
-    },
-    "P-admitted-with-water~oil": {
-      "id": "P-admitted-with-water~oil",
-      "antecedents": [
-        "stranger_in_hall",
-        "stranger_carries_oil"
-      ],
-      "forbidden": [],
-      "derives": [
-        "stranger_admitted_with_oil"
-      ],
-      "requires_in_result": [],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from P-admitted-with-water by water\u2192oil analogy] A water-bearing stranger inside the Hall is admitted with water.",
-      "domain": "physical",
-      "context_tags": [
-        "stranger_present",
-        "water_present",
-        "oil_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized",
-      "suppressed": true,
-      "suppression_reason": "superseded by v4 grounded analog for oil"
-    },
-    "R3~oil": {
-      "id": "R3~oil",
-      "antecedents": [
-        "stranger_at_door"
-      ],
-      "forbidden": [],
-      "derives": [],
-      "requires_in_result": [],
-      "forbids_in_result": [
-        "stranger_admitted_with_oil"
-      ],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from R3 by water\u2192oil analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
-      "domain": "hospitality",
-      "context_tags": [
-        "stranger_present",
-        "water_present",
-        "oil_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 2,
-      "source": "crystallized",
-      "suppressed": true,
-      "suppression_reason": "superseded by v4 grounded analog for oil"
-    },
-    "P-admitted-with-water~food": {
-      "id": "P-admitted-with-water~food",
-      "antecedents": [
-        "stranger_in_hall",
-        "stranger_carries_food"
-      ],
-      "forbidden": [],
-      "derives": [
-        "stranger_admitted_with_food"
-      ],
-      "requires_in_result": [],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from P-admitted-with-water by water\u2192food analogy] A water-bearing stranger inside the Hall is admitted with water.",
-      "domain": "physical",
-      "context_tags": [
-        "food_present",
-        "stranger_present",
-        "water_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized"
-    },
-    "R3~food": {
-      "id": "R3~food",
-      "antecedents": [
-        "stranger_at_door"
-      ],
-      "forbidden": [],
-      "derives": [],
-      "requires_in_result": [],
-      "forbids_in_result": [
-        "stranger_admitted_with_food"
-      ],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from R3 by water\u2192food analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
-      "domain": "hospitality",
-      "context_tags": [
-        "food_present",
-        "stranger_present",
-        "water_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 2,
-      "source": "crystallized"
-    },
-    "P-admitted-with-water~medicine": {
-      "id": "P-admitted-with-water~medicine",
-      "antecedents": [
-        "stranger_in_hall",
-        "stranger_carries_medicine"
-      ],
-      "forbidden": [],
-      "derives": [
-        "stranger_admitted_with_medicine"
-      ],
-      "requires_in_result": [],
-      "forbids_in_result": [],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from P-admitted-with-water by water\u2192medicine analogy] A water-bearing stranger inside the Hall is admitted with water.",
-      "domain": "physical",
-      "context_tags": [
-        "stranger_present",
-        "water_present",
-        "medicine_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 0,
-      "source": "crystallized"
-    },
-    "R3~medicine": {
-      "id": "R3~medicine",
-      "antecedents": [
-        "stranger_at_door"
-      ],
-      "forbidden": [],
-      "derives": [],
-      "requires_in_result": [],
-      "forbids_in_result": [
-        "stranger_admitted_with_medicine"
-      ],
-      "priority": 8,
-      "urgency": "high",
-      "statement": "[crystallized from R3 by water\u2192medicine analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
-      "domain": "hospitality",
-      "context_tags": [
-        "stranger_present",
-        "water_present",
-        "medicine_present"
-      ],
-      "confidence": 0.4,
-      "usage_count": 1,
-      "source": "crystallized"
-    },
     "P3a~oil_v4": {
       "id": "P3a~oil_v4",
       "antecedents": [
@@ -726,12 +526,12 @@
       "forbids_in_result": [],
       "priority": 8,
       "urgency": "high",
-      "statement": "[v4 token-projected from P3a via wood\u2192oil (sim +0.515)] Wood in burning Hearth produces fed Hearth.",
+      "statement": "[v4 token-projected from P3a via wood\u2192oil (sim +0.510)] Wood in burning Hearth produces fed Hearth.",
       "domain": "physical",
       "context_tags": [
-        "hearth_present",
         "oil_present",
-        "wood_present"
+        "wood_present",
+        "hearth_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

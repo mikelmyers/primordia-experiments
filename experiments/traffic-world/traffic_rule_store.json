@@ -313,9 +313,9 @@
       "statement": "[v4 token-projected from R6 via bicycle\u2192horse_carriage (sim +0.633)] Vehicles must give wide berth to bicycles ahead.",
       "domain": "shared_road",
       "context_tags": [
-        "horse_carriage_present",
+        "bicycle_present",
         "vulnerable_present",
-        "bicycle_present"
+        "horse_carriage_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -337,8 +337,8 @@
       "statement": "[v4 token-projected from R5 via car\u2192robotaxi (sim +1.000)] Vehicles must maintain a safe following distance from cars ahead.",
       "domain": "following",
       "context_tags": [
-        "robotaxi_present",
-        "vehicle_ahead"
+        "vehicle_ahead",
+        "robotaxi_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

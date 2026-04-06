@@ -1,0 +1,420 @@
+{
+  "rules": {
+    "P-burner-flame": {
+      "id": "P-burner-flame",
+      "antecedents": [
+        "burner_on"
+      ],
+      "forbidden": [],
+      "derives": [
+        "flame_on"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A burner that is on produces a flame on the stove.",
+      "domain": "stove",
+      "context_tags": [
+        "stove_active"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-oil-near-flame": {
+      "id": "P-oil-near-flame",
+      "antecedents": [
+        "oil_near_flame",
+        "flame_on"
+      ],
+      "forbidden": [],
+      "derives": [
+        "fire_risk_high"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 9,
+      "urgency": "high",
+      "statement": "Oil near a flame raises the fire risk.",
+      "domain": "stove",
+      "context_tags": [
+        "stove_active",
+        "oil_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-water-on-fire": {
+      "id": "P-water-on-fire",
+      "antecedents": [
+        "water_on_fire"
+      ],
+      "forbidden": [],
+      "derives": [
+        "fire_extinguished"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "Water on fire extinguishes the fire.",
+      "domain": "fire_response",
+      "context_tags": [
+        "fire_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-water-grease-fire": {
+      "id": "P-water-grease-fire",
+      "antecedents": [
+        "water_on_fire",
+        "grease_fire"
+      ],
+      "forbidden": [],
+      "derives": [
+        "fire_spread"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "Water poured on a grease fire spreads the fire.",
+      "domain": "fire_response",
+      "context_tags": [
+        "fire_present",
+        "water_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-raw-meat-contamination": {
+      "id": "P-raw-meat-contamination",
+      "antecedents": [
+        "raw_meat_on_counter"
+      ],
+      "forbidden": [],
+      "derives": [
+        "counter_contaminated"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "Raw meat on the counter contaminates the counter.",
+      "domain": "food_handling",
+      "context_tags": [
+        "raw_food_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-knife-edge": {
+      "id": "P-knife-edge",
+      "antecedents": [
+        "knife_at_edge"
+      ],
+      "forbidden": [],
+      "derives": [
+        "fall_hazard"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 7,
+      "urgency": "high",
+      "statement": "A knife at the edge of the counter is a fall hazard.",
+      "domain": "tool_handling",
+      "context_tags": [
+        "knife_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-vegetable-knife": {
+      "id": "P-vegetable-knife",
+      "antecedents": [
+        "vegetable_under_knife"
+      ],
+      "forbidden": [],
+      "derives": [
+        "vegetable_chopped"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "A vegetable under a knife becomes chopped.",
+      "domain": "food_prep",
+      "context_tags": [
+        "vegetable_present",
+        "knife_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R1": {
+      "id": "R1",
+      "antecedents": [
+        "flame_on"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "fire_risk_high"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "The cook must not allow high fire risk while a flame is on.",
+      "domain": "stove",
+      "context_tags": [
+        "stove_active"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R2": {
+      "id": "R2",
+      "antecedents": [
+        "raw_meat_on_counter"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "raw_meat_in_fridge"
+      ],
+      "forbids_in_result": [],
+      "priority": 9,
+      "urgency": "high",
+      "statement": "Raw meat on the counter must be moved to the fridge.",
+      "domain": "food_handling",
+      "context_tags": [
+        "raw_food_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R3": {
+      "id": "R3",
+      "antecedents": [
+        "knife_at_edge"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "knife_stored_safely"
+      ],
+      "forbids_in_result": [],
+      "priority": 8,
+      "urgency": "high",
+      "statement": "A knife at the edge must be stored safely.",
+      "domain": "tool_handling",
+      "context_tags": [
+        "knife_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R4": {
+      "id": "R4",
+      "antecedents": [
+        "vegetable_present",
+        "hungry_diner"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "vegetable_chopped"
+      ],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "A vegetable to be served must be chopped.",
+      "domain": "food_prep",
+      "context_tags": [
+        "vegetable_present",
+        "mealtime"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "R5": {
+      "id": "R5",
+      "antecedents": [
+        "grease_fire"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "fire_extinguished"
+      ],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "A grease fire must be extinguished.",
+      "domain": "fire_response",
+      "context_tags": [
+        "fire_present"
+      ],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "C1": {
+      "id": "C1",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "cook_injured"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "The cook must never be injured.",
+      "domain": "meta",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "C2": {
+      "id": "C2",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "foodborne_illness"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "No foodborne illness may result from the meal.",
+      "domain": "meta",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "C3": {
+      "id": "C3",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [
+        "fire_spread"
+      ],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "The kitchen must not catch fire.",
+      "domain": "meta",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "C4": {
+      "id": "C4",
+      "antecedents": [],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 10,
+      "urgency": "visceral",
+      "statement": "When two visceral rules conflict, prefer cook safety.",
+      "domain": "meta",
+      "context_tags": [],
+      "confidence": 1.0,
+      "usage_count": 0,
+      "source": "authored"
+    },
+    "P-oil-near-flame~butter_v4": {
+      "id": "P-oil-near-flame~butter_v4",
+      "antecedents": [
+        "butter_near_flame",
+        "flame_on"
+      ],
+      "forbidden": [],
+      "derives": [
+        "fire_risk_high"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 9,
+      "urgency": "high",
+      "statement": "[v4 token-projected from P-oil-near-flame via oil\u2192butter (sim +1.000)] Oil near a flame raises the fire risk.",
+      "domain": "stove",
+      "context_tags": [
+        "stove_active",
+        "oil_present",
+        "butter_present"
+      ],
+      "confidence": 0.4,
+      "usage_count": 0,
+      "source": "crystallized_v4"
+    },
+    "P-vegetable-knife~peas_v4": {
+      "id": "P-vegetable-knife~peas_v4",
+      "antecedents": [
+        "peas_under_knife"
+      ],
+      "forbidden": [],
+      "derives": [
+        "peas_chopped"
+      ],
+      "requires_in_result": [],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "[v4 token-projected from P-vegetable-knife via vegetable\u2192peas (sim +0.487)] A vegetable under a knife becomes chopped.",
+      "domain": "food_prep",
+      "context_tags": [
+        "peas_present",
+        "knife_present",
+        "vegetable_present"
+      ],
+      "confidence": 0.4,
+      "usage_count": 0,
+      "source": "crystallized_v4"
+    },
+    "R4~peas_v4": {
+      "id": "R4~peas_v4",
+      "antecedents": [
+        "peas_present",
+        "hungry_diner"
+      ],
+      "forbidden": [],
+      "derives": [],
+      "requires_in_result": [
+        "peas_chopped"
+      ],
+      "forbids_in_result": [],
+      "priority": 6,
+      "urgency": "medium",
+      "statement": "[v4 token-projected from R4 via vegetable\u2192peas (sim +0.487)] A vegetable to be served must be chopped.",
+      "domain": "food_prep",
+      "context_tags": [
+        "mealtime",
+        "peas_present",
+        "vegetable_present"
+      ],
+      "confidence": 0.4,
+      "usage_count": 0,
+      "source": "crystallized_v4"
+    }
+  }
+}
