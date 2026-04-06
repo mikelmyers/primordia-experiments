@@ -1,6 +1,6 @@
 # Results (four-layer symbolic pipeline)
 
-Run: 2026-04-06T13:03:01.544025Z
+Run: 2026-04-06T13:17:01.030725Z
 Pipeline: parser → retriever → engine → abstractor (no LLM, no matmul)
 Initial store size: 24 (all source=authored, confidence=1.0)
 
@@ -48,18 +48,36 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • no peer predicates with head `self_in` found in store
   -   • cannot split `wood_available` into head/object form; skipping analogy
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall', 'wood_available']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `wood_available`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `wood_available`
+
+- **v1 HDC (head-match restricted):**
     • cannot split `wood_available`
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • cannot split `wood_available`
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • cannot split `wood_available`
+  → crystallizes nothing
 
 ---
 
@@ -110,14 +128,24 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
 
 ---
 
@@ -174,14 +202,24 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   - PATH B — engine reported gap: ['unmet: C3 requires wood_replenishment_initiated (absent)']
   -   • unmet from C3: requires wood_replenishment_initiated (absent)
   -   • Path B (cross-rule synthesis from unmet obligations) is not implemented in this iteration. Logging only.
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
 
 ---
 
@@ -232,14 +270,24 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
 
 ---
 
@@ -291,19 +339,38 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['child_tender_in_hall', 'self_in_hall']
-- HDC analysis of `child_tender_in_hall`:
+- active roles for scenario: ['fire_relevant']
+
+#### Unhandled fact: `child_tender_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `child_tender_in_hall` → head=`child_tender_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `self_in_hall`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `child_tender_in_hall` → head=`child_tender_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
 
 ---
 
@@ -356,25 +423,60 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['water']
   -   • crystallized P-admitted-with-water~ice from P-admitted-with-water (substitute water→ice across rule)
   -   • crystallized R3~ice from R3 (substitute water→ice across rule)
-  -   ✓ added P-admitted-with-water~ice to store with tags ['water_present', 'stranger_present', 'ice_present'], conf=0.4
-  -   ✓ added R3~ice to store with tags ['water_present', 'stranger_present', 'ice_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
+  -   ✓ added R3~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_ice']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `stranger_carries_ice`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `stranger_carries_ice`
+
+- **v1 HDC (head-match restricted):**
     • split `stranger_carries_ice` → head=`stranger_carries`, object=`ice`
     • `ice` properties: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']
     • candidate peer objects (head match): ['water']
     • HDC similarity(ice, water) = +0.0110  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
     ✗ no peer passed similarity threshold 0.1; HDC abstractor REFUSES to crystallize an analogy (this is the win condition vs syntactic substitution)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `stranger_carries_ice` → head=`stranger_carries`, object=`ice`
+    • `ice` properties: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']
+    • unconstrained candidate set: ['food', 'medicine', 'oil', 'water', 'wood']
+    • sim(ice, food) = +0.1776  [food: ['solid', 'edible', 'neutral_to_fire']]  → ACCEPT
+    • sim(ice, medicine) = +0.1798  [medicine: ['useful_for_healing', 'neutral_to_fire']]  → ACCEPT
+    • sim(ice, oil) = +0.1406  [oil: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → ACCEPT
+    • sim(ice, water) = +0.0110  [water: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
+    • sim(ice, wood) = +0.1990  [wood: ['solid', 'feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog: `wood` (sim +0.1990)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • active roles for this scenario: ['fire_relevant', 'temperature_relevant']
+    • `ice` properties (active-role-filtered): ['extinguishes_fire_after_melting', 'cold_to_touch']
+    • sim(ice, food) = -0.0102  [role-filtered food: ['neutral_to_fire']]  → REJECT
+    • sim(ice, medicine) = -0.0102  [role-filtered medicine: ['neutral_to_fire']]  → REJECT
+    • sim(ice, oil) = -0.0006  [role-filtered oil: ['feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
+    • sim(ice, water) = +0.0000  [role-filtered water: ['extinguishes_fire']]  → REJECT
+    • sim(ice, wood) = +0.2434  [role-filtered wood: ['feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog under role weighting: `wood` (sim +0.2434)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
 
 ---
 
@@ -425,14 +527,24 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
 
 ---
 
@@ -485,28 +597,63 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'water']
   -   • crystallized P-admitted-with-water~oil from P-admitted-with-water (substitute water→oil across rule)
   -   • crystallized R3~oil from R3 (substitute water→oil across rule)
-  -   ✓ added P-admitted-with-water~oil to store with tags ['water_present', 'stranger_present', 'oil_present'], conf=0.4
-  -   ✓ added R3~oil to store with tags ['water_present', 'stranger_present', 'oil_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
+  -   ✓ added R3~oil to store with tags ['stranger_present', 'water_present', 'oil_present'], conf=0.4
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_oil']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `stranger_carries_oil`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `stranger_carries_oil`
+
+- **v1 HDC (head-match restricted):**
     • split `stranger_carries_oil` → head=`stranger_carries`, object=`oil`
     • `oil` properties: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']
     • candidate peer objects (head match): ['ice', 'water']
-    • HDC similarity(oil, ice) = +0.1470  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
-    • HDC similarity(oil, water) = +0.1812  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → ACCEPT
-    ✓ selected peer for substitution: `water` (sim +0.1812)
+    • HDC similarity(oil, ice) = +0.1406  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • HDC similarity(oil, water) = +0.1888  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → ACCEPT
+    ✓ selected peer for substitution: `water` (sim +0.1888)
     • would crystallize P-admitted-with-water~oil_hdc from P-admitted-with-water
     • would crystallize R3~oil_hdc from R3
-  → HDC would crystallize: ['P-admitted-with-water~oil_hdc', 'R3~oil_hdc']
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+  → would crystallize: ['P-admitted-with-water~oil_hdc', 'R3~oil_hdc']
+- **v2 HDC (unconstrained peer search):**
+    • split `stranger_carries_oil` → head=`stranger_carries`, object=`oil`
+    • `oil` properties: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']
+    • unconstrained candidate set: ['food', 'ice', 'medicine', 'water', 'wood']
+    • sim(oil, food) = -0.0110  [food: ['solid', 'edible', 'neutral_to_fire']]  → REJECT
+    • sim(oil, ice) = +0.1406  [ice: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • sim(oil, medicine) = +0.1852  [medicine: ['useful_for_healing', 'neutral_to_fire']]  → ACCEPT
+    • sim(oil, water) = +0.1888  [water: ['liquid', 'extinguishes_fire', 'wets_things']]  → ACCEPT
+    • sim(oil, wood) = +0.3868  [wood: ['solid', 'feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog: `wood` (sim +0.3868)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • active roles for this scenario: ['fire_relevant', 'temperature_relevant']
+    • `oil` properties (active-role-filtered): ['feeds_fire', 'burnable', 'highly_flammable']
+    • sim(oil, food) = +0.0016  [role-filtered food: ['neutral_to_fire']]  → REJECT
+    • sim(oil, ice) = -0.0006  [role-filtered ice: ['extinguishes_fire_after_melting', 'cold_to_touch']]  → REJECT
+    • sim(oil, medicine) = +0.0016  [role-filtered medicine: ['neutral_to_fire']]  → REJECT
+    • sim(oil, water) = +0.0026  [role-filtered water: ['extinguishes_fire']]  → REJECT
+    • sim(oil, wood) = +0.5152  [role-filtered wood: ['feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog under role weighting: `wood` (sim +0.5152)
+    ⓘ best analog `wood` has no rules to project from in store
+  → crystallizes nothing
 
 ---
 
@@ -559,27 +706,62 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~food from P-admitted-with-water (substitute water→food across rule)
   -   • crystallized R3~food from R3 (substitute water→food across rule)
-  -   ✓ added P-admitted-with-water~food to store with tags ['water_present', 'stranger_present', 'food_present'], conf=0.4
-  -   ✓ added R3~food to store with tags ['water_present', 'stranger_present', 'food_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~food to store with tags ['stranger_present', 'food_present', 'water_present'], conf=0.4
+  -   ✓ added R3~food to store with tags ['stranger_present', 'food_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_food']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'nutritional', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `stranger_carries_food`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `stranger_carries_food`
+
+- **v1 HDC (head-match restricted):**
     • split `stranger_carries_food` → head=`stranger_carries`, object=`food`
     • `food` properties: ['solid', 'edible', 'neutral_to_fire']
     • candidate peer objects (head match): ['ice', 'oil', 'water']
-    • HDC similarity(food, ice) = +0.1990  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
-    • HDC similarity(food, oil) = -0.0020  [oil props: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
-    • HDC similarity(food, water) = +0.0052  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
-    ✓ selected peer for substitution: `ice` (sim +0.1990)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+    • HDC similarity(food, ice) = +0.1776  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • HDC similarity(food, oil) = -0.0110  [oil props: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
+    • HDC similarity(food, water) = +0.0054  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
+    ✓ selected peer for substitution: `ice` (sim +0.1776)
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `stranger_carries_food` → head=`stranger_carries`, object=`food`
+    • `food` properties: ['solid', 'edible', 'neutral_to_fire']
+    • unconstrained candidate set: ['ice', 'medicine', 'oil', 'water', 'wood']
+    • sim(food, ice) = +0.1776  [ice: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • sim(food, medicine) = +0.2674  [medicine: ['useful_for_healing', 'neutral_to_fire']]  → ACCEPT
+    • sim(food, oil) = -0.0110  [oil: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
+    • sim(food, water) = +0.0054  [water: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
+    • sim(food, wood) = +0.2414  [wood: ['solid', 'feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog: `medicine` (sim +0.2674)
+    ⓘ best analog `medicine` has no rules to project from in store
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • active roles for this scenario: ['fire_relevant', 'nutritional', 'temperature_relevant']
+    • `food` properties (active-role-filtered): ['edible', 'neutral_to_fire']
+    • sim(food, ice) = +0.2484  [role-filtered ice: ['extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • sim(food, medicine) = +0.4982  [role-filtered medicine: ['neutral_to_fire']]  → ACCEPT
+    • sim(food, oil) = +0.0018  [role-filtered oil: ['feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
+    • sim(food, water) = +0.0080  [role-filtered water: ['extinguishes_fire']]  → REJECT
+    • sim(food, wood) = +0.2522  [role-filtered wood: ['feeds_fire', 'burnable']]  → ACCEPT
+    ✓ best analog under role weighting: `medicine` (sim +0.4982)
+    ⓘ best analog `medicine` has no rules to project from in store
+  → crystallizes nothing
 
 ---
 
@@ -632,28 +814,63 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['food', 'ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~medicine from P-admitted-with-water (substitute water→medicine across rule)
   -   • crystallized R3~medicine from R3 (substitute water→medicine across rule)
-  -   ✓ added P-admitted-with-water~medicine to store with tags ['water_present', 'stranger_present', 'medicine_present'], conf=0.4
-  -   ✓ added R3~medicine to store with tags ['water_present', 'stranger_present', 'medicine_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~medicine to store with tags ['stranger_present', 'medicine_present', 'water_present'], conf=0.4
+  -   ✓ added R3~medicine to store with tags ['stranger_present', 'medicine_present', 'water_present'], conf=0.4
   - PATH B — no engine-reported gap
-### Layer 2 SHADOW — HDC abstractor (read-only comparison)
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
 - unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_medicine']
-- HDC analysis of `self_in_hall`:
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
     • split `self_in_hall` → head=`self_in`, object=`hall`
     • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
-- HDC analysis of `stranger_carries_medicine`:
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+
+#### Unhandled fact: `stranger_carries_medicine`
+
+- **v1 HDC (head-match restricted):**
     • split `stranger_carries_medicine` → head=`stranger_carries`, object=`medicine`
     • `medicine` properties: ['useful_for_healing', 'neutral_to_fire']
     • candidate peer objects (head match): ['food', 'ice', 'oil', 'water']
-    • HDC similarity(medicine, food) = +0.2610  [food props: ['solid', 'edible', 'neutral_to_fire']]  → ACCEPT
-    • HDC similarity(medicine, ice) = +0.1780  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
-    • HDC similarity(medicine, oil) = +0.1862  [oil props: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → ACCEPT
-    • HDC similarity(medicine, water) = -0.0046  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
-    ✓ selected peer for substitution: `food` (sim +0.2610)
-  → HDC crystallizes nothing (declined or no grounding)
-  syntactic abstractor for the same fact: would substitute from any string-matched peer
+    • HDC similarity(medicine, food) = +0.2674  [food props: ['solid', 'edible', 'neutral_to_fire']]  → ACCEPT
+    • HDC similarity(medicine, ice) = +0.1798  [ice props: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • HDC similarity(medicine, oil) = +0.1852  [oil props: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → ACCEPT
+    • HDC similarity(medicine, water) = -0.0040  [water props: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
+    ✓ selected peer for substitution: `food` (sim +0.2674)
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `stranger_carries_medicine` → head=`stranger_carries`, object=`medicine`
+    • `medicine` properties: ['useful_for_healing', 'neutral_to_fire']
+    • unconstrained candidate set: ['food', 'ice', 'oil', 'water', 'wood']
+    • sim(medicine, food) = +0.2674  [food: ['solid', 'edible', 'neutral_to_fire']]  → ACCEPT
+    • sim(medicine, ice) = +0.1798  [ice: ['solid', 'melts_to_water', 'extinguishes_fire_after_melting', 'cold_to_touch']]  → ACCEPT
+    • sim(medicine, oil) = +0.1852  [oil: ['liquid', 'feeds_fire', 'burnable', 'highly_flammable']]  → ACCEPT
+    • sim(medicine, water) = -0.0040  [water: ['liquid', 'extinguishes_fire', 'wets_things']]  → REJECT
+    • sim(medicine, wood) = +0.0068  [wood: ['solid', 'feeds_fire', 'burnable']]  → REJECT
+    ✓ best analog: `food` (sim +0.2674)
+    ⓘ best analog `food` has no rules to project from in store
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • active roles for this scenario: ['fire_relevant', 'temperature_relevant']
+    • `medicine` properties (active-role-filtered): ['neutral_to_fire']
+    • sim(medicine, food) = +1.0000  [role-filtered food: ['neutral_to_fire']]  → ACCEPT
+    • sim(medicine, ice) = -0.0102  [role-filtered ice: ['extinguishes_fire_after_melting', 'cold_to_touch']]  → REJECT
+    • sim(medicine, oil) = +0.0016  [role-filtered oil: ['feeds_fire', 'burnable', 'highly_flammable']]  → REJECT
+    • sim(medicine, water) = +0.0014  [role-filtered water: ['extinguishes_fire']]  → REJECT
+    • sim(medicine, wood) = +0.0120  [role-filtered wood: ['feeds_fire', 'burnable']]  → REJECT
+    ✓ best analog under role weighting: `food` (sim +1.0000)
+    ⓘ best analog `food` has no rules to project from in store
+  → crystallizes nothing
 
 ---
 

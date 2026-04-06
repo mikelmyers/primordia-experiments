@@ -250,6 +250,220 @@ def crystallize_by_hdc_analogy(
     return new_rules, log
 
 
+def crystallize_by_hdc_unconstrained(
+    unhandled_fact: str,
+    store: RuleStore,
+    properties_by_substance: dict[str, list[str]],
+    codebook: Codebook,
+    similarity_threshold: float = 0.10,
+) -> tuple[list[Rule], list[str]]:
+    """v2: Drop the head-match restriction.
+
+    The v1 abstractor only considered as analogy candidates those substances
+    that already appeared somewhere in the rule store as `<head>_<X>`. This
+    excluded `wood` from the candidate set for `oil` even though wood is the
+    correct analog. v2 considers EVERY substance in the property table.
+
+    The cost is that v2 may select an analog that has no rules to copy from
+    (e.g. wood has no `stranger_carries_wood` rules). In that case the
+    abstractor reports the analogy without crystallizing — which is itself
+    informative: it tells us 'the right analog exists in the property table
+    but the rule store has nothing to project from it.'
+    """
+    log: list[str] = []
+    split = _split_predicate(unhandled_fact)
+    if split is None:
+        log.append(f"  • cannot split `{unhandled_fact}`")
+        return [], log
+    head, new_obj = split
+    log.append(f"  • split `{unhandled_fact}` → head=`{head}`, object=`{new_obj}`")
+
+    if new_obj not in properties_by_substance:
+        log.append(f"  • `{new_obj}` not in property table; v2 declines")
+        return [], log
+
+    new_props = properties_by_substance[new_obj]
+    log.append(f"  • `{new_obj}` properties: {new_props}")
+    new_hv = encode_property_bundle(new_props, codebook)
+
+    # UNCONSTRAINED: every substance in the property table is a candidate.
+    candidates = sorted(s for s in properties_by_substance if s != new_obj)
+    log.append(f"  • unconstrained candidate set: {candidates}")
+
+    scored: list[tuple[str, float]] = []
+    for peer in candidates:
+        peer_props = properties_by_substance[peer]
+        peer_hv = encode_property_bundle(peer_props, codebook)
+        sim = similarity(new_hv, peer_hv)
+        verdict = "ACCEPT" if sim >= similarity_threshold else "REJECT"
+        log.append(
+            f"  • sim({new_obj}, {peer}) = {sim:+.4f}  "
+            f"[{peer}: {peer_props}]  → {verdict}"
+        )
+        if sim >= similarity_threshold:
+            scored.append((peer, sim))
+
+    if not scored:
+        log.append(f"  ✗ no candidate passed threshold {similarity_threshold}")
+        return [], log
+
+    scored.sort(key=lambda x: -x[1])
+    best_peer, best_sim = scored[0]
+    log.append(f"  ✓ best analog: `{best_peer}` (sim {best_sim:+.4f})")
+
+    # Try to project rules from the chosen peer. May find none — that is also
+    # informative.
+    new_rules: list[Rule] = []
+    for entry in store.all_entries():
+        preds = _all_predicates_in_rule(entry)
+        if not any(_references_object(p, best_peer) for p in preds):
+            continue
+        if entry.get("source") == "crystallized":
+            continue
+        new_id = f"{entry['id']}~{new_obj}_v2"
+        new_rule = Rule(
+            id=new_id,
+            antecedents=_substitute_in_list(entry["antecedents"], best_peer, new_obj),
+            forbidden=_substitute_in_list(entry["forbidden"], best_peer, new_obj),
+            derives=_substitute_in_list(entry["derives"], best_peer, new_obj),
+            requires_in_result=_substitute_in_list(entry["requires_in_result"], best_peer, new_obj),
+            forbids_in_result=_substitute_in_list(entry["forbids_in_result"], best_peer, new_obj),
+            priority=entry["priority"],
+            urgency=entry["urgency"],
+            statement=(
+                f"[v2 HDC-crystallized from {entry['id']} via "
+                f"{best_peer}→{new_obj} (sim {best_sim:+.3f})] "
+                + entry.get("statement", "")
+            ),
+        )
+        new_rules.append(new_rule)
+        log.append(f"  • would crystallize {new_id} from {entry['id']}")
+
+    if not new_rules:
+        log.append(
+            f"  ⓘ best analog `{best_peer}` has no rules to project from in store"
+        )
+    return new_rules, log
+
+
+def crystallize_by_hdc_role_weighted(
+    unhandled_fact: str,
+    facts: list[str],
+    store: RuleStore,
+    properties_by_substance: dict[str, list[str]],
+    property_roles: dict[str, str],
+    active_roles: set[str],
+    codebook: Codebook,
+    similarity_threshold: float = 0.10,
+) -> tuple[list[Rule], list[str]]:
+    """v3: Role-weighted HDC analogy.
+
+    Each property has a role tag (fire_relevant, nutritional, etc). For
+    similarity, we restrict the bundle to ONLY properties whose role is
+    active in the current scenario context. A fire-context scenario filters
+    away `solid`, `liquid`, `edible`, etc., so similarity is computed
+    purely on fire-relevant properties.
+
+    Predicted effect:
+      - oil vs wood: both have `feeds_fire` + `burnable` → high similarity
+      - oil vs water: only `extinguishes_fire` vs `feeds_fire` → low/negative
+      - food vs anything: food has no fire-relevant property → low to all
+    """
+    log: list[str] = []
+    split = _split_predicate(unhandled_fact)
+    if split is None:
+        log.append(f"  • cannot split `{unhandled_fact}`")
+        return [], log
+    head, new_obj = split
+
+    if new_obj not in properties_by_substance:
+        log.append(f"  • `{new_obj}` not in property table; v3 declines")
+        return [], log
+
+    log.append(f"  • active roles for this scenario: {sorted(active_roles)}")
+    if not active_roles:
+        log.append("  • no active roles inferred; v3 declines (no context to filter on)")
+        return [], log
+
+    def role_filtered(props: list[str]) -> list[str]:
+        return [p for p in props if property_roles.get(p) in active_roles]
+
+    new_props_filtered = role_filtered(properties_by_substance[new_obj])
+    log.append(
+        f"  • `{new_obj}` properties (active-role-filtered): {new_props_filtered}"
+    )
+    if not new_props_filtered:
+        log.append(
+            f"  ⓘ `{new_obj}` has no properties matching any active role; "
+            f"v3 declines (no role-relevant signal)"
+        )
+        return [], log
+    new_hv = encode_property_bundle(new_props_filtered, codebook)
+
+    candidates = sorted(s for s in properties_by_substance if s != new_obj)
+
+    scored: list[tuple[str, float, list[str]]] = []
+    for peer in candidates:
+        peer_props_f = role_filtered(properties_by_substance[peer])
+        if not peer_props_f:
+            log.append(
+                f"  • {peer}: no role-relevant properties → skipped"
+            )
+            continue
+        peer_hv = encode_property_bundle(peer_props_f, codebook)
+        sim = similarity(new_hv, peer_hv)
+        verdict = "ACCEPT" if sim >= similarity_threshold else "REJECT"
+        log.append(
+            f"  • sim({new_obj}, {peer}) = {sim:+.4f}  "
+            f"[role-filtered {peer}: {peer_props_f}]  → {verdict}"
+        )
+        if sim >= similarity_threshold:
+            scored.append((peer, sim, peer_props_f))
+
+    if not scored:
+        log.append(
+            f"  ✗ no candidate passed threshold {similarity_threshold} "
+            f"after role filtering"
+        )
+        return [], log
+
+    scored.sort(key=lambda x: -x[1])
+    best_peer, best_sim, _ = scored[0]
+    log.append(f"  ✓ best analog under role weighting: `{best_peer}` (sim {best_sim:+.4f})")
+
+    new_rules: list[Rule] = []
+    for entry in store.all_entries():
+        preds = _all_predicates_in_rule(entry)
+        if not any(_references_object(p, best_peer) for p in preds):
+            continue
+        if entry.get("source") == "crystallized":
+            continue
+        new_id = f"{entry['id']}~{new_obj}_v3"
+        new_rule = Rule(
+            id=new_id,
+            antecedents=_substitute_in_list(entry["antecedents"], best_peer, new_obj),
+            forbidden=_substitute_in_list(entry["forbidden"], best_peer, new_obj),
+            derives=_substitute_in_list(entry["derives"], best_peer, new_obj),
+            requires_in_result=_substitute_in_list(entry["requires_in_result"], best_peer, new_obj),
+            forbids_in_result=_substitute_in_list(entry["forbids_in_result"], best_peer, new_obj),
+            priority=entry["priority"],
+            urgency=entry["urgency"],
+            statement=(
+                f"[v3 role-weighted HDC-crystallized from {entry['id']} via "
+                f"{best_peer}→{new_obj} (sim {best_sim:+.3f})] "
+                + entry.get("statement", "")
+            ),
+        )
+        new_rules.append(new_rule)
+        log.append(f"  • would crystallize {new_id} from {entry['id']}")
+
+    if not new_rules:
+        log.append(
+            f"  ⓘ best analog `{best_peer}` has no rules to project from in store"
+        )
+    return new_rules, log
+
+
 def analyze_and_crystallize(
     facts: list[str],
     goal: list[str],

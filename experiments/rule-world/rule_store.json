@@ -529,9 +529,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192ice analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "ice_present"
+        "ice_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -553,9 +553,9 @@
       "statement": "[crystallized from R3 by water\u2192ice analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "ice_present"
+        "ice_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 4,
@@ -578,8 +578,8 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192oil analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "water_present",
         "stranger_present",
+        "water_present",
         "oil_present"
       ],
       "confidence": 0.4,
@@ -602,8 +602,8 @@
       "statement": "[crystallized from R3 by water\u2192oil analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "water_present",
         "stranger_present",
+        "water_present",
         "oil_present"
       ],
       "confidence": 0.4,
@@ -627,9 +627,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192food analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "food_present"
+        "food_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -651,9 +651,9 @@
       "statement": "[crystallized from R3 by water\u2192food analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "food_present"
+        "food_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 1,
@@ -676,9 +676,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192medicine analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "medicine_present"
+        "medicine_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -700,9 +700,9 @@
       "statement": "[crystallized from R3 by water\u2192medicine analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "water_present",
         "stranger_present",
-        "medicine_present"
+        "medicine_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,

@@ -20,12 +20,19 @@ from datetime import datetime
 from pathlib import Path
 
 from engine import reason
-from world_structured import ACTIONS, SUBSTANCE_PROPERTIES
+from world_structured import (
+    ACTIONS,
+    SUBSTANCE_PROPERTIES,
+    PROPERTY_ROLES,
+    active_roles_for_scenario,
+)
 from rule_store import RuleStore, migrate_authored_rules
 from retriever import retrieve
 from abstractor import (
     analyze_and_crystallize,
     crystallize_by_hdc_analogy,
+    crystallize_by_hdc_unconstrained,
+    crystallize_by_hdc_role_weighted,
     find_unhandled_facts,
 )
 from parser import parse
@@ -125,35 +132,56 @@ def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[s
     ]
     for line in abstraction["log"]:
         out.append(f"  - {line}")
-    # ----- Layer 2 SHADOW: HDC abstractor (does not mutate store) -----
+    # ----- Layer 2 SHADOW: HDC abstractors v1/v2/v3 (read-only) -----
     unhandled = pre_mutation_unhandled
+    active_roles = active_roles_for_scenario(parsed["facts"])
     out += [
-        "### Layer 2 SHADOW — HDC abstractor (read-only comparison)",
+        "### Layer 2 SHADOW — HDC abstractors (read-only comparison)",
         "",
         f"- unhandled facts (captured pre-mutation): {unhandled}",
+        f"- active roles for scenario: {sorted(active_roles)}",
     ]
     if not unhandled:
         out.append("- nothing for HDC to analyze")
     else:
         for f in unhandled:
-            new_rules, hdc_log = crystallize_by_hdc_analogy(
-                f, store, SUBSTANCE_PROPERTIES, codebook
-            )
-            out.append(f"- HDC analysis of `{f}`:")
-            for line in hdc_log:
-                out.append(f"  {line}")
-            if new_rules:
-                out.append(
-                    f"  → HDC would crystallize: {[r.id for r in new_rules]}"
-                )
-            else:
-                out.append(
-                    "  → HDC crystallizes nothing (declined or no grounding)"
-                )
+            out.append(f"\n#### Unhandled fact: `{f}`\n")
 
-            # Direct comparison with what the syntactic abstractor would do
-            syntactic_choice = "would substitute from any string-matched peer"
-            out.append(f"  syntactic abstractor for the same fact: {syntactic_choice}")
+            for label, fn, kwargs in [
+                (
+                    "v1 HDC (head-match restricted)",
+                    crystallize_by_hdc_analogy,
+                    dict(unhandled_fact=f, store=store,
+                         properties_by_substance=SUBSTANCE_PROPERTIES,
+                         codebook=codebook),
+                ),
+                (
+                    "v2 HDC (unconstrained peer search)",
+                    crystallize_by_hdc_unconstrained,
+                    dict(unhandled_fact=f, store=store,
+                         properties_by_substance=SUBSTANCE_PROPERTIES,
+                         codebook=codebook),
+                ),
+                (
+                    "v3 HDC (role-weighted, fire-context)",
+                    crystallize_by_hdc_role_weighted,
+                    dict(unhandled_fact=f, facts=parsed["facts"], store=store,
+                         properties_by_substance=SUBSTANCE_PROPERTIES,
+                         property_roles=PROPERTY_ROLES,
+                         active_roles=active_roles,
+                         codebook=codebook),
+                ),
+            ]:
+                new_rules, hdc_log = fn(**kwargs)
+                out.append(f"- **{label}:**")
+                for line in hdc_log:
+                    out.append(f"  {line}")
+                if new_rules:
+                    out.append(
+                        f"  → would crystallize: {[r.id for r in new_rules]}"
+                    )
+                else:
+                    out.append("  → crystallizes nothing")
     out += ["", "---", ""]
     return out
 

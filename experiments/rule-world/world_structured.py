@@ -209,6 +209,52 @@ SUBSTANCE_PROPERTIES: dict[str, list[str]] = {
 }
 
 
+# Role tags assign each property to a semantic category. The role-weighted
+# HDC abstractor (v3) uses this to filter similarity to only those properties
+# whose role is "active" in the current scenario context. A scenario where
+# the hearth matters activates `fire_relevant`; a scenario about feeding
+# tenders would activate `nutritional`; etc.
+PROPERTY_ROLES: dict[str, str] = {
+    # fire-relevant
+    "extinguishes_fire":               "fire_relevant",
+    "extinguishes_fire_after_melting": "fire_relevant",
+    "feeds_fire":                      "fire_relevant",
+    "burnable":                        "fire_relevant",
+    "highly_flammable":                "fire_relevant",
+    "neutral_to_fire":                 "fire_relevant",
+    # temperature
+    "cold_to_touch":                   "temperature_relevant",
+    # nutritional / utility
+    "edible":                          "nutritional",
+    "useful_for_healing":              "medicinal",
+    # physical state (mostly incidental in fire context)
+    "solid":                           "physical_state",
+    "liquid":                          "physical_state",
+    # behavioral
+    "melts_to_water":                  "behavioral",
+    "wets_things":                     "behavioral",
+}
+
+
+def active_roles_for_scenario(facts: list[str]) -> set[str]:
+    """Pick roles whose semantic category is relevant given the fact set.
+
+    The mapping is small and explicit. Adding a new role here is the only
+    domain-specific knowledge the role-weighted abstractor consumes.
+    """
+    roles: set[str] = set()
+    fact_set = set(facts)
+    if any(f.startswith("hearth_") or "fire" in f for f in fact_set):
+        roles.add("fire_relevant")
+    if any("cold" in f or "warm" in f for f in fact_set):
+        roles.add("temperature_relevant")
+    if any("hung" in f or "food" in f for f in fact_set):
+        roles.add("nutritional")
+    if any("wound" in f or "ill" in f or "heal" in f for f in fact_set):
+        roles.add("medicinal")
+    return roles
+
+
 # ---------- action library ----------
 # The engine searches over THIS list. Nothing scenario-specific.
 
