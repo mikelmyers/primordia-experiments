@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Scenario 1 (covered) — Red light",
+    "description": "You are driving and approaching an intersection. The light ahead is red."
+  },
+  {
+    "id": 2,
+    "title": "Scenario 2 (covered) — Pedestrian in crosswalk",
+    "description": "You are driving toward a crosswalk. A pedestrian is in the crosswalk, crossing."
+  },
+  {
+    "id": 3,
+    "title": "Scenario 3 (covered) — Ambulance behind",
+    "description": "You are driving in the left lane. An ambulance is approaching from behind with sirens."
+  },
+  {
+    "id": 4,
+    "title": "Scenario 4 (covered) — Car too close ahead",
+    "description": "You are driving and the car ahead is too close, you are tailgating."
+  },
+  {
+    "id": 5,
+    "title": "Scenario 5 (covered) — Bicycle ahead",
+    "description": "You are driving and there is a bicycle ahead in your lane."
+  },
+  {
+    "id": 6,
+    "title": "Scenario 6 (novel substance) — Horse-drawn carriage",
+    "description": "You are driving and a horse-drawn carriage is ahead of you in your lane."
+  },
+  {
+    "id": 7,
+    "title": "Scenario 7 (novel substance) — Robotaxi",
+    "description": "You are driving and a self-driving taxi is ahead of you, slowing down."
+  },
+  {
+    "id": 8,
+    "title": "Scenario 8 (novel substance) — Fire engine behind",
+    "description": "You are driving and a fire engine behind you is approaching with sirens."
+  }
+]

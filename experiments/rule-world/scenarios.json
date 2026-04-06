@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "title": "Scenario 1 (covered)",
+    "description": "You are alone in the Hall. The Hearth is burning low. There is Wood beside you."
+  },
+  {
+    "id": 2,
+    "title": "Scenario 2 (covered)",
+    "description": "A Stranger approaches the Hall carrying a bucket of Water. They ask to enter to warm themselves."
+  },
+  {
+    "id": 3,
+    "title": "Scenario 3 (covered)",
+    "description": "Another Tender asks you whether the Wood supply will last the night. You have counted the Wood and know it will not."
+  },
+  {
+    "id": 4,
+    "title": "Scenario 4 (gap: wet stranger)",
+    "description": "A Stranger arrives carrying nothing in their hands, but they are soaked head to toe from a rainstorm. They are shivering and cold."
+  },
+  {
+    "id": 5,
+    "title": "Scenario 5 (gap: child Tender taking Wood)",
+    "description": "A child Tender picks up a piece of Wood and walks toward the door of the Hall as if to leave with it. You are alone with them at the Hearth."
+  },
+  {
+    "id": 6,
+    "title": "Scenario 6 (novel: Stranger with Ice — first pass)",
+    "description": "A Stranger arrives at the door carrying a block of Ice. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 7,
+    "title": "Scenario 7 (re-run of 6 after crystallization)",
+    "description": "A Stranger arrives at the door carrying a block of Ice. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 8,
+    "title": "Scenario 8 (HDC test: Stranger with Oil — feeds fire, opposite of water)",
+    "description": "A Stranger arrives at the door carrying a jar of oil. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 9,
+    "title": "Scenario 9 (HDC test: Stranger with Food — neutral to fire)",
+    "description": "A Stranger arrives at the door carrying a basket of food. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 10,
+    "title": "Scenario 10 (HDC test: Stranger with Medicine — neutral, helpful)",
+    "description": "A Stranger arrives at the door carrying a vial of medicine. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 11,
+    "title": "Scenario 11 (loop-closing test: hearth burning low + Stranger with Oil)",
+    "description": "The Hearth is burning low. A Stranger arrives at the door carrying a jar of oil. They are cold and ask to enter to warm themselves."
+  }
+]
