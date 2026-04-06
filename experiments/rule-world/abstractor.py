@@ -26,9 +26,107 @@ chain of reasoning that led to it.
 
 from __future__ import annotations
 
-from engine import Rule
+from engine import Rule, Action
 from rule_store import RuleStore, _dict_to_rule
 from hdc import Codebook, encode_property_bundle, similarity
+
+
+def synthesize_actions_by_analogy(
+    new_obj: str,
+    peer: str,
+    action_library: list[Action],
+) -> tuple[list[Action], list[str]]:
+    """Token-substitute actions that reference `peer` to produce `new_obj` versions.
+
+    Mirrors v4's rule projection but for actions. Example:
+        add_wood_to_hearth: pre [wood_available, self_in_hall],
+                            add [wood_in_hearth],
+                            remove [hearth_burning_low]
+    becomes (with peer=wood, new_obj=oil):
+        add_oil_to_hearth:  pre [oil_available, self_in_hall],
+                            add [oil_in_hearth],
+                            remove [hearth_burning_low]
+
+    Together with v4's projected rule
+        P3a~oil_v4: oil_in_hearth ∧ hearth_burning ⇒ hearth_fed
+    this gives the engine a complete causal chain from
+    `oil_available` to satisfying R1.
+    """
+    log: list[str] = []
+    new_actions: list[Action] = []
+    existing_names = {a.name for a in action_library}
+
+    for a in action_library:
+        all_preds = (
+            list(a.preconditions)
+            + list(a.forbidden_pre)
+            + list(a.add)
+            + list(a.remove)
+        )
+        if not any(_references_token(p, peer) for p in all_preds):
+            continue
+        new_name = _substitute_token(a.name, peer, new_obj)
+        if new_name in existing_names or new_name == a.name:
+            continue
+        new_action = Action(
+            name=new_name,
+            preconditions=_substitute_tokens_in_list(a.preconditions, peer, new_obj),
+            forbidden_pre=_substitute_tokens_in_list(a.forbidden_pre, peer, new_obj),
+            add=_substitute_tokens_in_list(a.add, peer, new_obj),
+            remove=_substitute_tokens_in_list(a.remove, peer, new_obj),
+        )
+        existing_names.add(new_name)
+        new_actions.append(new_action)
+        log.append(f"  • synthesized action `{new_name}` from `{a.name}`:")
+        log.append(f"      preconditions: {new_action.preconditions}")
+        log.append(f"      add:           {new_action.add}")
+        log.append(f"      remove:        {new_action.remove}")
+    return new_actions, log
+
+
+def select_v4_analog(
+    unhandled_fact: str,
+    facts: list[str],
+    properties_by_substance: dict[str, list[str]],
+    property_roles: dict[str, str],
+    active_roles: set[str],
+    codebook: Codebook,
+    similarity_threshold: float = 0.10,
+) -> tuple[str | None, float, list[str]]:
+    """Pure analog selection step from v4 (without projection). Returns
+    (best_peer, similarity, log) so callers can use the same analog for
+    both rule projection and action synthesis.
+    """
+    log: list[str] = []
+    split = _split_predicate(unhandled_fact)
+    if split is None:
+        return None, 0.0, log
+    head, new_obj = split
+    if new_obj not in properties_by_substance:
+        return None, 0.0, log
+    if not active_roles:
+        return None, 0.0, log
+
+    def role_filtered(props):
+        return [p for p in props if property_roles.get(p) in active_roles]
+
+    new_props_f = role_filtered(properties_by_substance[new_obj])
+    if not new_props_f:
+        return None, 0.0, log
+    new_hv = encode_property_bundle(new_props_f, codebook)
+
+    best: tuple[str, float] | None = None
+    for peer in sorted(s for s in properties_by_substance if s != new_obj):
+        peer_props_f = role_filtered(properties_by_substance[peer])
+        if not peer_props_f:
+            continue
+        peer_hv = encode_property_bundle(peer_props_f, codebook)
+        sim = similarity(new_hv, peer_hv)
+        if sim >= similarity_threshold and (best is None or sim > best[1]):
+            best = (peer, sim)
+    if best is None:
+        return None, 0.0, log
+    return best[0], best[1], log
 
 
 def _split_predicate(p: str) -> tuple[str, str] | None:

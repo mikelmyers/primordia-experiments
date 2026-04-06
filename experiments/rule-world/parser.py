@@ -39,12 +39,13 @@ PATTERNS: list[tuple[str, list[str]]] = [
     # Novel substances (Scenario 6+)
     (r"\bblock of ice\b", ["stranger_carries_ice"]),
     (r"\bcarrying.*ice\b", ["stranger_carries_ice"]),
-    (r"\bjar of oil\b", ["stranger_carries_oil"]),
-    (r"\bcarrying.*oil\b", ["stranger_carries_oil"]),
-    (r"\b(loaf|basket) of (bread|food)\b", ["stranger_carries_food"]),
-    (r"\bcarrying.*(food|bread)\b", ["stranger_carries_food"]),
-    (r"\b(vial|bottle) of medicine\b", ["stranger_carries_medicine"]),
-    (r"\bcarrying.*medicine\b", ["stranger_carries_medicine"]),
+    (r"\bjar of oil\b", ["stranger_carries_oil", "oil_available"]),
+    (r"\bcarrying.*oil\b", ["stranger_carries_oil", "oil_available"]),
+    (r"\b(loaf|basket) of (bread|food)\b", ["stranger_carries_food", "food_available"]),
+    (r"\bcarrying.*(food|bread)\b", ["stranger_carries_food", "food_available"]),
+    (r"\b(vial|bottle) of medicine\b", ["stranger_carries_medicine", "medicine_available"]),
+    (r"\bcarrying.*medicine\b", ["stranger_carries_medicine", "medicine_available"]),
+    (r"\b(burning low|nearly out|almost out|dying)\b", ["hearth_burning_low"]),
 
     # Child Tender scenario
     (r"\bchild tender\b", ["child_tender_in_hall"]),

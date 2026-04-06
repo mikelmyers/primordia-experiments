@@ -34,8 +34,11 @@ from abstractor import (
     crystallize_by_hdc_unconstrained,
     crystallize_by_hdc_role_weighted,
     crystallize_by_hdc_v4_token_projection,
+    synthesize_actions_by_analogy,
+    select_v4_analog,
     find_unhandled_facts,
 )
+from rule_store import _rule_to_dict
 from parser import parse
 from hdc import Codebook
 
@@ -51,7 +54,15 @@ def render_eval(ev: dict) -> list[str]:
     return out
 
 
-def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[str]:
+V4_WRITE_SCENARIOS = {11}
+
+
+def run_scenario(
+    scenario: dict,
+    store: RuleStore,
+    codebook: Codebook,
+    current_actions: list,
+) -> list[str]:
     out: list[str] = []
     title = scenario["title"]
     desc = scenario["description"]
@@ -59,6 +70,8 @@ def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[s
     out += [f"## {title}", "", f"**Description:** {desc}", ""]
 
     # ----- Layer 3: parser -----
+    # (v4 production write log gets prepended after parsing if applicable)
+
     parsed = parse(desc)
     out += [
         "### Layer 3 — Parser",
@@ -68,6 +81,96 @@ def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[s
         f"- goal: {parsed['goal']}",
         "",
     ]
+
+    # ----- Optional: v4 production write BEFORE retrieval/engine -----
+    # When enabled, v4 targets every substance that appears in this
+    # scenario's fact set (not just "unhandled" facts) and projects both
+    # rules and actions for any substance that doesn't yet have a v4
+    # crystallization. This sidesteps the limitation that the syntactic
+    # abstractor in earlier scenarios already "handled" these predicates.
+    v4_write_log: list[str] = []
+    if scenario["id"] in V4_WRITE_SCENARIOS:
+        active_roles_pre = active_roles_for_scenario(parsed["facts"])
+        substances_in_play: set[str] = set()
+        for f in parsed["facts"]:
+            for tok in f.split("_"):
+                if tok in SUBSTANCE_PROPERTIES:
+                    substances_in_play.add(tok)
+
+        already_v4: set[str] = set()
+        for entry in store.all_entries():
+            if entry.get("source") == "crystallized_v4":
+                tail = entry["id"].split("~")[-1].replace("_v4", "")
+                if tail in SUBSTANCE_PROPERTIES:
+                    already_v4.add(tail)
+
+        targets = sorted(substances_in_play - already_v4)
+        v4_write_log.append(
+            f"v4 PRODUCTION WRITE enabled for scenario {scenario['id']}"
+        )
+        v4_write_log.append(f"  substances in play: {sorted(substances_in_play)}")
+        v4_write_log.append(f"  already v4-handled: {sorted(already_v4)}")
+        v4_write_log.append(f"  v4 targets:         {targets}")
+        v4_write_log.append(f"  active roles:       {sorted(active_roles_pre)}")
+
+        for sub in targets:
+            synthetic = f"stranger_carries_{sub}"
+            v4_write_log.append(f"\n  --- target substance: `{sub}` ---")
+            new_rules, log = crystallize_by_hdc_v4_token_projection(
+                unhandled_fact=synthetic,
+                facts=parsed["facts"],
+                store=store,
+                properties_by_substance=SUBSTANCE_PROPERTIES,
+                property_roles=PROPERTY_ROLES,
+                active_roles=active_roles_pre,
+                codebook=codebook,
+            )
+            for line in log:
+                v4_write_log.append(f"  {line}")
+            for r in new_rules:
+                src_id = r.id.split("~")[0]
+                src_meta = store.get_meta(src_id)
+                if src_meta:
+                    new_tags = list(set(src_meta["context_tags"] + [f"{sub}_present"]))
+                    store.add_rule(
+                        r,
+                        domain=src_meta["domain"],
+                        context_tags=new_tags,
+                        source="crystallized_v4",
+                        confidence=0.4,
+                    )
+                    v4_write_log.append(f"  ✓ wrote rule `{r.id}` to store")
+
+            peer, sim, _ = select_v4_analog(
+                synthetic,
+                parsed["facts"],
+                SUBSTANCE_PROPERTIES,
+                PROPERTY_ROLES,
+                active_roles_pre,
+                codebook,
+            )
+            if peer is not None:
+                v4_write_log.append(
+                    f"  analog for action synthesis: `{peer}` (sim {sim:+.4f})"
+                )
+                new_actions, alog = synthesize_actions_by_analogy(
+                    new_obj=sub,
+                    peer=peer,
+                    action_library=current_actions,
+                )
+                for line in alog:
+                    v4_write_log.append(line)
+                for a in new_actions:
+                    current_actions.append(a)
+                    v4_write_log.append(
+                        f"  ✓ added action `{a.name}` to runtime library"
+                    )
+
+    if v4_write_log:
+        out += ["### Layer 2′ — v4 PRODUCTION WRITE (rules + action synthesis)", ""]
+        for line in v4_write_log:
+            out.append(f"- {line}")
+        out.append("")
 
     # ----- Layer 1: retriever -----
     retrieval = retrieve(parsed["facts"], parsed["goal"], store)
@@ -85,7 +188,7 @@ def run_scenario(scenario: dict, store: RuleStore, codebook: Codebook) -> list[s
     ]
 
     # ----- Engine -----
-    result = reason(parsed["facts"], parsed["goal"], active_rules, ACTIONS)
+    result = reason(parsed["facts"], parsed["goal"], active_rules, current_actions)
     best = result["best"]
     out += [
         "### Engine",
@@ -217,9 +320,10 @@ def run() -> None:
     ]
 
     codebook = Codebook(seed=42)
+    current_actions = list(ACTIONS)  # accumulates v4-synthesized actions
 
     for s in scenarios:
-        out += run_scenario(s, store, codebook)
+        out += run_scenario(s, store, codebook, current_actions)
 
     out += [
         "## Final rule store snapshot",

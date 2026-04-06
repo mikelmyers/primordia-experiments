@@ -48,5 +48,10 @@
     "id": 10,
     "title": "Scenario 10 (HDC test: Stranger with Medicine — neutral, helpful)",
     "description": "A Stranger arrives at the door carrying a vial of medicine. They are cold and ask to enter to warm themselves."
+  },
+  {
+    "id": 11,
+    "title": "Scenario 11 (loop-closing test: hearth burning low + Stranger with Oil)",
+    "description": "The Hearth is burning low. A Stranger arrives at the door carrying a jar of oil. They are cold and ask to enter to warm themselves."
   }
 ]

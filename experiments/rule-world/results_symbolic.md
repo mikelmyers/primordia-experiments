@@ -1,6 +1,6 @@
 # Results (four-layer symbolic pipeline)
 
-Run: 2026-04-06T13:23:15.486448Z
+Run: 2026-04-06T13:34:47.756630Z
 Pipeline: parser → retriever → engine → abstractor (no LLM, no matmul)
 Initial store size: 24 (all source=authored, confidence=1.0)
 
@@ -12,7 +12,7 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Layer 3 — Parser
 
-- matched patterns: 3
+- matched patterns: 4
 - facts: ['hearth_burning', 'hearth_burning_low', 'self_at_hearth', 'self_in_hall', 'wood_available']
 - goal: ['hearth_fed']
 
@@ -444,8 +444,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['water']
   -   • crystallized P-admitted-with-water~ice from P-admitted-with-water (substitute water→ice across rule)
   -   • crystallized R3~ice from R3 (substitute water→ice across rule)
-  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
-  -   ✓ added R3~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~ice to store with tags ['water_present', 'ice_present', 'stranger_present'], conf=0.4
+  -   ✓ added R3~ice to store with tags ['water_present', 'ice_present', 'stranger_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -601,20 +601,20 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 ### Layer 3 — Parser
 
 - matched patterns: 5
-- facts: ['hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
+- facts: ['hearth_burning', 'oil_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
 - goal: ['stranger_situation_resolved']
 
 ### Layer 1 — Retriever
 
 - store size: 26
-- inferred context tags: ['cold_being', 'hearth_present', 'stranger_present', 'tender_present']
+- inferred context tags: ['cold_being', 'hearth_present', 'oil_present', 'stranger_present', 'tender_present']
 - inferred domains: ['fire_safety', 'honesty', 'hospitality', 'physical']
 - active window: 26 rules → ['R4', 'C2', 'P-attendance', 'P-water-near-hearth', 'P-shelter', 'R2', 'C1', 'R3', 'P3a', 'R3~ice', 'R5', 'P-wet', 'P-water-in-hall', 'P-extinguish', 'P-admitted-with-water', 'P-admitted-with-water~ice', 'R1', 'C3', 'P-wood-leaving', 'P1', 'P2', 'P4', 'P5', 'P6', 'C4', 'C5']
 - dormant: 0 rules
 
 ### Engine
 
-- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
+- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'oil_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
 - forward-chain trace:
   - P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']
 
@@ -633,23 +633,39 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Layer 2 — Abstractor
 
-- unhandled facts: ['self_in_hall', 'stranger_carries_oil']
+- unhandled facts: ['oil_available', 'self_in_hall', 'stranger_carries_oil']
 - crystallized rule ids: ['P-admitted-with-water~oil', 'R3~oil']
 - reasoning log:
-  - PATH A — unhandled predicates: ['self_in_hall', 'stranger_carries_oil']
+  - PATH A — unhandled predicates: ['oil_available', 'self_in_hall', 'stranger_carries_oil']
+  -   • cannot split `oil_available` into head/object form; skipping analogy
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   -   • split `stranger_carries_oil` → head=`stranger_carries` object=`oil`
   -   • peer objects with same head: ['ice', 'water']
   -   • crystallized P-admitted-with-water~oil from P-admitted-with-water (substitute water→oil across rule)
   -   • crystallized R3~oil from R3 (substitute water→oil across rule)
-  -   ✓ added P-admitted-with-water~oil to store with tags ['oil_present', 'stranger_present', 'water_present'], conf=0.4
-  -   ✓ added R3~oil to store with tags ['oil_present', 'stranger_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~oil to store with tags ['oil_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added R3~oil to store with tags ['oil_present', 'water_present', 'stranger_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
-- unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_oil']
+- unhandled facts (captured pre-mutation): ['oil_available', 'self_in_hall', 'stranger_carries_oil']
 - active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `oil_available`
+
+- **v1 HDC (head-match restricted):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • cannot split `oil_available`
+  → crystallizes nothing
 
 #### Unhandled fact: `self_in_hall`
 
@@ -732,7 +748,7 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 ### Layer 3 — Parser
 
 - matched patterns: 5
-- facts: ['hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_food', 'stranger_cold']
+- facts: ['food_available', 'hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_food', 'stranger_cold']
 - goal: ['stranger_situation_resolved']
 
 ### Layer 1 — Retriever
@@ -745,7 +761,7 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Engine
 
-- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_food', 'stranger_cold']
+- initial state after chain: ['food_available', 'hall_has_attentive_tender', 'hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_food', 'stranger_cold']
 - forward-chain trace:
   - P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']
 
@@ -764,23 +780,39 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Layer 2 — Abstractor
 
-- unhandled facts: ['self_in_hall', 'stranger_carries_food']
+- unhandled facts: ['food_available', 'self_in_hall', 'stranger_carries_food']
 - crystallized rule ids: ['P-admitted-with-water~food', 'R3~food']
 - reasoning log:
-  - PATH A — unhandled predicates: ['self_in_hall', 'stranger_carries_food']
+  - PATH A — unhandled predicates: ['food_available', 'self_in_hall', 'stranger_carries_food']
+  -   • cannot split `food_available` into head/object form; skipping analogy
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   -   • split `stranger_carries_food` → head=`stranger_carries` object=`food`
   -   • peer objects with same head: ['ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~food from P-admitted-with-water (substitute water→food across rule)
   -   • crystallized R3~food from R3 (substitute water→food across rule)
-  -   ✓ added P-admitted-with-water~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
-  -   ✓ added R3~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~food to store with tags ['food_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added R3~food to store with tags ['food_present', 'water_present', 'stranger_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
-- unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_food']
+- unhandled facts (captured pre-mutation): ['food_available', 'self_in_hall', 'stranger_carries_food']
 - active roles for scenario: ['fire_relevant', 'nutritional', 'temperature_relevant']
+
+#### Unhandled fact: `food_available`
+
+- **v1 HDC (head-match restricted):**
+    • cannot split `food_available`
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • cannot split `food_available`
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • cannot split `food_available`
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • cannot split `food_available`
+  → crystallizes nothing
 
 #### Unhandled fact: `self_in_hall`
 
@@ -854,7 +886,7 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 ### Layer 3 — Parser
 
 - matched patterns: 5
-- facts: ['hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_medicine', 'stranger_cold']
+- facts: ['hearth_burning', 'medicine_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_medicine', 'stranger_cold']
 - goal: ['stranger_situation_resolved']
 
 ### Layer 1 — Retriever
@@ -867,7 +899,7 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Engine
 
-- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_medicine', 'stranger_cold']
+- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'medicine_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_medicine', 'stranger_cold']
 - forward-chain trace:
   - P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']
 
@@ -886,23 +918,39 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ### Layer 2 — Abstractor
 
-- unhandled facts: ['self_in_hall', 'stranger_carries_medicine']
+- unhandled facts: ['medicine_available', 'self_in_hall', 'stranger_carries_medicine']
 - crystallized rule ids: ['P-admitted-with-water~medicine', 'R3~medicine']
 - reasoning log:
-  - PATH A — unhandled predicates: ['self_in_hall', 'stranger_carries_medicine']
+  - PATH A — unhandled predicates: ['medicine_available', 'self_in_hall', 'stranger_carries_medicine']
+  -   • cannot split `medicine_available` into head/object form; skipping analogy
   -   • split `self_in_hall` → head=`self_in` object=`hall`
   -   • no peer predicates with head `self_in` found in store
   -   • split `stranger_carries_medicine` → head=`stranger_carries` object=`medicine`
   -   • peer objects with same head: ['food', 'ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~medicine from P-admitted-with-water (substitute water→medicine across rule)
   -   • crystallized R3~medicine from R3 (substitute water→medicine across rule)
-  -   ✓ added P-admitted-with-water~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
-  -   ✓ added R3~medicine to store with tags ['stranger_present', 'water_present', 'medicine_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~medicine to store with tags ['medicine_present', 'water_present', 'stranger_present'], conf=0.4
+  -   ✓ added R3~medicine to store with tags ['medicine_present', 'water_present', 'stranger_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
-- unhandled facts (captured pre-mutation): ['self_in_hall', 'stranger_carries_medicine']
+- unhandled facts (captured pre-mutation): ['medicine_available', 'self_in_hall', 'stranger_carries_medicine']
 - active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `medicine_available`
+
+- **v1 HDC (head-match restricted):**
+    • cannot split `medicine_available`
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • cannot split `medicine_available`
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • cannot split `medicine_available`
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • cannot split `medicine_available`
+  → crystallizes nothing
 
 #### Unhandled fact: `self_in_hall`
 
@@ -970,9 +1018,138 @@ Initial store size: 24 (all source=authored, confidence=1.0)
 
 ---
 
+## Scenario 11 (loop-closing test: hearth burning low + Stranger with Oil)
+
+**Description:** The Hearth is burning low. A Stranger arrives at the door carrying a jar of oil. They are cold and ask to enter to warm themselves.
+
+### Layer 3 — Parser
+
+- matched patterns: 7
+- facts: ['hearth_burning', 'hearth_burning_low', 'oil_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
+- goal: ['stranger_situation_resolved']
+
+### Layer 2′ — v4 PRODUCTION WRITE (rules + action synthesis)
+
+- v4 PRODUCTION WRITE enabled for scenario 11
+-   substances in play: ['oil']
+-   already v4-handled: []
+-   v4 targets:         ['oil']
+-   active roles:       ['fire_relevant', 'temperature_relevant']
+- 
+  --- target substance: `oil` ---
+-     • active roles: ['fire_relevant', 'temperature_relevant']
+-     • `oil` (role-filtered): ['feeds_fire', 'burnable', 'highly_flammable']
+-     • sim(oil, food) = +0.0016  → reject
+-     • sim(oil, ice) = -0.0006  → reject
+-     • sim(oil, medicine) = +0.0016  → reject
+-     • sim(oil, water) = +0.0026  → reject
+-     • sim(oil, wood) = +0.5152  → ACCEPT
+-     ✓ analog: `wood` (sim +0.5152)
+-     • would crystallize P3a~oil_v4 from P3a:
+-         antecedents:        ['oil_in_hearth', 'hearth_burning']
+-         derives:            ['hearth_fed']
+-     • would crystallize P-wood-leaving~oil_v4 from P-wood-leaving:
+-         antecedents:        ['oil_held_by_child', 'child_tender_at_door']
+-         derives:            ['oil_leaving_hall']
+-     • would crystallize C3~oil_v4 from C3:
+-         antecedents:        ['oil_supply_insufficient']
+-         requires_in_result: ['oil_replenishment_initiated']
+-   ✓ wrote rule `P3a~oil_v4` to store
+-   ✓ wrote rule `P-wood-leaving~oil_v4` to store
+-   ✓ wrote rule `C3~oil_v4` to store
+-   analog for action synthesis: `wood` (sim +0.5152)
+-   • synthesized action `add_oil_to_hearth` from `add_wood_to_hearth`:
+-       preconditions: ['oil_available', 'self_in_hall']
+-       add:           ['oil_in_hearth']
+-       remove:        ['hearth_burning_low']
+-   • synthesized action `initiate_oil_replenishment_plan` from `initiate_wood_replenishment_plan`:
+-       preconditions: ['oil_supply_insufficient']
+-       add:           ['oil_replenishment_initiated']
+-       remove:        []
+-   • synthesized action `leave_hall_to_gather_oil` from `leave_hall_to_gather_wood`:
+-       preconditions: ['oil_supply_insufficient', 'self_at_hearth']
+-       add:           ['oil_replenishment_initiated', 'self_at_door']
+-       remove:        ['self_at_hearth']
+-   ✓ added action `add_oil_to_hearth` to runtime library
+-   ✓ added action `initiate_oil_replenishment_plan` to runtime library
+-   ✓ added action `leave_hall_to_gather_oil` to runtime library
+
+### Layer 1 — Retriever
+
+- store size: 35
+- inferred context tags: ['cold_being', 'hearth_at_risk', 'hearth_present', 'oil_present', 'stranger_present', 'tender_present']
+- inferred domains: ['fire_safety', 'honesty', 'hospitality', 'physical']
+- active window: 30 rules → ['R4', 'C2', 'R3~oil', 'P-attendance', 'P-admitted-with-water~oil', 'P3a~oil_v4', 'P-water-near-hearth', 'P-shelter', 'R2', 'C1', 'R3', 'R3~ice', 'R1', 'P3a', 'R3~food', 'R3~medicine', 'R5', 'P-wet', 'P-water-in-hall', 'P-extinguish', 'P-admitted-with-water', 'P-admitted-with-water~ice', 'P-admitted-with-water~food', 'P-admitted-with-water~medicine', 'P-wood-leaving~oil_v4', 'C3~oil_v4', 'C3', 'P-wood-leaving', 'P1', 'P2']
+- dormant: 5 rules
+
+### Engine
+
+- initial state after chain: ['hall_has_attentive_tender', 'hearth_burning', 'hearth_burning_low', 'oil_available', 'self_at_hearth', 'self_in_hall', 'stranger_at_door', 'stranger_carries_oil', 'stranger_cold']
+- forward-chain trace:
+  - P-attendance: ['self_at_hearth'] ⇒ derives ['hall_has_attentive_tender']
+
+- action evaluations (best first):
+  - **add_oil_to_hearth** (score 267, goal_met=False)
+
+- **CHOSEN ACTION:** `add_oil_to_hearth` (score 267)
+- triggered rules: ['C1', 'C2', 'R1', 'R2', 'R3', 'R3~food', 'R3~ice', 'R3~medicine', 'R3~oil']
+
+- gap: True
+  - goal predicates not all satisfied
+
+### Layer 2 — Abstractor
+
+- unhandled facts: ['oil_available', 'self_in_hall']
+- crystallized rule ids: []
+- reasoning log:
+  - PATH A — unhandled predicates: ['oil_available', 'self_in_hall']
+  -   • cannot split `oil_available` into head/object form; skipping analogy
+  -   • split `self_in_hall` → head=`self_in` object=`hall`
+  -   • no peer predicates with head `self_in` found in store
+  - PATH B — engine reported gap: ['goal predicates not all satisfied']
+  -   • Path B (cross-rule synthesis from unmet obligations) is not implemented in this iteration. Logging only.
+### Layer 2 SHADOW — HDC abstractors (read-only comparison)
+
+- unhandled facts (captured pre-mutation): ['oil_available', 'self_in_hall']
+- active roles for scenario: ['fire_relevant', 'temperature_relevant']
+
+#### Unhandled fact: `oil_available`
+
+- **v1 HDC (head-match restricted):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • cannot split `oil_available`
+  → crystallizes nothing
+
+#### Unhandled fact: `self_in_hall`
+
+- **v1 HDC (head-match restricted):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` has no entry in property table; HDC analogy declines (would be ungrounded)
+  → crystallizes nothing
+- **v2 HDC (unconstrained peer search):**
+    • split `self_in_hall` → head=`self_in`, object=`hall`
+    • `hall` not in property table; v2 declines
+  → crystallizes nothing
+- **v3 HDC (role-weighted, fire-context):**
+    • `hall` not in property table; v3 declines
+  → crystallizes nothing
+- **v4 HDC (role-weighted + TOKEN-level projection):**
+    • `hall` not in property table; v4 declines
+  → crystallizes nothing
+
+---
+
 ## Final rule store snapshot
 
-- final store size: 32
+- final store size: 35
 - rules by source:
   - **authored** (24):
     - P3a (conf=1.0, used=0)
@@ -989,22 +1166,26 @@ Initial store size: 24 (all source=authored, confidence=1.0)
     - P4 (conf=1.0, used=0)
     - P5 (conf=1.0, used=0)
     - P6 (conf=1.0, used=0)
-    - R1 (conf=1.0, used=1)
-    - R2 (conf=1.0, used=10)
-    - R3 (conf=1.0, used=7)
+    - R1 (conf=1.0, used=2)
+    - R2 (conf=1.0, used=11)
+    - R3 (conf=1.0, used=8)
     - R4 (conf=1.0, used=5)
     - R5 (conf=1.0, used=1)
-    - C1 (conf=1.0, used=10)
-    - C2 (conf=1.0, used=10)
+    - C1 (conf=1.0, used=11)
+    - C2 (conf=1.0, used=11)
     - C3 (conf=1.0, used=1)
     - C4 (conf=1.0, used=10)
     - C5 (conf=1.0, used=0)
   - **crystallized** (8):
     - P-admitted-with-water~ice (conf=0.4, used=0)
-    - R3~ice (conf=0.4, used=4)
+    - R3~ice (conf=0.4, used=5)
     - P-admitted-with-water~oil (conf=0.4, used=0)
-    - R3~oil (conf=0.4, used=2)
+    - R3~oil (conf=0.4, used=3)
     - P-admitted-with-water~food (conf=0.4, used=0)
-    - R3~food (conf=0.4, used=1)
+    - R3~food (conf=0.4, used=2)
     - P-admitted-with-water~medicine (conf=0.4, used=0)
-    - R3~medicine (conf=0.4, used=0)
+    - R3~medicine (conf=0.4, used=1)
+  - **crystallized_v4** (3):
+    - P3a~oil_v4 (conf=0.4, used=0)
+    - P-wood-leaving~oil_v4 (conf=0.4, used=0)
+    - C3~oil_v4 (conf=0.4, used=0)
