@@ -2,36 +2,52 @@
   {
     "id": 1,
     "title": "Scenario 1 (covered)",
-    "facts": ["alone_in_hall", "hearth_burning_low", "wood_available"],
-    "goal": "keep_hearth_alive",
-    "candidate_actions": ["add_wood_to_hearth", "do_nothing", "leave_hall"]
+    "facts": [
+      "self_in_hall", "self_at_hearth",
+      "hearth_burning", "hearth_burning_low",
+      "wood_available"
+    ],
+    "goal": ["hearth_fed"]
   },
   {
     "id": 2,
     "title": "Scenario 2 (covered)",
-    "facts": ["stranger_at_door", "stranger_carries_water", "stranger_requests_entry"],
-    "goal": "decide_admission",
-    "candidate_actions": ["admit_stranger", "refuse_stranger", "admit_if_disarmed"]
+    "facts": [
+      "self_in_hall", "self_at_hearth",
+      "hearth_burning",
+      "stranger_at_door", "stranger_carries_water"
+    ],
+    "goal": ["stranger_situation_resolved"]
   },
   {
     "id": 3,
     "title": "Scenario 3 (covered)",
-    "facts": ["asked_by_tender", "wood_supply_insufficient"],
-    "goal": "respond_truthfully",
-    "candidate_actions": ["tell_truth", "lie_to_reassure", "stay_silent"]
+    "facts": [
+      "self_in_hall", "self_at_hearth",
+      "hearth_burning",
+      "asked_by_tender", "wood_supply_insufficient"
+    ],
+    "goal": ["tender_informed_truthfully"]
   },
   {
     "id": 4,
-    "title": "Scenario 4 (gap)",
-    "facts": ["stranger_at_door", "stranger_wet_with_water", "stranger_not_carrying_water", "stranger_cold"],
-    "goal": "decide_admission",
-    "candidate_actions": ["admit_stranger", "refuse_stranger", "admit_but_keep_far_from_hearth"]
+    "title": "Scenario 4 (gap: wet stranger)",
+    "facts": [
+      "self_in_hall", "self_at_hearth",
+      "hearth_burning",
+      "stranger_at_door", "stranger_wet", "stranger_cold"
+    ],
+    "goal": ["stranger_situation_resolved"]
   },
   {
     "id": 5,
-    "title": "Scenario 5 (gap)",
-    "facts": ["child_tender_taking_wood", "child_tender_walking_to_door", "only_other_tender_is_self", "hearth_burning"],
-    "goal": "preserve_hearth_and_wood",
-    "candidate_actions": ["chase_child", "call_out_to_child", "stay_at_hearth", "block_door_from_hearth"]
+    "title": "Scenario 5 (gap: child Tender taking Wood)",
+    "facts": [
+      "self_in_hall", "self_at_hearth",
+      "hearth_burning",
+      "child_tender_in_hall", "child_tender_at_door",
+      "wood_held_by_child"
+    ],
+    "goal": ["wood_recovered"]
   }
 ]
