@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "title": "Scenario 1 (covered: oil pan unattended)",
+    "description": "You are cooking. The burner is on with oil in the pan. You stepped away to answer the door."
+  },
+  {
+    "id": 2,
+    "title": "Scenario 2 (covered: raw chicken on counter)",
+    "description": "You are in the kitchen. Raw chicken is sitting on the counter from your shopping bag."
+  },
+  {
+    "id": 3,
+    "title": "Scenario 3 (covered: knife at edge)",
+    "description": "You are cooking. There is a knife on the edge of the counter."
+  },
+  {
+    "id": 4,
+    "title": "Scenario 4 (covered: grease fire)",
+    "description": "You are cooking. The pan caught fire — a small grease fire is in the pan."
+  },
+  {
+    "id": 5,
+    "title": "Scenario 5 (covered: chopping vegetables for dinner)",
+    "description": "You are in the kitchen. Carrots are on the counter and the knife is beside them. Dinner is in twenty minutes and the guests are hungry."
+  },
+  {
+    "id": 6,
+    "title": "Scenario 6 (covered: water spilled on stovetop)",
+    "description": "You are cooking. There is spilled water on the stovetop next to the burner."
+  },
+  {
+    "id": 7,
+    "title": "Scenario 7 (novel: butter melting in pan, walked away)",
+    "description": "You are cooking. The burner is on with a stick of butter melting in the pan. You walked away to answer the door."
+  },
+  {
+    "id": 8,
+    "title": "Scenario 8 (novel: cracked raw eggs on counter)",
+    "description": "You are in the kitchen. You cracked an egg and the raw eggs are on the counter from breakfast prep."
+  },
+  {
+    "id": 9,
+    "title": "Scenario 9 (novel: frozen peas out for dinner)",
+    "description": "You are in the kitchen. A bag of frozen peas is on the counter and the knife is beside them. Dinner is in twenty minutes and the guests are hungry."
+  }
+]

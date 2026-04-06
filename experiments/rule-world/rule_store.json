@@ -530,8 +530,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "ice_present"
+        "ice_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -554,8 +554,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "ice_present"
+        "ice_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 5,
@@ -579,8 +579,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "oil_present"
+        "oil_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -605,8 +605,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "oil_present"
+        "oil_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 2,
@@ -632,8 +632,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "food_present"
+        "food_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -656,8 +656,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "food_present"
+        "food_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 2,
@@ -681,8 +681,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "medicine_present"
+        "medicine_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -705,8 +705,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "water_present",
-        "medicine_present"
+        "medicine_present",
+        "water_present"
       ],
       "confidence": 0.4,
       "usage_count": 1,
@@ -729,9 +729,9 @@
       "statement": "[v4 token-projected from P3a via wood\u2192oil (sim +0.515)] Wood in burning Hearth produces fed Hearth.",
       "domain": "physical",
       "context_tags": [
+        "hearth_present",
         "oil_present",
-        "wood_present",
-        "hearth_present"
+        "wood_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
