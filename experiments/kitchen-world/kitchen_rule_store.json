@@ -408,8 +408,8 @@
       "statement": "[v4 token-projected from R4 via vegetable\u2192peas (sim +0.487)] A vegetable to be served must be chopped.",
       "domain": "food_prep",
       "context_tags": [
-        "peas_present",
         "mealtime",
+        "peas_present",
         "vegetable_present"
       ],
       "confidence": 0.4,

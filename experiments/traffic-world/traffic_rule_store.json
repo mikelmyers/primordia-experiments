@@ -313,8 +313,8 @@
       "statement": "[v4 token-projected from R6 via bicycle\u2192horse_carriage (sim +0.633)] Vehicles must give wide berth to bicycles ahead.",
       "domain": "shared_road",
       "context_tags": [
-        "vulnerable_present",
         "bicycle_present",
+        "vulnerable_present",
         "horse_carriage_present"
       ],
       "confidence": 0.4,
