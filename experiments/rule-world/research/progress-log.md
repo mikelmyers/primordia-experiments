@@ -418,3 +418,107 @@ be bootstrapped from rule structure + parsed observations alone, with
 the remaining 33% traceable to corpus coverage gaps that are themselves
 addressable by closing the crystallization → induction loop. The
 property-table authoring bottleneck is no longer fully blocking.
+
+---
+
+## Iteration 10 — Crystallization → induction loop closure (mixed result)
+
+**Hypothesis.** Feeding v4-crystallized rules back into the structural
+inducer should close iteration 9's `oil → wood` failure, because
+`P3a~oil_v4` (oil_in_hearth → hearth_fed) gives oil a `shape:X_in_hearth`
+feature that uniquely matches wood.
+
+**What was built.**
+- `experiments/rule-world/research/iteration10_runner.py` — runs four
+  variants of induction per query: A baseline (i9), B full loop
+  (authored + all crystallized), C held-out (loop minus crystallizations
+  mentioning the query substance, as a laundering check), D loop with
+  IDF feature weighting (rare/discriminating features score higher).
+- No new files; reuses `property_inducer.py` and `compression.py`.
+
+**Result — top-1 agreement unchanged.**
+
+| domain | query | target | A | B | C | D |
+|---|---|---|---|---|---|---|
+| rule-world | oil | wood | ❌ | ❌ | ❌ | ❌ |
+| rule-world | food | medicine | ✅ | ✅ | ✅ | ✅ |
+| rule-world | medicine | food | ✅ | ✅ | ✅ | ✅ |
+| traffic-world | horse_carriage | bicycle | ✅ | ✅ | ✅ | ✅ |
+| traffic-world | robotaxi | car | ✅ | ✅ | ✅ | ✅ |
+| traffic-world | fire_engine | truck | ❌ | ❌ | ❌ | ❌ |
+
+Top-1 stays at 4/6 across every variant. The bottom line is: closing
+the loop did not flip any failing query to passing.
+
+**Result — rank-of-target improved for oil under IDF.** The interesting
+sub-finding lives in the rank table:
+
+| query | target | A | B | C | D (loop+IDF) |
+|---|---|---|---|---|---|
+| oil | wood | rank 5 | rank 5 | rank 5 | **rank 3** |
+
+The loop *does* surface the right signal — oil ends up sharing
+`shape:X_in_hearth` with wood after `P3a~oil_v4` enters the corpus —
+but the signal is drowned by symmetric noise. Specifically, the
+syntactic pre-v4 crystallizations (`P-admitted-with-water~ice`,
+`R3~oil`, `P-admitted-with-water~food`, etc.) add identical features
+to oil/food/medicine/ice. With plain count scoring, oil shares 5
+features with wood but 7 with food. IDF weighting reduces the noise
+floor and lifts wood from rank 5 to rank 3, but not to rank 1.
+
+**Held-out check (variant C) is clean.** For every query, dropping
+crystallized rules that mention the query substance produces results
+*identical* to the baseline (variant A). This means: there is no
+transferable signal from one substance's crystallizations to another's
+analog selection. The only crystallization that matters for finding
+oil's analog is the one v4 produced *for oil*. Variant C confirming
+this is good — it means we are not laundering, but it also means the
+loop's reach is limited to the substances v4 has already operated on.
+
+**What this proves.**
+- The crystallization → induction loop runs cleanly end to end.
+- v4-style rule crystallizations DO add the structurally-correct
+  discriminating feature (`shape:X_in_hearth` for oil↔wood).
+- IDF weighting moves the right answer from invisible to rank 3.
+
+**What this disproves (or at least dents).**
+- The optimistic iteration-9 reading that "the loop should close the
+  remaining 33% gap." The loop adds the right *signal* but does not
+  by itself flip the *score*. The signal-to-noise ratio of the current
+  inducer is too low for top-1 to flip with one v4 crystallization in
+  a sea of nine syntactic ones.
+- The hope that iteration 10 alone would push agreement to 6/6.
+
+**Diagnosed root cause.** The pre-v4 syntactic crystallizations
+(`R3~ice`, `P-admitted-with-water~food`, etc.) are in the rule store
+because earlier iterations needed them, but they are *symmetric*: every
+novel substance gets the same pair of stranger-related rules. Feeding
+them into the inducer adds equal noise to every substance's feature
+set without contributing discriminating signal. This is iteration 7's
+"hygiene" problem from a new angle — those rules should probably not
+participate in property induction even if they remain in the engine's
+firing set.
+
+**Honest next moves, ranked.**
+1. **Filter the inducer's rule corpus to v4-only crystallizations**
+   (suppress the syntactic ones for induction purposes only). This is
+   the smallest change with the highest expected return — it should
+   give oil → wood at rank 1 with no other change. Iteration 11.
+2. **Generate more v4 crystallizations** by running additional
+   adversarial scenarios. More true-analogical rules per substance =
+   more discriminating signal per substance.
+3. **Add a discriminator-aware encoder to the inducer** so features
+   that perfectly co-occur across many substances are collapsed before
+   scoring. IDF is the cheap version of this; PMI would be more
+   principled.
+4. **Accept that fire_engine will remain ❌ until truck appears in the
+   traffic-world corpus.** That's a corpus problem, not an algorithm
+   problem, and the right fix is adding scenarios involving trucks —
+   not making the inducer cleverer.
+
+**Status of the trillion-dollar reframe after iteration 10.** Unchanged
+in headline, sharpened in detail. Property-table induction works at
+~67% top-1 agreement. The loop closure runs but does not improve top-1
+agreement on its own. The diagnostic resolution improved: we now know
+*why* it doesn't improve (symmetric noise from syntactic
+crystallizations) and have a one-line fix to test in iteration 11.

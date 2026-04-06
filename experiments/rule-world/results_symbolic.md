@@ -1,6 +1,6 @@
 # Results (four-layer symbolic pipeline)
 
-Run: 2026-04-06T14:24:56.499464Z
+Run: 2026-04-06T15:57:04.104298Z
 Pipeline: parser → retriever → engine → abstractor (no LLM, no matmul)
 Initial store size: 24 (all source=authored, confidence=1.0)
 
@@ -498,8 +498,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['water']
   -   • crystallized P-admitted-with-water~ice from P-admitted-with-water (substitute water→ice across rule)
   -   • crystallized R3~ice from R3 (substitute water→ice across rule)
-  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
-  -   ✓ added R3~ice to store with tags ['stranger_present', 'ice_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
+  -   ✓ added R3~ice to store with tags ['stranger_present', 'water_present', 'ice_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 
@@ -875,8 +875,8 @@ Initial store size: 24 (all source=authored, confidence=1.0)
   -   • peer objects with same head: ['ice', 'oil', 'water']
   -   • crystallized P-admitted-with-water~food from P-admitted-with-water (substitute water→food across rule)
   -   • crystallized R3~food from R3 (substitute water→food across rule)
-  -   ✓ added P-admitted-with-water~food to store with tags ['food_present', 'stranger_present', 'water_present'], conf=0.4
-  -   ✓ added R3~food to store with tags ['food_present', 'stranger_present', 'water_present'], conf=0.4
+  -   ✓ added P-admitted-with-water~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
+  -   ✓ added R3~food to store with tags ['stranger_present', 'water_present', 'food_present'], conf=0.4
   - PATH B — no engine-reported gap
 ### Layer 2 SHADOW — HDC abstractors (read-only comparison)
 

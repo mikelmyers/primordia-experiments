@@ -530,8 +530,8 @@
       "domain": "physical",
       "context_tags": [
         "stranger_present",
-        "ice_present",
-        "water_present"
+        "water_present",
+        "ice_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -554,8 +554,8 @@
       "domain": "hospitality",
       "context_tags": [
         "stranger_present",
-        "ice_present",
-        "water_present"
+        "water_present",
+        "ice_present"
       ],
       "confidence": 0.4,
       "usage_count": 5,
@@ -631,9 +631,9 @@
       "statement": "[crystallized from P-admitted-with-water by water\u2192food analogy] A water-bearing stranger inside the Hall is admitted with water.",
       "domain": "physical",
       "context_tags": [
-        "food_present",
         "stranger_present",
-        "water_present"
+        "water_present",
+        "food_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
@@ -655,9 +655,9 @@
       "statement": "[crystallized from R3 by water\u2192food analogy] A Tender may permit a Stranger into the Hall only if the Stranger carries no Water.",
       "domain": "hospitality",
       "context_tags": [
-        "food_present",
         "stranger_present",
-        "water_present"
+        "water_present",
+        "food_present"
       ],
       "confidence": 0.4,
       "usage_count": 2,
@@ -729,9 +729,9 @@
       "statement": "[v4 token-projected from P3a via wood\u2192oil (sim +0.515)] Wood in burning Hearth produces fed Hearth.",
       "domain": "physical",
       "context_tags": [
-        "hearth_present",
         "oil_present",
-        "wood_present"
+        "wood_present",
+        "hearth_present"
       ],
       "confidence": 0.4,
       "usage_count": 0,
