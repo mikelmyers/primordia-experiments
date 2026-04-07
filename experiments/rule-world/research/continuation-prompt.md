@@ -9,271 +9,235 @@ results.
 
 ## What you are walking into
 
-The repository is `mikelmyers/primordia-experiments`, branch
-`claude/document-rule-world-status-iltb9`, HEAD `ba0d945` as of
-2026-04-06 18:17 UTC. Fourteen iterations are complete. The
-architecture is mature in its closed-domain reasoning layer and
-incomplete in its open-domain generation layer. The trillion-dollar
-question — *can equivalent or superior generative intelligence be
-produced without matmul at scale?* — is still open, and answering it
-is the actual goal.
+Repository: `mikelmyers/primordia-experiments`.
+Branch: `claude/review-continuation-prompt-9afno`.
+HEAD: `807d5a1` (Iteration 15 landed and pushed).
+Iterations complete and committed: 1 through 15.
+Iteration 16 is **in progress and not yet committed** — the literature
+review was run, the findings are summarized below, but the write-up
+files have not been created. Your first job is to finalize iteration
+16 to disk, then move to iteration 17.
 
 ## The four documents you must read first, in order
 
 1. **`experiments/rule-world/research/post-matmul-foundations.md`** —
-   the math. Parts 1–5 plus updates. Read all of it. Specifically
-   internalize Part 4 ("the unsolved math problem hiding under the
-   engineering question") and Part 2 (the survey of mathematical
-   landscapes) — these frame what would actually count as a
-   breakthrough.
+   the math. Parts 1–5 plus updates. Specifically internalize Part 2
+   (the landscape) and Part 4 (the unsolved math problem).
 
 2. **`experiments/rule-world/research/progress-log.md`** — the
-   chronological lab notebook of all 14 iterations. Read it cover to
-   cover. Note especially the iteration-by-iteration "what this
-   proves / what this does not prove" pairs. The honesty discipline
-   in those pairs is the most important single thing about how this
-   work is done. Match it.
+   chronological lab notebook through iteration 15. Iteration 15 is
+   the first real swing at the open-domain side of the trillion-dollar
+   question. Read it carefully, especially its "what this does not
+   prove" section. Iteration 16 entry does not exist yet; you will
+   write it.
 
 3. **`experiments/rule-world/research/WHERE-WE-STAND-2026-04-06-1817.md`** —
-   the research-state snapshot you should treat as the canonical
-   summary of the current position. Headline numbers are there.
-   Open problems are there. What is and is not claimed is there.
+   the research-state snapshot. It has been amended with a
+   post-iteration-15 headline. Iteration 16 amendment is not there
+   yet; you will add it after finalizing iteration 16.
 
-4. **`experiments/rule-world/research/STATUS-2026-04-06.md`** — the
-   earlier post-iteration-8 snapshot, kept for historical context.
-   Compare against WHERE-WE-STAND to see what shifted between
-   iteration 8 and iteration 14.
+4. **`experiments/clm/iter15_results.md` and `iter15_results.json`** —
+   the PPM-D vs nanoGPT bpc table on text8. This is our anchor
+   empirical data point for the open-domain question.
 
-## The claim space (what is and is not currently claimable)
+## The claim space as of iteration 15
 
-Claimable after iteration 14:
-- Closed-domain reasoning without matmul, demonstrated at N=3
-  unrelated domains (rule-world, traffic-world, kitchen-world).
-- Grounded analogy substrate-independent across HDC and compression.
-- Property-table induction at **89% top-1** across N=3 with no
-  hand-authored property labels (8/9 adversarial queries).
-- Crystallization → induction loop closure verified (oil → wood
-  flipped from rank 5 to rank 1 by filtering syntactic crystallizations).
-- Verbose NL explanation across N=3 (28/28 scenarios) with honest
-  bug reporting.
-- Humanization dictionary induction at **33%** combined (partial win,
-  rule-world 38.6%, traffic-world 21.6%, kitchen-world 38.1%).
+Claimable:
+- Closed-domain reasoning without matmul across N=3 unrelated domains
+  (rule-world, traffic-world, kitchen-world).
+- Property induction at 89% top-1, humanization induction at 33%.
+- Verbose NL explanation across 28/28 scenarios.
+- **First open-domain data point (iteration 15):** PPM-D order 6 on
+  text8 at 90 MB reaches **1.731 bpc** on a 500 KB held-out slice.
+  A compute-matched CPU nanoGPT baseline (420 s wallclock, 814K params)
+  plateaus at ~2.52 bpc at every training size — compute-bound, not
+  data-bound. The gap to the published Transformer-XL ceiling
+  (~1.08 bpc) is 1.60×, just past the pre-declared 1.5× live-signal
+  threshold.
 
-NOT claimable:
-- Open-domain free text generation. **Untouched.**
-- Statistical pattern extraction from unstructured text without
-  gradient descent on dense matrices. **Untouched.**
-- Acquiring rules themselves from text. **Untouched.**
-- Generality at non-toy vocabulary scale. **Untested.**
-- A general parser. Largest remaining hand-authored surface.
-- **Any answer to the trillion-dollar question.** The closed-domain
-  result is a smaller, related win — not the answer.
+Not claimable:
+- Open-domain free text generation. Still untouched.
+- Any answer to the trillion-dollar question.
+- A well-funded transformer baseline we ran ourselves (we only have
+  published ceiling numbers to cite).
 
-## How to behave
+## What iteration 16 found (do NOT lose this)
 
-**Be honest about uncertainty.** The user values honesty over
-advocacy. If a result is mixed, say it is mixed. If you don't know,
-say you don't know. If your previous claim was wrong, say so. Do not
-pad results. Do not hide failures. The grease-fire scenario in
-iteration 13 — where the explainer surfaces its own bad decision —
-is the model for how every result should be reported.
+Iteration 16 was not a code iteration. It was a structured
+literature review of every serious prior attempt at matmul-free /
+gradient-free generative substrates. Coverage: HDC/VSA for language,
+classical and modern Hopfield, Numenta HTM, compression LMs (PPM/CTW/
+cmix/NNCP), reservoir computing, spiking NNs (incl. SpikeGPT — which
+is backprop-trained and not matmul-free), thermodynamic computing
+(Extropic/Normal — no published LM results), feedback alignment
+(Bartunov 2018 — the canonical scale-up negative result), predictive
+coding (μPC 2025 — vision only), equilibrium propagation (ImageNet-32,
+no text), Hinton's forward-forward (MNIST/IMDb only), tensor networks
+for language (PTB/WikiText-2, bond-dimension wall), Eliasmith's Spaun
+(HRR chain-length noise wall).
 
-**Distinguish "research progress" from "product progress".** The user
-is not asking you to ship anything. They are asking you to find out
-whether the research question has an answer. Iteration 13 produced a
-system that *could* be a product, but the user explicitly redirected:
-"This isn't a product." Treat that as durable instruction.
+**The payoff of the review — the shared-assumptions section — is the
+main output.** Six assumptions recur across the walls. The three
+strongest form a single wall in three vocabularies:
 
-**The trillion-dollar question is the only goal.** Every iteration
-should be evaluated by the question "does this move us closer to
-answering whether matmul-free generative intelligence is possible at
-scale?" not by "does this make the existing closed-domain stack
-better?" Polishing the closed-domain stack is fine when it serves the
-research, not when it serves an imagined product.
+- **A1:** "A single fixed-capacity vector must carry the context."
+  (HDC bundling, HRR binding, Hopfield attractors, MPS bond dimension,
+  ESN spectral horizon — all the same wall.)
+- **A4:** "Scaling means denser." (Every substrate's scale-up knob
+  increases the density of a dense-matmul-equivalent operation.)
+- **A6:** "Long-range dependencies must live in the substrate's
+  state." (All RNN-family substrates + HDC + TN.)
 
-**Build in rule-world first, then transfer.** Every layer that has
-worked has been built in rule-world, then validated in traffic-world,
-then validated in kitchen-world. Twice this discipline has surfaced
-hidden assumptions (the iteration-8 multi-token bug, the iteration-12
-antecedent-scoring bug). Skip the discipline at your peril.
+These three together are the wall every matmul-free LM attempt has
+hit. The transformer's actual innovation, viewed from this inventory,
+is not "matmul" or "attention" — it is **"stop compressing context
+into a state vector at all; keep the raw context around and look it
+up against it."** Transformers do this with KV cache + softmax.
+Databases do it with indices + lookups.
 
-**Match the iteration template.** Each iteration entry in
-`progress-log.md` follows the same shape: Hypothesis → What was built
-→ Result (with concrete numbers) → Diagnosed failures → What this
-proves → **What this does not prove** → Status of the trillion-dollar
-reframe. Use this template for every new iteration. The "what this
-does not prove" section is non-optional and is where the user looks
-first to test your honesty.
+**The critical research observation:** our existing property-graph +
+symbolic-engine architecture (rule-world, traffic-world, kitchen-world)
+already makes the same architectural move — *without matmul*, by
+replacing softmax-over-keys with index-lookup-over-graph-nodes. We
+already drop A1. We already drop A6. The PPM-D experiment in
+iteration 15 is the negative control: it keeps A1 (a dense parametric
+context model) and plateaus exactly where the theory predicts it
+should.
 
-**Never modify rule-world architecture files in a transfer test.**
-The architectural contract from iteration 12 is: rule-world is the
-source of truth, transfer domains import its machinery unmodified.
-Any change to `engine.py`, `abstractor.py`, `hdc.py`, `compression.py`,
-`retriever.py`, `rule_store.py` is a research event in itself and
-should be its own iteration entry with a clear justification. The
-iteration-12 multi-token v4 projection bug and antecedent-scoring bug
-are open precisely because fixing them would have violated this
-contract mid-iteration.
+Two other shared assumptions also stand out as droppable:
+- **A2:** locality of the learning rule (biological constraint, not
+  logical — we aren't trying to be biologically plausible).
+- **A5:** biological/physical plausibility as a design constraint
+  (inherited by most of the field — not inherited by our stack).
 
-## What the user wants you to do next
+A3 (generation = sampling from a parametric distribution fit by loss
+minimization) is the subtlest. Symbolic engines can generate by
+**construction** (graph traversal + rewriting) rather than by
+sampling. This is the conceptual bridge to iteration 17+.
 
-The user has explicitly framed the next phase as: *"We are going to
-keep researching this until we actually do get to a real breakthrough."*
-The research directions, ranked by closeness to the trillion-dollar
-question (from `WHERE-WE-STAND-2026-04-06-1817.md`):
+## Iteration 16 — what you must write to disk
 
-1. **Open-domain text generation without matmul.** The hardest, the
-   most valuable, and the unstarted one. Compression-based language
-   modeling (PPM, CTW, arithmetic coding over byte streams) is the
-   most promising matmul-free starting point per Part 2 of the math
-   doc. Nobody has tried this with modern compute and modern data.
-   This is iteration 15's most ambitious candidate.
+**Do not re-run the literature review.** The findings are durable;
+copy them from the iteration-16 section in the chat history of the
+session that was interrupted. If the full findings are unavailable,
+re-run a focused subagent search with the same prompt structure:
+target 10–12 entries with {name, citation, what built, best scale,
+best metric, failure mode, underlying assumption, do-we-share-it,
+confidence}, and the shared-assumptions section at the end.
 
-2. **The unsolved math problem from Part 4.** A learning rule for
-   distributed representations that is (a) gradient-free, (b) scales
-   linearly in data, (c) provably converges to representations
-   capturing conditional structure, (d) composes across layers.
-   Hebbian + HDC is the obvious starting point and has never been
-   tested at language scale. A single positive result on this
-   problem would be a breakthrough on its own.
+Files to create:
 
-3. **Acquiring rules themselves from text.** The CYC failure mode,
-   worth retrying with the modern stack we now have. If a system
-   could read a paragraph of domain description and produce
-   formal Rule objects, the entire architecture would suddenly
-   scale to domains nobody hand-authored.
+1. `experiments/rule-world/research/failure-modes-inventory.md` — the
+   full inventory. Keep entries faithful to the subagent's findings,
+   clean the formatting, add a preamble explaining the iteration and
+   the method. The shared-assumptions synthesis section is the main
+   payoff and must be present.
 
-4. **A general parser.** Largest remaining hand-authored surface.
-   Probably needs *some* statistical component but perhaps not a
-   full LLM. Classical NLP (tokenizer + dependency parser + entity
-   linker) is matmul-light.
+2. `experiments/rule-world/research/progress-log.md` — append an
+   iteration 16 entry following the template (Hypothesis → What was
+   built → Result → What this proves → **What this does not prove**
+   → Status of the trillion-dollar reframe). Iteration 16 is a
+   **literature-synthesis iteration**, not a code iteration. The
+   hypothesis: "structured inventory of prior failure modes will
+   localize shared assumptions that, if broken, would open new
+   ground." The result: the six shared assumptions, with the finding
+   that our existing stack already drops A1/A4/A6 and the PPM-D
+   experiment is the negative control. The "what this does not
+   prove" section is mandatory and should explicitly include: (a)
+   the inventory is not exhaustive, (b) "never tested at scale" is
+   not the same as "would work at scale," (c) shared-assumption
+   analysis can be wrong even when the inventory is right, (d) the
+   synthesis may be confirmation-biased toward our existing stack.
 
-5. **Scale tests.** Run the existing architecture on a domain with
-   hundreds of substances and thousands of scenarios. Find which
-   assumption breaks first.
+3. `experiments/rule-world/research/WHERE-WE-STAND-2026-04-06-1817.md`
+   — add a post-iteration-16 amendment at the top, under the
+   post-iteration-15 amendment, with the six shared assumptions and
+   the architectural observation that our stack already drops three
+   of them.
 
-6. **The two iteration-12 bugs.** Multi-token v4 projection and
-   antecedent-removing visceral scoring. Tractable, narrow, but
-   neither moves the trillion-dollar question — they are debt.
+4. Commit + push with a clear iteration-16 commit message.
 
-7. **N=4 and N=5 transfer domains.** N=3 caught the bugs N=2 missed.
-   The diminishing-returns curve is unknown.
+## How to behave (unchanged from earlier continuation prompts)
 
-**Default if the user has not specified: direction 1 or direction 2.**
-Both are genuine swings at the open question. Direction 1 is more
-empirically falsifiable (you can run a compression LM on a corpus
-and measure perplexity vs a small transformer). Direction 2 is more
-mathematically interesting.
+- Be honest about uncertainty. Negative results are valuable output.
+- "What this does not prove" is mandatory on every iteration entry.
+- Do not pitch the architecture as a product.
+- Do not modify `engine.py`, `abstractor.py`, `hdc.py`,
+  `compression.py`, `retriever.py`, `rule_store.py` without flagging
+  the change as a rule-world architecture event in its own iteration.
+- Rule-world is the source of truth. Transfer domains validate.
+- Match the iteration template.
+- The trillion-dollar question is the only goal. Polishing the
+  closed-domain stack is fine when it serves the research, not when
+  it serves an imagined product.
 
-If you have the option, **do not start with directions 3–7.** Those
-are research debt or scaling debt, not research progress. They are
-valuable when nothing else is moving, but they should not crowd out
-the actual swings at the open question.
+## What the user wants you to do next (iteration 17 candidates)
 
-## How to start a new iteration
+After finalizing iteration 16 to disk, propose iteration 17. The
+shared-assumptions finding reorders the direction ranking from the
+earlier continuation prompt. In priority order:
 
-1. Open `progress-log.md` and read the last entry to confirm you
-   understand the current state.
-2. Pick a direction (1 or 2 by default unless the user has redirected).
-3. State the hypothesis you are testing in one sentence.
-4. State the success metric in one sentence — what number would you
-   need to see to call it a positive result, and what number would
-   you call a clean negative.
-5. Build the smallest experiment that produces that number.
-6. Run it. Capture the actual number, including if it is negative.
-7. Write the iteration entry following the template in
-   `progress-log.md`. The "what this does not prove" section is
-   mandatory.
-8. Commit and push to the same branch.
-9. Update the WHERE-WE-STAND document timestamp + headline numbers
-   if the iteration changed the headline.
+1. **Extend the property-graph substrate toward open-domain generation
+   by construction, not by sampling.** This is the A1/A3/A6 swing.
+   Concretely: can the rule-world engine generate a novel paragraph
+   about a grounded topic by graph traversal + token substitution +
+   HDC analogy, with no parametric distribution and no softmax? The
+   iteration-11 v4 pipeline already does this for single-action
+   outputs. The next step is multi-sentence coherent text about a
+   closed domain — not ChatGPT-scale, but a real demonstration that
+   "generation by construction" is possible for structured knowledge.
+   If this works, scaling up is the subsequent question. If it
+   doesn't, we learn where graph-based generation hits its own wall.
 
-## Things to avoid
+2. **CTW as the compression-family door-closer.** Cheap (~1 day),
+   independent second data point for the compression family.
+   Expected within 0.1 bpc of PPM-D. Useful confirmation, not a swing.
 
-- Modifying `engine.py`, `abstractor.py`, `hdc.py`, `compression.py`,
-  `retriever.py`, or `rule_store.py` without flagging it as a
-  rule-world architecture change in its own iteration entry.
-- Deleting `results.md` (the original LLM-baseline output, kept for
-  comparison — never overwrite).
-- Introducing matmul, numpy linear algebra beyond `np.sign` and dot
-  products of int8 vectors, or any learned parameter that requires
-  gradient descent. **The whole point is matmul-free.**
-- Starting an iteration without an explicit success/failure metric.
-- Reporting only positive numbers.
-- Skipping the "what this does not prove" section.
-- Treating closed-domain wins as if they answered the open question.
-- Pitching the architecture as a product.
-- Hiding bugs the architecture surfaces about itself.
-- Padding results to look better than they are. The iteration 14
-  result (33% partial win) is a model for how to report a mixed
-  outcome honestly.
-- Using TodoWrite for short tasks; reserve it for genuinely
-  multi-step iteration plans.
+3. **A well-funded transformer baseline** so the "1.60× gap" becomes
+   measurement-quality instead of estimate-quality. Requires GPU or
+   overnight CPU.
 
-## A note on the user's research disposition
+4. **Scale tests of the closed-domain reasoner** on a domain with
+   hundreds of substances and thousands of scenarios. Finds where
+   the property-graph architecture actually breaks before we try to
+   extend it to open-domain.
 
-The user is explicitly comfortable with failure. They would rather
-see "we tried compression-based language modeling and it produced
-worse perplexity than a small transformer at every corpus size we
-tried" than see "we got 47% on this synthetic benchmark we just
-made up." Negative results are valuable research output and should
-be reported with the same care as positive ones. If a swing fails
-honestly, that is iteration progress. If a swing succeeds dishonestly,
-that is iteration regress.
+5. **The Part 4 learning-rule problem (Hebbian/HDC at language
+   scale).** Still the "strongest single candidate" per the math doc,
+   but shares A1 with HDC language modeling and is therefore subject
+   to the bundle-saturation wall the inventory documents. Worth
+   trying only if direction 1 saturates.
 
-The user's stated goal — verbatim — is: *"We are going to keep
-researching this until we actually do get to a real breakthrough."*
-There is no time pressure. There is no demo. There is just the
-question, and the discipline of trying to answer it.
-
-## How to run the existing pipelines (sanity check)
-
-Before starting iteration 15, run all three domains plus the
-property inducer to confirm nothing has rotted:
-
-```bash
-cd /home/user/primordia-experiments
-
-# Three domain pipelines
-python experiments/rule-world/runner_symbolic.py
-python experiments/traffic-world/traffic_runner.py
-python experiments/kitchen-world/kitchen_runner.py
-
-# Property inducer comparison across N=3
-python experiments/rule-world/research/iteration12_runner.py
-
-# Verbose NL explanations across N=3
-python experiments/rule-world/research/iteration13_runner.py
-
-# Humanization dictionary induction across N=3
-python experiments/rule-world/research/iteration14_runner.py
-```
-
-Expected outputs:
-- All scenarios resolve without exceptions.
-- Iteration 12 prints `Combined N=3 result: 8/9 = 89%` for property
-  induction.
-- Iteration 13 prints `scenarios explained: rule-world=11
-  traffic-world=8 kitchen-world=9` and writes the explanations
-  markdown.
-- Iteration 14 prints combined `33.3%` coverage.
-
-If any of these break, that is iteration 15's first job — find what
-rotted, fix it, document it as a regression iteration.
+**Default if the user has not specified: direction 1.** It is the
+one direction that (a) builds on what already works in the stack,
+(b) drops the assumptions the inventory flagged as breakable, and
+(c) produces a result — positive or negative — that directly
+informs the trillion-dollar question.
 
 ## Branch and commit state at handoff
 
-Branch: `claude/document-rule-world-status-iltb9`
-HEAD:   `ba0d945` (Iteration 14: humanization dictionary induction
-        partial win, 33%)
-Tip:    14 iterations in, all on this branch, all pushed to origin.
+Branch: `claude/review-continuation-prompt-9afno`
+HEAD: `807d5a1` (Iteration 15: CLM vs nanoGPT on text8, mixed-but-real result)
+Untracked / uncommitted at handoff: **iteration 16 files have not
+been written yet**. The subagent returned its findings in the prior
+session's chat history. Your first action should be to finalize
+iteration 16 to disk, then commit and push, then propose iteration 17.
 
-Last 5 iteration commits in chronological order:
-- Iteration 10: crystallization → induction loop closure (mixed)
-- Iteration 11: v4-only loop closure (5/6 top-1, the fix landed)
-- Iteration 12: third domain transfer test (kitchen-world) at N=3
-- Iteration 13: verbose NL explanations across N=3, zero matmul
-- Iteration 14: humanization dictionary induction (partial, 33%)
+## Things to avoid
 
-You are now caught up. Pick a direction (1 or 2 by default) and
-start iteration 15.
+- Re-running the literature review if the prior findings are
+  available. The review was ~30 tool calls and produced durable
+  output. Copy it, do not redo it.
+- Starting iteration 17 before iteration 16 is committed and pushed.
+- Treating the shared-assumptions finding as a proof that our
+  architecture will work at open-domain scale. It is a hypothesis
+  about why prior attempts failed, not a guarantee that dropping
+  those assumptions succeeds.
+- Introducing matmul, dense linear algebra, or gradient descent.
+- Using TodoWrite for short tasks; reserve it for multi-step
+  iteration plans.
+
+You are now caught up. Finalize iteration 16 to disk, commit and
+push, then propose iteration 17 based on the shared-assumptions
+analysis. Default to direction 1 (generation by construction on the
+existing property-graph substrate) unless the user redirects.
