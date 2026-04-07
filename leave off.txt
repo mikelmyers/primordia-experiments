@@ -1,0 +1,195 @@
+You're asking the exact right strategic question. Let me be honest about what the PPM result actually tells us.
+
+On generation specifically
+Right — PPM-D will never give us real generation, even if we somehow pushed it to 1.54 bpc. Here's why:
+
+There's a famous math theorem that says "prediction and generation are the same thing." If you're optimal at predicting the next letter, you can sample from your predictions and you'll generate perfect text. That's true.
+
+But PPM-D isn't optimal. It's short-sighted. It only sees the last 5–6 letters. If you ask it to write a paragraph, it'll produce stuff like:
+
+"the country of the states of the government of the country and the..."
+
+Each little piece looks OK locally, but there's no memory of what the paragraph is about. This has been tried many times since the 90s — the output is called "Markov chain gibberish." It's not a bug we can fix with more data. It's baked into what PPM is.
+
+So PPM-D's role in our research was never "this will become ChatGPT." Its role was "let's get a real, measurable number for the cheapest no-fancy-math method, so we know where the floor is." We got that number: 1.73 now, ~1.55 with better engineering, and that's the end of the road for pure counting. Useful to know. Time to move.
+
+The two paths forward (from our math doc, Part 2)
+Path A — Stay in the compression family, try CTW next (iteration 16).
+
+CTW is PPM's cousin. Same general idea (count statistics), but it weights contexts of many different lengths together in a smarter way.
+Cheap: ~1 day of work to implement and test.
+Honest expectation: It'll probably land within 0.1 bpc of PPM-D — maybe 1.65, maybe 1.80. Almost certainly still stuck above 1.5.
+Why do it anyway: So we can confirm the whole compression family has a ceiling instead of guessing. "We tried two different predictors from this family and both saturated around the same number" is a much stronger negative result than "we tried one." It closes the door cleanly.
+But this path does not lead to generation either. It just confirms more rigorously that counting-based methods stop here.
+Path B — Jump to a different math landscape entirely.
+
+Our math doc lists about 15 different mathematical foundations. Two of them are called out as the strongest remaining candidates we haven't tried:
+
+HDC at language scale (hyperdimensional computing). We already use HDC inside rule-world for reasoning, and it works. But we've never tried it as a language model. Unlike PPM, HDC can actually represent long-range compositional structure — "this paragraph is about volcanoes" is the kind of thing it's designed for. This is the candidate the math doc literally calls "strongest single candidate, never tested at language scale."
+
+The Part 4 problem — find a learning rule that is (a) no gradients, (b) scales linearly with data, (c) actually learns conditional structure, (d) composes across layers. Nobody has solved this. A working solution here would be a breakthrough on its own, not just a language model.
+
+These are harder, messier, and could produce a clean negative result. But they are the only candidates on the map that could plausibly lead to real generation without matmul. PPM and CTW cannot. We already know that.
+
+My honest recommendation
+Do Path A and Path B in that order, but spend very little time on A.
+
+Iteration 16 — CTW, strict time limit (1 day). Just to close the door on the compression family. If CTW lands where I expect (within 0.1 of PPM), we log a clean "compression family saturates around 1.6–1.7 bpc on text8" finding and stop polishing that lever. If CTW surprises us and lands at, say, 1.3, that changes the whole picture and we pivot to pushing compression harder. Either way, one day of work buys a real answer.
+
+Iteration 17+ — HDC at language scale. This is the real swing. It's where the math doc says the underexplored ground is. It's the only remaining candidate that could reach generation, not just prediction. It's also the one that's hardest to plan, because nobody has done it and we'll have to figure out as we go what "HDC at language scale" even means concretely.
+
+The reason I'd still do iter 16 first is that the iteration 15 number of 1.73 is slightly ambiguous — a tiny chance CTW or tuned PPM breaks into the 1.3–1.4 range and reopens the compression path. Spending one day to rule that out costs almost nothing, and if we skip it we'll always wonder. But it's a door-closing exercise, not a research swing.
+
+The real research starts at iter 17. That's where we stop asking "how low can pure counting go?" and start asking "is there any math-shape that learns language without gradient descent and produces real text?" Nobody has a published answer to that question. That's exactly the place the continuation prompt said to aim at.
+
+Want me to do iter 16 (the one-day CTW door-closer) next, or skip straight to planning iter 17 (HDC at language scale, the real swing)? Both are defensible — skipping 16 is slightly more aggressive and slightly less rigorous.
+
+
+1 step
+1 step
+But those have been tried before correct? And tested?
+
+
+
+Great pushback. Let me be careful and precise because "has it been tried?" has a yes-ish answer that makes it sound dead, and a no-ish answer that's more honest. Both pieces are true.
+
+What HAS been tried (and works as far as it goes)
+HDC / hyperdimensional computing:
+
+Invented by Pentti Kanerva (~1988, "Sparse Distributed Memory") and Tony Plate (~1995, "Holographic Reduced Representations"). Almost 40 years old.
+Has been used for: text classification, simple analogy tasks (king − man + woman = queen, the famous word2vec trick actually works under HDC too), small-scale symbolic reasoning, small n-gram-style language prediction, tiny toy sequence tasks.
+There are published HDC "language models" from roughly 2015–2022. They exist. They work on things like 1 MB of Shakespeare, or predicting the next word on Penn Treebank.
+Industrial use: HDC is actually deployed in a few places today — low-power edge ML chips, gesture classifiers, biosignal processors. It's a real, working substrate for classification.
+Hebbian learning:
+
+Donald Hebb, 1949. "Cells that fire together wire together." Seventy-six years old.
+The classic Hopfield network (1982) is Hebbian. Tried everywhere. Known limitations: doesn't scale to deep networks, memory capacity is small, no good story for learning compositional structure.
+Modern Hopfield networks (Ramsauer et al. 2020) revived interest — but they sneak matmul back in through attention, so they don't actually solve the no-matmul problem.
+CTW (Context Tree Weighting):
+
+Willems, Shtarkov, Tjalkens 1995. Thirty years old.
+Tested to death in the compression-benchmark era. Published numbers everywhere. It's the one where I can tell you with confidence "it'll land within 0.1 bpc of PPM."
+What HAS NOT been tried (the real gap)
+None of these has been tried as a full open-domain language model at modern data scale with modern compute. Specifically:
+
+HDC has never been run on a billion-token corpus. The published HDC language experiments top out around ~10 MB of training data and ~10K vocab. They are the HDC equivalent of our 1 MB PPM run. Nobody has asked "what happens at 100 GB?" Not because it was tried and failed — because people stopped looking in 2017 when transformers became the only thing anyone worked on. Read the math doc Part 2 verdict line for HDC literally — "strongest single candidate, never tested at language scale." That's a direct quote.
+
+Hebbian has never been combined with HDC and a proper learning rule at scale. Classic Hebbian + modern HDC encoding + a property graph for grounding has never been tested as a package. Each piece has been tested alone, in small-scale isolation. That's what the Part 4 unsolved math problem is really about — nobody has built the theoretical glue that lets these pieces compose.
+
+Modern data scale for any non-matmul method, period. The biggest honest non-matmul language experiments I know of are still in the 10–100 MB range. Transformers are in the 1,000,000+ GB range. That is six to eight orders of magnitude of unexplored territory.
+
+Why this matters
+So the honest framing is not "HDC has been tried and failed." The honest framing is:
+
+HDC has been tested at the equivalent of our 1 MB PPM run, on toy data, with hand-tuned parameters, by a handful of researchers, on 1990s–2010s hardware, and the results were "it works, similar to n-grams, moving on." Nobody has ever asked what happens when you give it a terabyte of text and modern compute. The one group that could have asked went all-in on transformers instead.
+
+That is a genuine unexplored frontier, but it's also a frontier that is unexplored because strong smart people looked at it and judged transformers were a better bet. That judgment might have been right. It might also have been a path-dependent accident of the 2012 ImageNet moment. We don't know.
+
+The real risk, stated plainly
+There is a real possibility that HDC-at-language-scale was quietly tried by grad students in 2015–2019, didn't work, and never got published because nobody publishes negative results in a field that's going 100 mph in another direction. We can't rule that out. "Never tested at scale" is not the same as "tested at scale and succeeded" — it just means we'd be the ones trying it.
+
+So the honest uncertainty is:
+
+Tried at toy scale, worked at toy scale, nobody scaled up: almost certain.
+Quietly tried at bigger scale and failed: possible, probably in some unpublished theses, no way for us to know without running it ourselves.
+Would work at full scale if we did it right: genuinely unknown. Could be a real breakthrough. Could be a dead end that confirms matmul's dominance.
+What this means for our plan
+This changes the calculation a little. None of the candidates is virgin territory. All of them have pieces that were tested, small-scale results that exist, and a general atmosphere of "we moved on." The question is whether "we moved on" was the right call or a fashion.
+
+Three honest options, ranked:
+
+Do the cheap door-closing experiments anyway (CTW, then tuned PPM, then small-scale HDC LM) — because even if HDC has been tried at toy scale, it hasn't been tried in our stack, on our corpus, with our eyes open. Reproducing the toy-scale result costs a few days. If we match the published toy result, that's a checkpoint and we scale up from there. If our toy result is different, that tells us something about our implementation assumptions. This is the safe scientific path: replicate first, then extend.
+
+Skip ahead to scale and just try HDC on text8 at 90 MB — betting that the "never tested at language scale" gap is real. Faster to a real answer, but if we fail we won't know whether it's because HDC is doomed or because our implementation is wrong.
+
+Accept that the paper literature is an informative negative signal and pivot somewhere else entirely — like attacking the NL parser (iteration 16 candidate #4 in the continuation prompt), or scale tests of the closed-domain reasoner (#5). These are closer to "research debt" than "trillion-dollar swings," but they make forward progress on a question we can answer, instead of gambling on one we might not.
+
+My updated honest take: option 1 is the scientifically correct move. It's slower but it's the only one that actually produces knowledge instead of gambles. Most of my original "let's just run HDC at scale" enthusiasm was downstream of me treating the math doc's "never tested at language scale" as "totally virgin ground," and you're right to pressure-test that.
+
+Does that change what you want to do next? I could see arguments for either (1) keep running the door-closers and scale up carefully, or (3) accept the negative signal from the field and point our effort at a question where we know we can make progress (parser, scale tests, real rule acquisition from text). Option 2 — big swing on HDC at scale — is the most exciting and the most likely to produce a nothing-burger.
+
+
+1 step
+1 step
+No wmto create something new we still need to build from first principles right? We have to understand the failures of what came before. Granted maybe we can read the research to gain more understanding? Our goal remains the same. Create the next generative AI that doesn't rely on miliions of gpus and data and cash
+
+
+
+You're exactly right. Let me restate the posture because I think I was drifting from it.
+
+"Build from first principles" and "read what came before" are not opposites. They're the same activity done well. The reason to read the failures is not to be discouraged by them — it's to find out exactly where each previous attempt hit its wall, and what assumption that wall depended on. Almost every research wall in history was built on an assumption somebody later dropped. Transformers themselves came from dropping the assumption that "recurrence is required for sequence modeling." That assumption had been load-bearing for 30 years before they dropped it.
+
+So the question is not "has HDC been tried?" — we already know yes, at toy scale, and it hit walls. The useful questions are:
+
+What specific wall did each attempt hit? Memory saturation? Lack of depth? No learning rule? Scaling collapse? Something else?
+What assumption was the wall made of? Did they assume fixed-random encoding? Did they assume bundle capacity was the bottleneck? Did they assume no backprop meant no credit assignment at depth?
+Which of those assumptions do we share, and which do we not? That is where the first-principles leverage is. If we inherit all the same assumptions, we'll hit all the same walls. If we can spot one assumption the field locked in by accident, we get a real shot.
+And candidly: there's another layer I was underselling. The reason "nobody tried HDC at language scale" is not only that transformers stole the oxygen. It's also that the people with the skills and taste to do HDC research mostly grew up inside the pre-2017 symbolic-AI / neuromorphic-hardware communities, and those communities were structurally not positioned to ask "what if we scaled this to a billion tokens?" — they didn't have the GPUs, didn't have the data pipelines, didn't have the eval infrastructure, and weren't asking that kind of question in the first place. The gap isn't "nobody thought of it." The gap is "the people who could have thought of it were using different tools and asking different questions, and the people with the right tools were too busy scaling matmul."
+
+That's a real opening. Not a guaranteed one, but a real one.
+
+Concrete proposal for iteration 16
+Before we write more code, let's do a targeted literature review as the iteration itself. Not a survey. A failure-modes inventory.
+
+Specifically, iter 16 = a document at experiments/rule-world/research/failure-modes-inventory.md containing, for each serious prior attempt at a matmul-free or scaling-friendly generative substrate:
+
+The paper — single citation.
+What they actually built — 2–3 sentences.
+Where it hit the wall — the specific failure mode, in concrete terms (perplexity plateaued at X, capacity saturated at N patterns, depth > K didn't train, etc.).
+What assumption the wall depended on — the one sentence that matters.
+Whether we share that assumption — yes / no / unclear, and why.
+Targets (roughly 8–12 entries, not 50 — we want depth not breadth):
+
+HDC language modeling: Joshi et al. 2016 (language classification with HDC), Kleyko et al. 2020s survey, whatever the most serious HDC-for-sequence-prediction attempts are.
+Hebbian / Hopfield: Classic Hopfield capacity limits (Amit 1989), modern Hopfield networks (Ramsauer et al. 2020 — and be honest about the matmul they smuggled back in).
+Sparse distributed memory / HTM: Numenta's 20-year record and its actual published numbers.
+Compression-based LMs: pre-2017 PPM/CTW/DMC numbers, why the field walked away in 2017.
+Reservoir computing: echo state networks at any scale that's been tried.
+Spiking neural networks for language: any serious attempts, what broke.
+Thermodynamic computing: what Extropic / Normal Computing have actually shown vs. claimed.
+The Part 4 problem: any papers that claimed progress on gradient-free deep learning rules (feedback alignment, direct feedback alignment, predictive coding, equilibrium propagation, forward-forward). For each, what scale they reached and where they plateaued.
+Output: one markdown document, maybe 3–5 pages, honest about everything, with a final section that identifies which assumptions are shared across every wall — because those are the ones that, if broken, would open new ground. That is the first-principles foothold.
+
+Why this is the right iter 16, not CTW
+I was about to send us back into the codebase with CTW as a door-closer. But closing a door we already mostly know is closed is not the highest-value use of the next iteration. We already know compression-family methods cap out around 1.5 bpc. Running CTW would give us one more data point confirming that. Useful, but confirmatory.
+
+What we do not yet have is a clear-eyed map of what everybody else tried, where they stopped, and why they stopped — especially the "why" layer. Without that map, any code we write next is going to bump into the same walls and we won't know it until we're halfway up them. With that map, iter 17 (whatever it ends up being) becomes a targeted swing at an identified weakness rather than a blind one.
+
+This iteration is cheap in compute and expensive in thinking. Which is probably the right ratio right now.
+
+How I'd execute it
+I'd do it in one long session using web search + fetch + whatever literature tools are available in this sandbox. Commit the doc, then come back to you with: "here are the shared assumptions under every previous failure. Which one looks most breakable?" That question is the real fork in the road, and once we have the doc we can answer it honestly instead of guessing.
+
+Does this match what you meant, or were you pointing at something slightly different? I want to make sure I heard you right before I spend a session on this — it's a real direction change and I don't want to do the wrong one thoroughly.
+
+
+1 step
+1 step
+Yes I believe so. Let's do it
+
+
+
+Good. I'll delegate the literature dig to a research subagent so we can cover the ground in parallel and in depth without cluttering context, then I'll write the inventory document myself from what it finds.
+
+
+Failure-modes lit review for iter 16
+Failure-modes lit review for iter 16
+
+Iter 16 research subagent launched — it'll work in the background to build the failure-modes inventory across HDC/VSA, Hopfield/Hebbian, HTM/SDR, compression LMs, reservoir computing, SNNs, thermodynamic computing, gradient-free learning rules (feedback alignment, predictive coding, equilibrium prop, forward-forward), tensor networks, and Eliasmith's Spaun. For each prior attempt it's specifically hunting for the failure mode, the underlying assumption, and whether our stack shares it.
+
+The final payoff it's going to produce is the "shared assumptions across all walls" section — the set of assumptions that every previous matmul-free attempt leaned on but that might be path-dependent rather than mathematically necessary. That's the research foothold we need before we write another line of code.
+
+While it works, I'll leave the current code state alone (not overlapping with its research). When it returns I'll:
+
+Write experiments/rule-world/research/failure-modes-inventory.md from its findings
+Write the iter 16 entry in progress-log.md — iter 16 being the literature synthesis itself as the research output, with the mandatory "what this does not prove" section
+Amend WHERE-WE-STAND with the iter 16 pointer
+Commit + push
+Come back to you with: "here are the shared assumptions under every previous failure — which one looks most breakable, and does any of them change your read on where to swing next?"
+No code changes expected in iter 16 unless the research surfaces something that demands an immediate experiment. This is the "expensive in thinking, cheap in compute" iteration you asked for.
+
+
+1 step
+1 step
+
+Subagent delivered. The key payoff: assumptions A1, A4, and A6 are the same wall in three vocabularies — every matmul-free LM attempt compressed context into a fixed-capacity dense state, and all of them hit saturation. The transformer's actual innovation, viewed from this inventory, is "don't compress context into a state vector at all." A property-graph substrate makes the same architectural move without matmul. Our existing stack already drops A1. That is a genuinely strong research foothold.
