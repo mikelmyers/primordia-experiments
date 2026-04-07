@@ -1176,3 +1176,128 @@ the other about the trillion-dollar question.
    generation and compression are dual, but duality is a theorem
    about optimal predictors, not about PPM-D at order 6.
 
+---
+
+## Iteration 16 — Failure-modes literature synthesis (2026-04-07)
+
+**Pivot from the iter 15 plan.** The post-iter-15 plan above named CTW
+as iter 16 — a one-day door-closer on the compression family. We did
+not run it. Instead, after re-reading the iter 15 result alongside the
+math doc, the honest read became: iter 15 didn't just "close" the
+compression path, it told us *the path we were on cannot reach the
+goal at all*. PPM-D worked, and that is exactly why it is a dead end.
+Confirming the dead end with one more compression-family data point
+(CTW) would be confirmatory not informative. The high-leverage move
+before writing more code was a literature pass that names *why* every
+prior matmul-free LM stopped where it stopped and which of those walls
+rule-world inherits vs has architecturally already escaped.
+
+So iter 16 is a research synthesis, not a code iteration. Output:
+`experiments/rule-world/research/failure-modes-inventory.md`. Twelve
+grouped entries covering HDC/VSA sequence work (Joshi/Kanerva),
+Holographic Reduced Representations (Plate), Sparse Distributed Memory
+(Kanerva 1988), classical Hopfield (Amit), Modern Hopfield (Ramsauer
+2020), HTM/Numenta, compression-based LMs (PPM/CTW/PAQ), reservoir
+computing, spiking neural networks for language, thermodynamic
+computing (Normal/Extropic), gradient-free deep learning rules
+(FA/DFA/predictive coding/equilibrium prop/forward-forward), tensor
+network LMs (MPS/MERA), Spaun, and (auxiliary) NTM/DNC. For each:
+paper, what they built, where it hit the wall, the underlying
+assumption that wall depends on, and whether rule-world inherits it.
+
+**Headline finding (corrects the working hypothesis).** Going in, the
+working hypothesis was that "every prior matmul-free LM hit the same
+wall: compressing context into a fixed-capacity dense state vector."
+The inventory partially refutes this. There are actually **two
+independent walls**:
+
+- **A1 — Fixed-capacity dense state vector.** The wall hit by HDC
+  bundling, HRR, SDM, classical Hopfield, ESNs, MPS-LMs, and Spaun.
+  Seven entries. Dominant in the connectionist matmul-free lineage.
+- **A6 — Suffix-count statistics asymptotically capture the
+  conditional distribution.** The wall hit by PPM/CTW/DMC. The
+  compression family does *not* compress to fixed-D — it uses an
+  unbounded suffix tree — and still saturates around 1.5 bpc on
+  enwik8/text8. **Iteration 15's PPM-D 1.731 bpc result is a data
+  point on this wall, not the A1 wall.**
+
+These are distinct, and the inventory is the first place this project
+has named them as distinct.
+
+**What rule-world has architecturally dropped:** A1 (graph context,
+unbounded), A4 (sub-linear hash-indexed recall, not dense
+inner-product), A10 (no dense per-layer weights anywhere), A9 (no
+sampling-bottleneck dependence — inference is deterministic).
+
+**What rule-world still inherits:** A3 (fixed, hand-designed HDC
+encoder — *shared with HTM and Spaun, the two prior systems most
+architecturally similar to ours, both of which failed to scale to
+language*), A5 (local rule for learning conditional structure —
+shared with HTM, SNN-LMs, and the entire gradient-free deep learning
+family, all of which failed at LM scale), A6 (suffix counts as the
+predictor — directly inherited via the PPM component, and iter 15
+already showed this binds), and A2 partially (binding-SNR-vs-depth on
+paths that route through the HDC layer).
+
+**Most consequential finding.** A3 is the assumption that connects
+rule-world to its closest prior art (HTM, Spaun) and the assumption
+whose break would most clearly differentiate the stack. Iter 17
+should attack A3 — *learn the HDC encoder online from graph
+structure* — before attacking anything else. This re-aims the
+"Hebbian/HDC at language scale" item from the iter 15 plan into a
+specific attackable subproblem rather than a generic ambition.
+
+**Updated next-iteration ranking (supersedes the iter 15 list).**
+
+1. **Iter 17 — A3 attack: online encoder learning over graph
+   structure.** Smallest possible experiment that learns the HDC
+   binding pattern from the property graph rather than fixing it by
+   hand. Success criterion: an encoder that, on rule-world + traffic-
+   world + kitchen-world, produces analog selections at least as good
+   as the hand-designed encoder on the existing adversarial set,
+   without being told the property table. Failure mode to watch for:
+   reproducing the HTM wall (local update converges to a fixed point
+   that captures surface co-occurrence but not conditional structure).
+2. **Iter 18 — A6 escape: graph-conditioned predictor.** A predictor
+   whose context is the *graph state* rather than the suffix string,
+   tested on text8 against the iter 15 PPM-D number. The hypothesis
+   is that graph-routed long-range information escapes A6. This is
+   the iter that would actually move the bpc number if anything does.
+3. **Iter 19 — small-vocab synthetic LM end-to-end.** Tie iter 17 +
+   iter 18 together on a synthetic corpus where we control the
+   long-range conditional structure and can measure whether the graph
+   substrate captures it. This is where "did we actually escape A6?"
+   becomes answerable.
+4. **CTW and the well-funded transformer baseline are demoted.** Both
+   were on the iter 15 list. CTW is now confirmatory (still nice to
+   have, but does not change the picture). The transformer baseline
+   is still wanted but no longer blocking, because the picture now
+   says "the compression-family number is the wrong axis to be
+   optimizing on at all."
+
+**What this iteration does not prove.**
+- It does not prove rule-world will succeed where HTM and Spaun
+  failed. The shared A3/A5 assumptions are real, and the prior
+  failures are negative evidence on our own bet. The inventory only
+  sharpens which specific bet is the live one.
+- It does not exhaustively cover the literature. Twelve grouped
+  entries is depth-not-breadth by design; Boltzmann/RBM, energy-based
+  models, neural ODEs, and state-space models like Mamba are out of
+  scope and could shift conclusions if added.
+- Several inline numbers in the inventory are flagged as unverified
+  (HTM character-LM bpc community recollection; current Extropic
+  publication state; Joshi 2016 venue attribution). These should be
+  spot-checked before any of this is quoted externally.
+- "Breakable" is a subjective ranking of where path-dependence is
+  most plausible, not a proof any of these assumptions actually fall.
+- Most importantly: the inventory identifies *where to swing*, not
+  whether the swing connects. Iter 17 is a real research bet whose
+  outcome is unknown.
+
+**Files touched.**
+- New: `experiments/rule-world/research/failure-modes-inventory.md`
+- This entry in `progress-log.md`
+- Pointer added to `WHERE-WE-STAND-2026-04-06-1817.md`
+- No code changes in iter 16 by design (expensive in thinking, cheap
+  in compute, per the iter-15 follow-up discussion).
+
