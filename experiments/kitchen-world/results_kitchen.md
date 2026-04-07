@@ -1,6 +1,6 @@
 # Results — kitchen-world (third transfer test)
 
-Run: 2026-04-06T17:10:39.603642Z
+Run: 2026-04-06T19:31:37.521144Z
 Engine: rule-world machinery, unmodified, on a third unrelated domain.
 Authored rules: 16 | actions: 9 | substances: 9
 
