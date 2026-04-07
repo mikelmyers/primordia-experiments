@@ -1301,3 +1301,140 @@ specific attackable subproblem rather than a generic ambition.
 - No code changes in iter 16 by design (expensive in thinking, cheap
   in compute, per the iter-15 follow-up discussion).
 
+---
+
+## Iteration 17 — A3 attack on the HDC substrate (2026-04-07)
+
+**Goal.** Iter 16 named A3 ("encoder is fixed / hand-designed, not
+learned from data") as the assumption whose break would most clearly
+differentiate rule-world from its closest prior art (HTM, Spaun) and
+pre-declared it as iter 17's target. Plan: break A3 for the live HDC
+role-weighted analog path on the existing N=3 adversarial set, so
+that iter 18's A6 attack on text8 runs on an interpretable (learned,
+not hand-tuned) encoder.
+
+Two variants, both reusing existing infra end-to-end:
+
+- **17a structural:** feed iter 9's induced feature table + induced
+  roles + all induced active roles into the live HDC path.
+- **17b behavioral:** restrict the induction corpus to rules whose
+  antecedents are actually satisfied and actions whose preconditions
+  actually hold during the scenario suite (the "firing trace").
+
+Pre-declared success criterion: induced+HDC top-1 agreement ≥ 89%
+combined on the same 10 adversarial queries iter 12 used.
+
+**Result.**
+
+| variant                | induced+HDC | induced+compress |
+|---|---|---|
+| 17a structural         | **7/10**    | 10/10            |
+| 17b behavioral         | **5/10**    | 8/10             |
+
+Neither variant clears the pre-declared 89% threshold on the HDC
+substrate. The induced+compression reference column (iter 12's
+baseline path) hits 10/10 on the structural corpus and 8/10 on the
+behavioral corpus — confirming that induced features do carry enough
+signal to recover the authored analog choices, but only under
+frequency-weighted similarity, not under HDC sign-majority bundling.
+
+**Two honest findings.**
+
+1. **A3 is strictly harder to break for the HDC substrate than for
+   the compression substrate.** Identical induced features, identical
+   query set, identical codebook: HDC hits 7/10, CompressionAnalog
+   hits 10/10. The failure mode is HDC-specific and mechanically
+   explicable — `hdc.bundle` uses sign-majority to compress a
+   multiset of features into a ±1 vector, discarding the cardinality
+   information CompressionAnalog's frequency-weighted similarity
+   relies on. At iter 17a corpus sizes (40–85 features, 5–10
+   substances), the sign collapse produces three-way ties on rule-
+   world's oil/food/medicine bundles that frequency weighting
+   disambiguates cleanly. This is a substrate-level limit, not a
+   tuning problem.
+
+2. **Behavioral restriction strips more signal than it concentrates
+   at this corpus size.** Iter 17b degrades both substrates because
+   firing-trace restriction simply removes vocabulary — traffic-world
+   `truck` is absent from every fired rule, so `fire_engine → truck`
+   goes from "ambiguous" to "unreachable." The "learn from behavior,
+   not syntax" intuition remains plausible at scale; it is not
+   testable on a 14-rule domain with 8 scenarios.
+
+**Consequence for the iter-17 hypothesis.**
+
+Iter 17 was set up to break A3 for the HDC substrate specifically,
+so iter 18's A6 attack would run on an interpretable learned encoder.
+The HDC-specific version of that plan failed. But the plan has a
+cleaner variant that follows from the iter 17 numbers:
+
+- Iter 9–12 already broke A3 for the CompressionAnalog substrate.
+- Iter 17 reproduces and extends that result (iter 12: 4/4 in
+  rule-world; iter 17a: 4/4 in rule-world with v4 crystallizations
+  folded in; 10/10 combined).
+- Therefore the interpretability concern motivating "break A3 first
+  before attacking A6" is *already satisfied on the compression
+  substrate*. It is only unsatisfied on the HDC substrate.
+
+This flips which substrate should carry iter 18. The iter-17 plan
+presumed HDC was the live predictor and therefore the substrate iter
+18 must attack. The iter 15 result contradicted that presumption
+directly: **CompressionAnalog (PPM-D) is the substrate that produced
+the 1.731 bpc on text8**, not HDC. Iter 18 was always going to be a
+compression-substrate iteration. Iter 17's contribution is making
+that choice explicit instead of accidental.
+
+**Updated iter 18 scope.**
+
+Iter 18 = **graph-conditioned CompressionAnalog on text8**, head to
+head against iter 15's PPM-D 1.731 bpc on the same 500 KB eval slice.
+
+- Predictor: CompressionAnalog with induced feature table over a
+  property graph that grows as the text stream is consumed. The
+  induction is exactly the iter 9 / iter 17a machinery — zero hand-
+  authored features — so a text8 win is interpretable as graph
+  routing adding signal the suffix tree cannot, not as hand tuning.
+- Context representation: **the graph, not the last k characters.**
+  This is the mechanical A6 attack: PPM conditions on suffix counts;
+  iter 18 conditions on a structured content-addressable index over
+  the stream.
+- Baseline: iter 15 PPM-D order 6 at 1.731 bpc on 500 KB text8 eval.
+- Pre-declared success criterion: beat 1.731 bpc on that slice by
+  any non-trivial margin. A 0.05 bpc improvement is a real signal;
+  0.2 bpc would be a headline result; sub-1.5 bpc would invalidate
+  the iter 15 "compression family saturates" reading entirely.
+
+HDC becomes a parallel research thread with its own open problem:
+**count-preserving bundle operator** (integer bundles, role-bound
+multi-token features, or CDHV-style histogram hypervectors). That
+is a substrate change, not an encoder change, and does not belong in
+the A3/A6 sequence. Deferred.
+
+**What iter 17 does not prove.**
+
+- It does not prove HDC cannot learn from induced features at scale.
+  It proves HDC underperforms compression on *this* corpus with *this*
+  bundle operator at *this* vocabulary size. A richer HDC substrate
+  is untested, not ruled out.
+- It does not prove behavioral learning is dead. It proves behavioral
+  learning is untestable at N=3 because firing restriction strips the
+  only vocabulary the inducer had.
+- It does not prove iter 18 will succeed. Iter 17 only selects which
+  substrate iter 18 should use.
+- It does not prove rule-world replaces any LLM for any task. The
+  trillion-dollar question is still open, still untouched on the
+  open-domain axis, still the thing iter 18 is actually betting on.
+
+**Files touched.**
+- New: `experiments/rule-world/research/iteration17a_runner.py`
+- New: `experiments/rule-world/research/iteration17a_results.md`
+- New: `experiments/rule-world/research/iteration17b_runner.py`
+- New: `experiments/rule-world/research/iteration17b_results.md`
+- New: `experiments/rule-world/research/iteration17_results.md`
+  (consolidated summary)
+- This entry in `progress-log.md`
+- Pointer added to `WHERE-WE-STAND-2026-04-06-1817.md`
+- No edits to `hdc.py`, `abstractor.py`, `property_inducer.py`,
+  `compression.py`, or `engine.py`. Iter 17 is a measurement
+  iteration; the live stack is unchanged.
+
