@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            color: #333;
+        }
+
+        .board-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .column {
+            flex: 1;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .cards-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #007bff;
+        }
+
+        .card-title {
+            font-weight: 500;
+            color: #333;
+            word-break: break-word;
+            margin-bottom: 8px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .card-btn {
+            padding: 4px 8px;
+            font-size: 0.75em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-move {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-move:hover {
+            background-color: #138496;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .add-card-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .add-card-input {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: inherit;
+        }
+
+        .add-card-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-add {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Kanban Board</h1>
+    </div>
+
+    <div class="board-container" id="boardContainer"></div>
+
+    <script>
+        // ===== Backend State Management (window.kanbanAPI) =====
+        const STORAGE_KEY = 'kanban-board';
+
+        const DEFAULT_BOARD = {
+            columns: [
+                { id: 'todo', title: 'Todo', cards: [] },
+                { id: 'doing', title: 'Doing', cards: [] },
+                { id: 'done', title: 'Done', cards: [] }
+            ]
+        };
+
+        let subscribers = [];
+
+        function loadBoard() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : DEFAULT_BOARD;
+        }
+
+        function saveBoard(board) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(board));
+        }
+
+        let board = loadBoard();
+
+        function notifySubscribers() {
+            subscribers.forEach(cb => cb(board));
+        }
+
+        function generateId() {
+            return 'card-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function addCard(columnId, title) {
+            const column = board.columns.find(col => col.id === columnId);
+            if (!column || !title.trim()) {
+                return false;
+            }
+            column.cards.push({
+                id: generateId(),
+                title: title.trim()
+            });
+            saveBoard(board);
+            notifySubscribers();
+            return true;
+        }
+
+        function deleteCard(columnId, cardId) {
+            const column = board.columns.find(col => col.id === columnId);
+            if (!column) {
+                return false;
+            }
+            const cardIndex = column.cards.findIndex(card => card.id === cardId);
+            if (cardIndex === -1) {
+                return false;
+            }
+            column.cards.splice(cardIndex, 1);
+            saveBoard(board);
+            notifySubscribers();
+            return true;
+        }
+
+        function moveCard(fromColumnId, toColumnId, cardId) {
+            const fromColumn = board.columns.find(col => col.id === fromColumnId);
+            const toColumn = board.columns.find(col => col.id === toColumnId);
+            
+            if (!fromColumn || !toColumn) {
+                return false;
+            }
+            
+            const cardIndex = fromColumn.cards.findIndex(card => card.id === cardId);
+            if (cardIndex === -1) {
+                return false;
+            }
+            
+            const card = fromColumn.cards.splice(cardIndex, 1)[0];
+            toColumn.cards.push(card);
+            saveBoard(board);
+            notifySubscribers();
+            return true;
+        }
+
+        function getBoard() {
+            return JSON.parse(JSON.stringify(board));
+        }
+
+        function subscribe(callback) {
+            if (typeof callback === 'function') {
+                subscribers.push(callback);
+                callback(board);
+            }
+        }
+
+        window.kanbanAPI = {
+            addCard,
+            deleteCard,
+            moveCard,
+            getBoard,
+            subscribe
+        };
+
+        // ===== Frontend UI Rendering =====
+        function renderBoard() {
+            const container = document.getElementById('boardContainer');
+            container.innerHTML = '';
+
+            board.columns.forEach(column => {
+                const columnEl = document.createElement('div');
+                columnEl.className = 'column';
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'column-title';
+                titleEl.textContent = column.title;
+                columnEl.appendChild(titleEl);
+
+                const cardsEl = document.createElement('div');
+                cardsEl.className = 'cards-container';
+                column.cards.forEach(card => {
+                    const cardEl = document.createElement('div');
+                    cardEl.className = 'card';
+
+                    const cardTitleEl = document.createElement('div');
+                    cardTitleEl.className = 'card-title';
+                    cardTitleEl.textContent = card.title;
+                    cardEl.appendChild(cardTitleEl);
+
+                    const actionsEl = document.createElement('div');
+                    actionsEl.className = 'card-actions';
+
+                    const prevBtn = document.createElement('button');
+                    prevBtn.className = 'card-btn btn-move';
+                    prevBtn.textContent = '← Prev';
+                    prevBtn.addEventListener('click', () => {
+                        const currentIndex = board.columns.findIndex(c => c.id === column.id);
+                        const prevIndex = (currentIndex - 1 + board.columns.length) % board.columns.length;
+                        window.kanbanAPI.moveCard(column.id, board.columns[prevIndex].id, card.id);
+                    });
+                    actionsEl.appendChild(prevBtn);
+
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'card-btn btn-move';
+                    nextBtn.textContent = 'Next →';
+                    nextBtn.addEventListener('click', () => {
+                        const currentIndex = board.columns.findIndex(c => c.id === column.id);
+                        const nextIndex = (currentIndex + 1) % board.columns.length;
+                        window.kanbanAPI.moveCard(column.id, board.columns[nextIndex].id, card.id);
+                    });
+                    actionsEl.appendChild(nextBtn);
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'card-btn btn-delete';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.addEventListener('click', () => {
+                        window.kanbanAPI.deleteCard(column.id, card.id);
+                    });
+                    actionsEl.appendChild(deleteBtn);
+
+                    cardEl.appendChild(actionsEl);
+                    cardsEl.appendChild(cardEl);
+                });
+                columnEl.appendChild(cardsEl);
+
+                const addSectionEl = document.createElement('div');
+                addSectionEl.className = 'add-card-section';
+
+                const inputEl = document.createElement('input');
+                inputEl.className = 'add-card-input';
+                inputEl.type = 'text';
+                inputEl.placeholder = 'New card title...';
+                inputEl.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        window.kanbanAPI.addCard(column.id, inputEl.value);
+                        inputEl.value = '';
+                    }
+                });
+                addSectionEl.appendChild(inputEl);
+
+                const btnEl = document.createElement('button');
+                btnEl.className = 'btn-add';
+                btnEl.textContent = 'Add Card';
+                btnEl.addEventListener('click', () => {
+                    window.kanbanAPI.addCard(column.id, inputEl.value);
+                    inputEl.value = '';
+                    inputEl.focus();
+                });
+                addSectionEl.appendChild(btnEl);
+
+                columnEl.appendChild(addSectionEl);
+                container.appendChild(columnEl);
+            });
+        }
+
+        // Subscribe to board changes and re-render
+        window.kanbanAPI.subscribe((newBoard) => {
+            board = newBoard;
+            renderBoard();
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBoard();
+        });
+    </script>
+</body>
+</html>
