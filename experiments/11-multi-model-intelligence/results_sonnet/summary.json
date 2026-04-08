@@ -1,0 +1,43 @@
+{
+  "experiment": "011-multi-model-intelligence",
+  "model": "claude-sonnet-4-6",
+  "task": "Build a minimal web-based Kanban task board.\n\nRequired features:\n- At least three columns (Todo, Doing, Done)\n- Add a new card to any column with a title\n- Move a card between columns (drag-drop or buttons are both acceptable)\n- Delete a card\n- State persists across page reload (use localStorage)\n- A single self-contained index.html file \u2014 no external dependencies,\n  no build step, no frameworks.\n\nThe UI should be clean and usable but nothing fancy.",
+  "max_iterations": 5,
+  "iterations_run": 1,
+  "approved": true,
+  "role_violations": [
+    "iter 1: frontend wrote persistence logic"
+  ],
+  "per_iteration": [
+    {
+      "iteration": 1,
+      "nodes": {
+        "architect": {
+          "primitive": "become",
+          "payload_chars": 1715
+        },
+        "frontend": {
+          "primitive": "become",
+          "payload_chars": 9483
+        },
+        "backend": {
+          "primitive": "become",
+          "payload_chars": 3713
+        },
+        "integrator": {
+          "primitive": "integrate",
+          "payload_chars": 11227,
+          "html_chars": 11215,
+          "html_path": "results_sonnet/output/index_iter1.html"
+        },
+        "critic": {
+          "primitive": "observe",
+          "approved": true,
+          "n_failing": 0
+        }
+      }
+    }
+  ],
+  "duration_seconds": 118.9,
+  "total_messages": 5
+}

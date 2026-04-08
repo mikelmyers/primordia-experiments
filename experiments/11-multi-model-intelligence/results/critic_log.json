@@ -1,0 +1,25 @@
+[
+  {
+    "approved": true,
+    "working": [
+      "Valid HTML5 document starting with <!DOCTYPE html>",
+      "Three Kanban columns present: Todo, Doing, Done",
+      "Add card form (input + button) present in each column with Enter-key support",
+      "Cards moveable via left/right arrow buttons and native HTML5 drag-and-drop",
+      "Delete button (\u2715) on each card",
+      "State persisted to localStorage under key 'kanban' on every mutation",
+      "Frontend calls window.kanbanAPI (the backend layer) for all operations \u2014 layers are wired",
+      "No undefined function references; all IDs and selectors are consistent",
+      "Drag-over visual highlight on columns",
+      "Card count badge in column headers",
+      "Empty column hint text",
+      "Boundary conditions handled: left button disabled on first column, right button disabled on last column",
+      "State loaded on startup with fallback to default if absent or corrupted"
+    ],
+    "failing": [],
+    "must_redo": [],
+    "feedback_for_iteration": "No issues found. The artifact is fully functional and meets all specified requirements.",
+    "iteration": 1,
+    "primitive": "observe"
+  }
+]
