@@ -1,0 +1,54 @@
+{
+  "haiku": {
+    "model": "haiku",
+    "ok": false,
+    "backend_violations": [],
+    "frontend_violations": [
+      "Frontend uses forbidden pattern `localStorage.setItem`. Persistence belongs to the Backend \u2014 call `window.kanbanAPI.<method>(...)` instead.",
+      "Frontend uses forbidden pattern `localStorage.getItem`. Persistence belongs to the Backend \u2014 call `window.kanbanAPI.<method>(...)` instead.",
+      "Frontend declares `function addCard(...)`. This shadows the Backend's `window.kanbanAPI.addCard`. Replace with `window.kanbanAPI.addCard(...)` at each call site and remove the local declaration.",
+      "Frontend declares `function deleteCard(...)`. This shadows the Backend's `window.kanbanAPI.deleteCard`. Replace with `window.kanbanAPI.deleteCard(...)` at each call site and remove the local declaration.",
+      "Frontend makes zero calls to `window.kanbanAPI.<method>(...)`. The Frontend is supposed to consume the Backend's API for all business logic. Wire your event handlers to call `window.kanbanAPI.addCard(...)`, `window.kanbanAPI.moveCard(...)`, etc."
+    ],
+    "schema_violations": [],
+    "stats": {
+      "backend_js_chars": 2679,
+      "frontend_html_chars": 10612,
+      "declared_methods": [
+        "addCard",
+        "moveCard",
+        "deleteCard",
+        "getBoard",
+        "subscribe"
+      ],
+      "n_backend_violations": 0,
+      "n_frontend_violations": 5
+    }
+  },
+  "sonnet": {
+    "model": "sonnet",
+    "ok": false,
+    "backend_violations": [
+      "Backend does not expose `window.kanbanAPI.getBoard(...)`. Add an assignment `window.kanbanAPI.getBoard = function ...` or include `getBoard` as a key in the object literal assigned to `window.kanbanAPI`."
+    ],
+    "frontend_violations": [
+      "Frontend uses forbidden pattern `localStorage.setItem`. Persistence belongs to the Backend \u2014 call `window.kanbanAPI.<method>(...)` instead.",
+      "Frontend uses forbidden pattern `localStorage.getItem`. Persistence belongs to the Backend \u2014 call `window.kanbanAPI.<method>(...)` instead.",
+      "Frontend does not contain DOM element with id=\"boardContainer\" (required by schema.dom_contract)."
+    ],
+    "schema_violations": [],
+    "stats": {
+      "backend_js_chars": 3695,
+      "frontend_html_chars": 9471,
+      "declared_methods": [
+        "addCard",
+        "moveCard",
+        "deleteCard",
+        "getBoard",
+        "subscribe"
+      ],
+      "n_backend_violations": 1,
+      "n_frontend_violations": 3
+    }
+  }
+}
