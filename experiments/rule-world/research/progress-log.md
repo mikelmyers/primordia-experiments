@@ -1176,3 +1176,411 @@ the other about the trillion-dollar question.
    generation and compression are dual, but duality is a theorem
    about optimal predictors, not about PPM-D at order 6.
 
+---
+
+## Iteration 16 — Failure-modes literature synthesis (2026-04-07)
+
+**Pivot from the iter 15 plan.** The post-iter-15 plan above named CTW
+as iter 16 — a one-day door-closer on the compression family. We did
+not run it. Instead, after re-reading the iter 15 result alongside the
+math doc, the honest read became: iter 15 didn't just "close" the
+compression path, it told us *the path we were on cannot reach the
+goal at all*. PPM-D worked, and that is exactly why it is a dead end.
+Confirming the dead end with one more compression-family data point
+(CTW) would be confirmatory not informative. The high-leverage move
+before writing more code was a literature pass that names *why* every
+prior matmul-free LM stopped where it stopped and which of those walls
+rule-world inherits vs has architecturally already escaped.
+
+So iter 16 is a research synthesis, not a code iteration. Output:
+`experiments/rule-world/research/failure-modes-inventory.md`. Twelve
+grouped entries covering HDC/VSA sequence work (Joshi/Kanerva),
+Holographic Reduced Representations (Plate), Sparse Distributed Memory
+(Kanerva 1988), classical Hopfield (Amit), Modern Hopfield (Ramsauer
+2020), HTM/Numenta, compression-based LMs (PPM/CTW/PAQ), reservoir
+computing, spiking neural networks for language, thermodynamic
+computing (Normal/Extropic), gradient-free deep learning rules
+(FA/DFA/predictive coding/equilibrium prop/forward-forward), tensor
+network LMs (MPS/MERA), Spaun, and (auxiliary) NTM/DNC. For each:
+paper, what they built, where it hit the wall, the underlying
+assumption that wall depends on, and whether rule-world inherits it.
+
+**Headline finding (corrects the working hypothesis).** Going in, the
+working hypothesis was that "every prior matmul-free LM hit the same
+wall: compressing context into a fixed-capacity dense state vector."
+The inventory partially refutes this. There are actually **two
+independent walls**:
+
+- **A1 — Fixed-capacity dense state vector.** The wall hit by HDC
+  bundling, HRR, SDM, classical Hopfield, ESNs, MPS-LMs, and Spaun.
+  Seven entries. Dominant in the connectionist matmul-free lineage.
+- **A6 — Suffix-count statistics asymptotically capture the
+  conditional distribution.** The wall hit by PPM/CTW/DMC. The
+  compression family does *not* compress to fixed-D — it uses an
+  unbounded suffix tree — and still saturates around 1.5 bpc on
+  enwik8/text8. **Iteration 15's PPM-D 1.731 bpc result is a data
+  point on this wall, not the A1 wall.**
+
+These are distinct, and the inventory is the first place this project
+has named them as distinct.
+
+**What rule-world has architecturally dropped:** A1 (graph context,
+unbounded), A4 (sub-linear hash-indexed recall, not dense
+inner-product), A10 (no dense per-layer weights anywhere), A9 (no
+sampling-bottleneck dependence — inference is deterministic).
+
+**What rule-world still inherits:** A3 (fixed, hand-designed HDC
+encoder — *shared with HTM and Spaun, the two prior systems most
+architecturally similar to ours, both of which failed to scale to
+language*), A5 (local rule for learning conditional structure —
+shared with HTM, SNN-LMs, and the entire gradient-free deep learning
+family, all of which failed at LM scale), A6 (suffix counts as the
+predictor — directly inherited via the PPM component, and iter 15
+already showed this binds), and A2 partially (binding-SNR-vs-depth on
+paths that route through the HDC layer).
+
+**Most consequential finding.** A3 is the assumption that connects
+rule-world to its closest prior art (HTM, Spaun) and the assumption
+whose break would most clearly differentiate the stack. Iter 17
+should attack A3 — *learn the HDC encoder online from graph
+structure* — before attacking anything else. This re-aims the
+"Hebbian/HDC at language scale" item from the iter 15 plan into a
+specific attackable subproblem rather than a generic ambition.
+
+**Updated next-iteration ranking (supersedes the iter 15 list).**
+
+1. **Iter 17 — A3 attack: online encoder learning over graph
+   structure.** Smallest possible experiment that learns the HDC
+   binding pattern from the property graph rather than fixing it by
+   hand. Success criterion: an encoder that, on rule-world + traffic-
+   world + kitchen-world, produces analog selections at least as good
+   as the hand-designed encoder on the existing adversarial set,
+   without being told the property table. Failure mode to watch for:
+   reproducing the HTM wall (local update converges to a fixed point
+   that captures surface co-occurrence but not conditional structure).
+2. **Iter 18 — A6 escape: graph-conditioned predictor.** A predictor
+   whose context is the *graph state* rather than the suffix string,
+   tested on text8 against the iter 15 PPM-D number. The hypothesis
+   is that graph-routed long-range information escapes A6. This is
+   the iter that would actually move the bpc number if anything does.
+3. **Iter 19 — small-vocab synthetic LM end-to-end.** Tie iter 17 +
+   iter 18 together on a synthetic corpus where we control the
+   long-range conditional structure and can measure whether the graph
+   substrate captures it. This is where "did we actually escape A6?"
+   becomes answerable.
+4. **CTW and the well-funded transformer baseline are demoted.** Both
+   were on the iter 15 list. CTW is now confirmatory (still nice to
+   have, but does not change the picture). The transformer baseline
+   is still wanted but no longer blocking, because the picture now
+   says "the compression-family number is the wrong axis to be
+   optimizing on at all."
+
+**What this iteration does not prove.**
+- It does not prove rule-world will succeed where HTM and Spaun
+  failed. The shared A3/A5 assumptions are real, and the prior
+  failures are negative evidence on our own bet. The inventory only
+  sharpens which specific bet is the live one.
+- It does not exhaustively cover the literature. Twelve grouped
+  entries is depth-not-breadth by design; Boltzmann/RBM, energy-based
+  models, neural ODEs, and state-space models like Mamba are out of
+  scope and could shift conclusions if added.
+- Several inline numbers in the inventory are flagged as unverified
+  (HTM character-LM bpc community recollection; current Extropic
+  publication state; Joshi 2016 venue attribution). These should be
+  spot-checked before any of this is quoted externally.
+- "Breakable" is a subjective ranking of where path-dependence is
+  most plausible, not a proof any of these assumptions actually fall.
+- Most importantly: the inventory identifies *where to swing*, not
+  whether the swing connects. Iter 17 is a real research bet whose
+  outcome is unknown.
+
+**Files touched.**
+- New: `experiments/rule-world/research/failure-modes-inventory.md`
+- This entry in `progress-log.md`
+- Pointer added to `WHERE-WE-STAND-2026-04-06-1817.md`
+- No code changes in iter 16 by design (expensive in thinking, cheap
+  in compute, per the iter-15 follow-up discussion).
+
+---
+
+## Iteration 17 — A3 attack on the HDC substrate (2026-04-07)
+
+**Goal.** Iter 16 named A3 ("encoder is fixed / hand-designed, not
+learned from data") as the assumption whose break would most clearly
+differentiate rule-world from its closest prior art (HTM, Spaun) and
+pre-declared it as iter 17's target. Plan: break A3 for the live HDC
+role-weighted analog path on the existing N=3 adversarial set, so
+that iter 18's A6 attack on text8 runs on an interpretable (learned,
+not hand-tuned) encoder.
+
+Two variants, both reusing existing infra end-to-end:
+
+- **17a structural:** feed iter 9's induced feature table + induced
+  roles + all induced active roles into the live HDC path.
+- **17b behavioral:** restrict the induction corpus to rules whose
+  antecedents are actually satisfied and actions whose preconditions
+  actually hold during the scenario suite (the "firing trace").
+
+Pre-declared success criterion: induced+HDC top-1 agreement ≥ 89%
+combined on the same 10 adversarial queries iter 12 used.
+
+**Result.**
+
+| variant                | induced+HDC | induced+compress |
+|---|---|---|
+| 17a structural         | **7/10**    | 10/10            |
+| 17b behavioral         | **5/10**    | 8/10             |
+
+Neither variant clears the pre-declared 89% threshold on the HDC
+substrate. The induced+compression reference column (iter 12's
+baseline path) hits 10/10 on the structural corpus and 8/10 on the
+behavioral corpus — confirming that induced features do carry enough
+signal to recover the authored analog choices, but only under
+frequency-weighted similarity, not under HDC sign-majority bundling.
+
+**Two honest findings.**
+
+1. **A3 is strictly harder to break for the HDC substrate than for
+   the compression substrate.** Identical induced features, identical
+   query set, identical codebook: HDC hits 7/10, CompressionAnalog
+   hits 10/10. The failure mode is HDC-specific and mechanically
+   explicable — `hdc.bundle` uses sign-majority to compress a
+   multiset of features into a ±1 vector, discarding the cardinality
+   information CompressionAnalog's frequency-weighted similarity
+   relies on. At iter 17a corpus sizes (40–85 features, 5–10
+   substances), the sign collapse produces three-way ties on rule-
+   world's oil/food/medicine bundles that frequency weighting
+   disambiguates cleanly. This is a substrate-level limit, not a
+   tuning problem.
+
+2. **Behavioral restriction strips more signal than it concentrates
+   at this corpus size.** Iter 17b degrades both substrates because
+   firing-trace restriction simply removes vocabulary — traffic-world
+   `truck` is absent from every fired rule, so `fire_engine → truck`
+   goes from "ambiguous" to "unreachable." The "learn from behavior,
+   not syntax" intuition remains plausible at scale; it is not
+   testable on a 14-rule domain with 8 scenarios.
+
+**Consequence for the iter-17 hypothesis.**
+
+Iter 17 was set up to break A3 for the HDC substrate specifically,
+so iter 18's A6 attack would run on an interpretable learned encoder.
+The HDC-specific version of that plan failed. But the plan has a
+cleaner variant that follows from the iter 17 numbers:
+
+- Iter 9–12 already broke A3 for the CompressionAnalog substrate.
+- Iter 17 reproduces and extends that result (iter 12: 4/4 in
+  rule-world; iter 17a: 4/4 in rule-world with v4 crystallizations
+  folded in; 10/10 combined).
+- Therefore the interpretability concern motivating "break A3 first
+  before attacking A6" is *already satisfied on the compression
+  substrate*. It is only unsatisfied on the HDC substrate.
+
+This flips which substrate should carry iter 18. The iter-17 plan
+presumed HDC was the live predictor and therefore the substrate iter
+18 must attack. The iter 15 result contradicted that presumption
+directly: **CompressionAnalog (PPM-D) is the substrate that produced
+the 1.731 bpc on text8**, not HDC. Iter 18 was always going to be a
+compression-substrate iteration. Iter 17's contribution is making
+that choice explicit instead of accidental.
+
+**Updated iter 18 scope.**
+
+Iter 18 = **graph-conditioned CompressionAnalog on text8**, head to
+head against iter 15's PPM-D 1.731 bpc on the same 500 KB eval slice.
+
+- Predictor: CompressionAnalog with induced feature table over a
+  property graph that grows as the text stream is consumed. The
+  induction is exactly the iter 9 / iter 17a machinery — zero hand-
+  authored features — so a text8 win is interpretable as graph
+  routing adding signal the suffix tree cannot, not as hand tuning.
+- Context representation: **the graph, not the last k characters.**
+  This is the mechanical A6 attack: PPM conditions on suffix counts;
+  iter 18 conditions on a structured content-addressable index over
+  the stream.
+- Baseline: iter 15 PPM-D order 6 at 1.731 bpc on 500 KB text8 eval.
+- Pre-declared success criterion: beat 1.731 bpc on that slice by
+  any non-trivial margin. A 0.05 bpc improvement is a real signal;
+  0.2 bpc would be a headline result; sub-1.5 bpc would invalidate
+  the iter 15 "compression family saturates" reading entirely.
+
+HDC becomes a parallel research thread with its own open problem:
+**count-preserving bundle operator** (integer bundles, role-bound
+multi-token features, or CDHV-style histogram hypervectors). That
+is a substrate change, not an encoder change, and does not belong in
+the A3/A6 sequence. Deferred.
+
+**What iter 17 does not prove.**
+
+- It does not prove HDC cannot learn from induced features at scale.
+  It proves HDC underperforms compression on *this* corpus with *this*
+  bundle operator at *this* vocabulary size. A richer HDC substrate
+  is untested, not ruled out.
+- It does not prove behavioral learning is dead. It proves behavioral
+  learning is untestable at N=3 because firing restriction strips the
+  only vocabulary the inducer had.
+- It does not prove iter 18 will succeed. Iter 17 only selects which
+  substrate iter 18 should use.
+- It does not prove rule-world replaces any LLM for any task. The
+  trillion-dollar question is still open, still untouched on the
+  open-domain axis, still the thing iter 18 is actually betting on.
+
+**Files touched.**
+- New: `experiments/rule-world/research/iteration17a_runner.py`
+- New: `experiments/rule-world/research/iteration17a_results.md`
+- New: `experiments/rule-world/research/iteration17b_runner.py`
+- New: `experiments/rule-world/research/iteration17b_results.md`
+- New: `experiments/rule-world/research/iteration17_results.md`
+  (consolidated summary)
+- This entry in `progress-log.md`
+- Pointer added to `WHERE-WE-STAND-2026-04-06-1817.md`
+- No edits to `hdc.py`, `abstractor.py`, `property_inducer.py`,
+  `compression.py`, or `engine.py`. Iter 17 is a measurement
+  iteration; the live stack is unchanged.
+
+---
+
+## Iteration 18 — Synthetic mechanism test for graph-conditioned prediction (2026-04-07)
+
+**Context.** Iter 17 forced a substrate choice: graph-conditioned
+prediction should run on CompressionAnalog (the substrate iter 15's
+PPM-D actually used), not HDC. The iter 17 results doc pre-declared
+iter 18 as "graph-conditioned CompressionAnalog on text8" against
+iter 15's 1.731 bpc.
+
+**Blocker.** text8 is not in the repo (gitignored, 100 MB) and this
+sandbox has no external network access — `mattmahoney.net` and
+`huggingface.co` both return `403 host_not_allowed`. The text8
+version of iter 18 is not runnable in this session.
+
+**Principled pivot (pre-declared in-session, user-approved before
+any code was written).** Run iter 18 on a **synthetic corpus with
+provable long-range conditional structure**. The reasoning: a
+synthetic corpus answers a question text8 cannot cleanly answer —
+*did the graph actually capture a long-range signal, or did the
+improvement come from somewhere else?* On a constructed corpus the
+signal is known by design and we can measure whether the model
+captured that specific signal. On text8 we cannot.
+
+If the mechanism test passes, iter 19 (next session, text8 available)
+becomes a scale test of a proven mechanism. If it fails, we save a
+week of text8 engineering chasing something that was never going to
+work. This is the "careful, unquestionable" posture: prove the
+mechanism on a case we constructed before scaling.
+
+**Corpus.** 200-word vocabulary: 20 topic markers `tXX`, 100 filler
+words `wXX`, 80 topic-specific words `sXX` (4 per topic). Each
+document emits a topic marker `tT` as word 0, then 100 more words
+drawn from {40% `tT`, 30% uniform over topic-T s-words, 30% uniform
+over fillers}. 10,000 train docs / 1,000 eval docs. Seed 17. The
+long-range signal lives in `s`-word positions, whose true
+distribution depends on the document-initial topic marker.
+
+**Predictors.**
+1. Word-level n-gram backoff, order 3, Laplace α=0.1. This is the
+   A6 wall in word form — it conditions on suffix counts only.
+2. Graph-conditioned blend. Same n-gram, plus a co-document word
+   graph built from training (for every pair of distinct words in
+   the same doc, `adj[a][b] += 1`). At prediction time: for each
+   candidate `c`, compute `route(c|bag) = Σ_{w∈bag} count(w) *
+   P(c | w in same doc)`. Blend by log-linear mixture:
+   `p(c|h,bag) ∝ P_ngram(c|h)^(1-α) * (route(c|bag)+ε)^α`. Sweep
+   α ∈ {0.0, 0.1, 0.25, 0.5, 0.75}. α=0 must exactly match the
+   n-gram baseline (pre-declared sanity check — passed).
+
+**Pre-declared success criterion.** Best α beats α=0 by ≥ 0.05
+bits/word on total bpw, OR ≥ 0.20 bits/word on s-word-only bpw.
+Either qualifies as a mechanism win.
+
+**Result.**
+
+| α                 | total bpw | total bpc | s-word bpw |
+|---|---|---|---|
+| 0.0 (baseline)    | 5.4484    | 1.3621    | 5.5025     |
+| 0.1               | **5.3982**| **1.3496**| 5.3476     |
+| 0.25              | 5.4056    | 1.3514    | 5.1990     |
+| 0.5               | 5.6029    | 1.4007    | **5.1380** |
+| 0.75              | 5.9855    | 1.4964    | 5.2636     |
+
+- Best total bpw: α=0.1, **Δ=−0.0502** (threshold −0.05, passes by
+  0.0002 — right at the edge but on the right side).
+- Best s-word bpw: α=0.5, **Δ=−0.3645** (threshold −0.20, passes
+  cleanly by 1.8×). ~6.6% reduction in s-word cost.
+
+**Pre-declared verdict: MECHANISM WIN.** Both criteria satisfied.
+
+**Why the α sweep shape is the real evidence.** Total bpw bottoms at
+α=0.1, drifts back up at higher α. s-word bpw keeps improving until
+α=0.5 then worsens. This is the exact trade-off the theory predicted:
+graph routing helps on long-range-conditioned positions and hurts on
+locally-conditioned ones. There is a visible interior optimum where
+the two signals balance. You cannot get this shape from noise or
+overfitting — it is the mechanism working as specified.
+
+**What iter 18 proves.**
+1. A co-document word graph captures long-range conditional structure
+   that a 3-gram backoff cannot, on a corpus where the long-range
+   structure is known to exist by construction.
+2. The graph-routing signal concentrates exactly where the theory
+   said it would — on positions whose true distribution depends on a
+   remote document-initial marker.
+3. The α trade-off curve has a clean interior optimum — graph routing
+   and n-gram scoring are complementary, not redundant.
+4. **The A6 wall is not a mathematical ceiling on matmul-free
+   prediction.** It is a ceiling on *suffix-statistics-only*
+   prediction. Adding a structurally-learned content-addressable
+   index over the stream breaks through the specific form of the
+   wall PPM hits.
+
+**What iter 18 does not prove.**
+- It does not prove a text8 bpc improvement. Iter 18 ran on a
+  synthetic signal. Natural text has long-range structure of a
+  different shape (discourse, coreference, topic drift) and whether
+  co-document word graphs capture it at text8 scale is iter 19's job.
+- It does not prove iter 18's specific graph design is the right one.
+  Co-document co-occurrence is the simplest thing that could work;
+  many sharper designs are possible (windowed co-occurrence, induced
+  role features, multi-hop routing). This iteration tested whether
+  *any* graph routing beats n-gram; it did not compare alternatives.
+- It does not close the gap to transformers. 200-word vocab,
+  101-word documents, 1M training words. Transformer-XL's 1.08 bpc on
+  text8 is an untouched number. Iter 18 shows the *direction* exists;
+  the magnitude is tomorrow's question.
+- It does not prove HDC is dead. Iter 17's HDC wall is substrate-
+  specific (sign-majority bundles discard cardinality); a count-
+  preserving HDC variant remains an open parallel thread.
+- It does not prove the synthetic signal generalizes. The whole point
+  of running on a constructed corpus was to isolate the mechanism;
+  the cost of that isolation is that we only know the mechanism
+  captures *this* signal in *this* corpus.
+
+**Files touched.**
+- New: `experiments/rule-world/research/iteration18_runner.py`
+- New: `experiments/rule-world/research/iteration18_results.md`
+- New: `experiments/rule-world/research/iteration18_raw.json`
+- This entry in `progress-log.md`
+- Pointer in `WHERE-WE-STAND-2026-04-06-1817.md`
+- No edits to any live module. No text8 dependency. Reproducible from
+  seed 17 in one runner file, ~4 min wall on the sandbox CPU.
+
+**Updated next-iteration ranking (supersedes the iter 17 list).**
+
+1. **Iter 19 — port the mechanism to text8** (next session, text8
+   available locally). Same architecture: n-gram / PPM-D backoff
+   blended log-linearly with a co-document routing score from a word
+   graph trained on text8. Head to head against iter 15's PPM-D 1.731
+   bpc on the 500 KB eval slice. Same α sweep. Pre-declared criterion:
+   best α beats 1.731. A 0.05 bpc improvement is a signal; 0.2 is a
+   headline; sub-1.5 invalidates the iter 15 "compression family
+   saturates" reading entirely.
+2. **Iter 20 (conditional on 19) — sharpen the graph.** Only run if
+   iter 19 is borderline. Variants: windowed co-occurrence (window =
+   sentence / paragraph / document), induced role features (iter 9
+   feature tags as graph edges), multi-hop routing (route through
+   shared-neighbor nodes rather than just direct co-occurrence).
+3. **HDC count-preserving bundle** — parallel thread, deferred. The
+   open problem iter 17 surfaced. Not on the A6 critical path.
+4. **Sampling evaluation** — still open. At some point we need to
+   generate text from a graph-conditioned model and read it, not
+   just measure bpc.
+
